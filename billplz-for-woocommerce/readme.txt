@@ -85,8 +85,5 @@ If you get infinite loop or JSON-like error:
 == Links ==
 [Wanzul Hosting](http://wanzul-hosting.com/) is the most reliable, cheap, recommended by the most web master around the world.
 
-== Updates ==
-Updates will provided through WordPress Update!
-
 == Thanks ==
 Special thanks to Akhie Joe for designing the button/banner and all donators! Thank You so much!
