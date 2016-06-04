@@ -24,6 +24,9 @@ For Installation Instruction, please refer to:
 
 == Changelog ==
 
+= 3.4 =
+* Small bugfix
+
 = 3.3 =
 * Recheck the payment status for handling callback signal
 
