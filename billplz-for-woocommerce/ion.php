@@ -221,7 +221,6 @@ function wcbillplz_gateway_load() {
          */
         public function generate_form( $order_id ) {
             $order = new WC_Order( $order_id );	
-			$order->reduce_order_stock();
             $host = $this->host; //ubah disini utk tambah feature
             $api_key = $this->api_key;
             $amount = $order->order_total;
