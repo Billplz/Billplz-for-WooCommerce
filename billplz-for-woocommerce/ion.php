@@ -221,6 +221,7 @@ function wcbillplz_gateway_load() {
          */
         public function generate_form( $order_id ) {
             $order = new WC_Order( $order_id );	
+			$order->reduce_order_stock();
             $host = $this->host; //ubah disini utk tambah feature
             $api_key = $this->api_key;
             $amount = $order->order_total;
@@ -396,8 +397,12 @@ $order = new WC_Order( $orderid );
 $referer = "<br>Referer: CallbackURL";	
 if ($paymentStatus){//kena ubah 
 if (!isset($_GET['billplz'])){
+	if ($order->status == 'pending'){
                 $order->add_order_note('Payment Status: SUCCESSFUL'.'<br>Transaction ID: ' . $tranID . $referer);								
                 $order->payment_complete();
+	}
+	//else
+	//	$order->add_order_note('Duplicated Callback by Billplz');
 }
 wp_redirect($order->get_checkout_order_received_url());
 		}
