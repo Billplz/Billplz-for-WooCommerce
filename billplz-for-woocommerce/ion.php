@@ -109,6 +109,7 @@ function wcbillplz_gateway_load() {
             $this->smsnoti = $this->settings['smsnoti'];
             $this->emailnoti = $this->settings['emailnoti'];
             $this->nopostdata = $this->settings['nopostdata'];
+			$this->immediatereducestock = $this->settings['immediatereducestock'];
 			$this->teststaging = $this->settings['teststaging'];
             add_action( 'woocommerce_receipt_billplz', array( &$this, 'receipt_page' ) );
 			
@@ -201,7 +202,7 @@ function wcbillplz_gateway_load() {
                     'title' => __( 'Test Mode', 'wcbillplz' ),
                     'type' => 'checkbox',
                     'label' => __( 'Staging Mode.', 'wcbillplz' ),
-                    'description' => __( 'To Use Staging Mode, Please Ensure You Are Using The Correct API Key and Collection ID.', 'wcbillplz' ),
+                    'description' => __( 'To Use Staging Mode, Please Register Staging Account at https://billplz-staging.herokuapp.com.', 'wcbillplz' ),
                     'default' => 'no'
                 ),
 				    'nopostdata' => array(
@@ -209,6 +210,13 @@ function wcbillplz_gateway_load() {
                     'type' => 'checkbox',
                     'label' => __( 'I am having problem with Payment Response', 'wcbillplz' ),
                     'description' => __( 'Tick this option if you are having problem with payment status.', 'wcbillplz' ),
+                    'default' => 'no'
+				),
+				    'immediatereducestock' => array(
+                    'title' => __( 'Reduce Stock', 'wcbillplz' ),
+                    'type' => 'checkbox',
+                    'label' => __( 'Enable Reduce Stock (Immediately!)', 'wcbillplz' ),
+                    'description' => __( 'Do not tick this option unless you know what you are doing. Stock will not automatically increase if the order are timeout/cancelled', 'wcbillplz' ),
                     'default' => 'no'
                 )
             );
@@ -242,6 +250,8 @@ function wcbillplz_gateway_load() {
 			else {
 				$postboo = true;		
 			}
+			if ($this->immediatereducestock == "yes")
+				$order->reduce_order_stock();
 			$nopostdata = "&orderid=".$order_id;
 			//number intelligence
 			$custTel = $order->billing_phone;
