@@ -302,8 +302,8 @@ $desc = substr($desc, 0, 200);
 				'reference_1' => $order_id,
                 'deliver' => $deliver,
 				'description' => $desc,
-                'redirect_url' => str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Billplz_Gateway', home_url( '/' ) )) . $nopostdata.'&by=wanzul',
-                'callback_url' => str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Billplz_Gateway', home_url( '/' ) )) . $nopostdata
+                'redirect_url' => home_url('/?wc-api=WC_Billplz_Gateway' ). $nopostdata.'&by=wanzul',
+                'callback_url' => home_url('/?wc-api=WC_Billplz_Gateway' ). $nopostdata
             );
 $arr = DapatkanLinkWoo($api_key, $billplz_data, $host);
 if (isset($arr['error'])) {
@@ -316,8 +316,8 @@ if (isset($arr['error'])) {
 				'reference_1' => $order_id,
                 'deliver' => $deliver,
 				'description' => $desc,
-                'redirect_url' => str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Billplz_Gateway', home_url( '/' ) )). $nopostdata.'&by=wanzul',
-                'callback_url' => str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Billplz_Gateway', home_url( '/' ) )). $nopostdata
+                'redirect_url' => home_url('/?wc-api=WC_Billplz_Gateway' ). $nopostdata.'&by=wanzul',
+                'callback_url' => home_url('/?wc-api=WC_Billplz_Gateway' ). $nopostdata
             );
 $arr = DapatkanLinkWoo($api_key, $billplz_data, $host);
 if (isset($arr['error'])) {
