@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.5
-Stable tag: 3.3
+Stable tag: 3.4
 Donate link: https://www.billplz.com/form/sw2co7ig8/
 Requires at least: 4.3
 License: GPLv2 or later
