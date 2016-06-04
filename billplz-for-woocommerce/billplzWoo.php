@@ -9,6 +9,5 @@
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
- * Invalid Transaction maybe is because vkey not found / skey wrong generated
  */
 require("ion.php");
