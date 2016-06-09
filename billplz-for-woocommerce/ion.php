@@ -404,7 +404,7 @@ if ($orderid != $arra['reference_1'])
 	exit("Hacking Attempt!");
 $order = new WC_Order( $orderid );
 $referer = "<br>Referer: CallbackURL";	
-if ($paymentStatus){//kena ubah 
+if ($paymentStatus){
 if (!isset($_GET['billplz'])){
 	if ($order->status == 'pending'){
                 $order->add_order_note('Payment Status: SUCCESSFUL'.'<br>Transaction ID: ' . $tranID . $referer);								
@@ -418,6 +418,7 @@ wp_redirect($order->get_checkout_order_received_url());
 else {
 	if (!isset($_GET['billplz']))
 	 $order->add_order_note('Payment Status: CANCELLED BY USER'.'<br>Transaction ID: ' . $tranID . $referer);
+wc_add_notice( __('Payment Error:', 'woothemes') . "Payment are cancelled when making payment", 'error' );
 wp_redirect($order->get_cancel_order_url());
 }
             exit;
