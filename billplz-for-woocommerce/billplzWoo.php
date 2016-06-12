@@ -10,7 +10,6 @@
  * Text Domain: wcbillplz
  * Domain Path: /languages/
  */
-
 function wcbillplz_woocommerce_fallback_notice()
 {
 	$message = '<div class="error">';
@@ -49,6 +48,46 @@ function DapatkanInfoWoo($api_key, $verification2, $host)
 	curl_close($process);
 	$arra = json_decode($return, true);
 	return $arra;
+}
+function check_api_coll($api_key, $collection_id, $host)
+{
+	$data    = array(
+		'collection_id' => $collection_id,
+		'email' => 'aa@gmail.com',
+		'description' => 'test',
+		'mobile' => '60145356443',
+		'name' => "Jone Doe",
+		'amount' => 150, // RM20
+		'callback_url' => "http://yourwebsite.com/return_url"
+	);
+	$process = curl_init($host);
+	curl_setopt($process, CURLOPT_HEADER, 0);
+	curl_setopt($process, CURLOPT_USERPWD, $api_key . ":");
+	curl_setopt($process, CURLOPT_TIMEOUT, 30);
+	curl_setopt($process, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($process, CURLOPT_POSTFIELDS, http_build_query($data));
+	$return = curl_exec($process);
+	curl_close($process);
+	$arr = json_decode($return, true);
+	if (isset($arr['error'])) {
+		$message = '<div class="error">';
+		$message .= '<p>' . sprintf(__('<strong>API Key or Collection ID is INVALID</strong> Check your API Key! %sClick here to re-configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
+		$message .= '</div>';
+		echo $message;
+	} else {
+		$idk     = $arr['id'];
+		$process = curl_init($host . $idk);
+		curl_setopt($process, CURLOPT_USERPWD, $api_key . ":");
+		curl_setopt($process, CURLOPT_CUSTOMREQUEST, "DELETE");
+		curl_setopt($process, CURLOPT_TIMEOUT, 30);
+		curl_setopt($process, CURLOPT_RETURNTRANSFER, TRUE);
+		$return = curl_exec($process);
+		curl_close($process);
+	}
+	//$message = '<div class="updated">';
+	//			$message .= '<p>' . sprintf(__('<strong>API Key or Collection ID is VALIDATED</strong>', 'wcbillplz')) . '</p>';
+	//			$message .= '</div>';
+	//			echo $message;
 }
 function wcbillplz_gateway_load()
 {
@@ -99,13 +138,13 @@ function wcbillplz_gateway_load()
 				$this->host = 'https://billplz-staging.herokuapp.com/api/v3/bills/';
 			}
 			// Define user setting variables.
-			$this->title                = $this->settings['title'];
-			$this->description          = $this->settings['description'];
-			$this->api_key              = $this->settings['api_key'];
-			$this->collection_id        = $this->settings['collection_id'];
-			$this->smsnoti              = $this->settings['smsnoti'];
-			$this->emailnoti            = $this->settings['emailnoti'];
-			$this->teststaging          = $this->settings['teststaging'];
+			$this->title         = $this->settings['title'];
+			$this->description   = $this->settings['description'];
+			$this->api_key       = $this->settings['api_key'];
+			$this->collection_id = $this->settings['collection_id'];
+			$this->smsnoti       = $this->settings['smsnoti'];
+			$this->emailnoti     = $this->settings['emailnoti'];
+			$this->teststaging   = $this->settings['teststaging'];
 			add_action('woocommerce_receipt_billplz', array(
 				&$this,
 				'receipt_page'
@@ -152,6 +191,8 @@ function wcbillplz_gateway_load()
 		 */
 		public function admin_options()
 		{
+			// Checking API Key & Collection ID validity.
+			check_api_coll($this->api_key, $this->collection_id, $this->host);
 ?>
             <h3><?php
 			_e('Billplz Online Payment', 'wcbillplz');
@@ -372,7 +413,7 @@ function wcbillplz_gateway_load()
 				$verification2 = $_GET['billplz'];
 				$tranID        = implode($verification2);
 			} else {
-					$tranID = $_POST['id'];
+				$tranID = $_POST['id'];
 			}
 			global $woocommerce;
 			$arra          = DapatkanInfoWoo($this->api_key, $tranID, $this->host);
