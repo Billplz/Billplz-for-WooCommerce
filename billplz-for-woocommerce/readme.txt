@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.5
-Stable tag: 3.5
+Stable tag: 3.6
 Donate link: https://www.billplz.com/form/sw2co7ig8/
 Requires at least: 4.3
 License: GPLv2 or later
@@ -24,6 +24,11 @@ For Installation Instruction, please refer to:
 
 == Changelog ==
 
+= 3.6 =
+* NEW: API Key & Collection ID will be validated instantly after setting it up
+* Immediate reduce stock option has been removed due to stock is not restored after expiry
+* Message recommending user to use WooCommerce Cart Stock Reducer are displayed
+
 = 3.5 =
 * Added new option for immediate reduce stock.
 
@@ -31,6 +36,7 @@ For Installation Instruction, please refer to:
 * Small bugfix
 
 = 3.3 =
+
 * Recheck the payment status for handling callback signal
 
 = 3.2 =
