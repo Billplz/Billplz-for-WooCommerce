@@ -188,6 +188,7 @@ function wcbillplz_gateway_load()
 		public function admin_options()
 		{
 			// Checking API Key & Collection ID validity.
+			if ($this->api_key != '' && $this->collection_id != '')
 			check_api_coll($this->api_key, $this->collection_id, $this->host);
 ?>
             <h3><?php
@@ -445,7 +446,7 @@ function wcbillplz_gateway_load()
 		public function api_key_missing_message()
 		{
 			$message = '<div class="error">';
-			$message .= '<p>' . sprintf(__('<strong>Gateway Disabled</strong> You should inform your Merchant ID in Billplz. %sClick here to configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
+			$message .= '<p>' . sprintf(__('<strong>Gateway Disabled</strong> You should inform your API Key in Billplz. %sClick here to configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
 			$message .= '</div>';
 			echo $message;
 		}
@@ -456,7 +457,7 @@ function wcbillplz_gateway_load()
 		public function collection_id_missing_message()
 		{
 			$message = '<div class="error">';
-			$message .= '<p>' . sprintf(__('<strong>Gateway Disabled</strong> You should inform your Verify Key in Billplz. %sClick here to configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
+			$message .= '<p>' . sprintf(__('<strong>Gateway Disabled</strong> You should inform your Collection ID in Billplz. %sClick here to configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
 			$message .= '</div>';
 			echo $message;
 		}
