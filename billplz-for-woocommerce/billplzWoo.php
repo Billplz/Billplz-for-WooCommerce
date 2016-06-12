@@ -132,11 +132,7 @@ function wcbillplz_gateway_load()
 			// Load the settings.
 			$this->init_settings();
 			//Billplz Staging
-			if ($this->settings['teststaging'] == "no") {
-				$this->host = 'https://www.billplz.com/api/v3/bills/';
-			} else {
-				$this->host = 'https://billplz-staging.herokuapp.com/api/v3/bills/';
-			}
+			$this->host = $this->settings['teststaging'] == "no" ? 'https://www.billplz.com/api/v3/bills/' : 'https://billplz-staging.herokuapp.com/api/v3/bills/';
 			// Define user setting variables.
 			$this->title         = $this->settings['title'];
 			$this->description   = $this->settings['description'];
