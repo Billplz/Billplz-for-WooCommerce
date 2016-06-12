@@ -71,7 +71,7 @@ function check_api_coll($api_key, $collection_id, $host)
 	$arr = json_decode($return, true);
 	if (isset($arr['error'])) {
 		$message = '<div class="error">';
-		$message .= '<p>' . sprintf(__('<strong>API Key or Collection ID is INVALID</strong> Check your API Key! %sClick here to re-configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
+		$message .= '<p>' . sprintf(__('<strong>API Key or Collection ID is INVALID</strong> Check your API Key & Collection ID! %sClick here to re-configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
 		$message .= '</div>';
 		echo $message;
 	} else {
