@@ -325,7 +325,7 @@ function wcbillplz_gateway_load()
 					if ($item['qty'])
 						$item_names[] = $item['name'] . ' x ' . $item['qty'];
 			$desc         = sprintf(__('Order %s', 'woocommerce'), $order->get_order_number()) . " - " . implode(', ', $item_names);
-			$desc         = substr($desc, 0, 200);
+			$desc         = substr($desc, 0, 199);
 			$billplz_data = array(
 				'amount' => $amount * 100,
 				'name' => $order->billing_first_name . " " . $order->billing_last_name,
