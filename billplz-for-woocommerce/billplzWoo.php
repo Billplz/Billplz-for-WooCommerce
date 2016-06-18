@@ -341,18 +341,7 @@ function wcbillplz_gateway_load()
 			);
 			$arr          = DapatkanLinkWoo($api_key, $billplz_data, $host);
 			if (isset($arr['error'])) {
-				$billplz_data = array(
-					'amount' => $amount * 100,
-					'name' => $order->billing_first_name . " " . $order->billing_last_name,
-					'email' => $emailCust,
-					'collection_id' => $this->collection_id,
-					'reference_1_label' => "ID",
-					'reference_1' => $order_id,
-					'deliver' => $deliver,
-					'description' => $desc,
-					'redirect_url' => home_url('/?wc-api=WC_Billplz_Gateway') . $nopostdata . '&by=wanzul',
-					'callback_url' => home_url('/?wc-api=WC_Billplz_Gateway') . $nopostdata
-				);
+				unset($billplz_data['mobile']);
 				$arr          = DapatkanLinkWoo($api_key, $billplz_data, $host);
 				if (isset($arr['error'])) {
 					echo "<pre>" . print_r($arr['error'], true) . "</pre>";
