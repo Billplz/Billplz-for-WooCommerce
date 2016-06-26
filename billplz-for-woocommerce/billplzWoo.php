@@ -396,8 +396,7 @@ function wcbillplz_gateway_load()
 		{
 			@ob_clean();
 			if (isset($_GET['billplz'])) {
-				$verification2 = $_GET['billplz'];
-				$tranID        = implode($verification2);
+				$tranID = $_GET['billplz']['id'];
 			} else {
 				$tranID = $_POST['id'];
 			}
