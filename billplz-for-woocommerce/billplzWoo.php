@@ -26,7 +26,7 @@ add_action('plugins_loaded', 'wcbillplz_gateway_load', 0);
  */
 function DapatkanLinkWoo($api_key, $billplz_data, $host)
 {
-	$process = curl_init($host);
+	$process = curl_init($host."bills/");
 	curl_setopt($process, CURLOPT_HEADER, 0);
 	curl_setopt($process, CURLOPT_USERPWD, $api_key . ":");
 	curl_setopt($process, CURLOPT_TIMEOUT, 30);
@@ -39,7 +39,7 @@ function DapatkanLinkWoo($api_key, $billplz_data, $host)
 }
 function DapatkanInfoWoo($api_key, $verification2, $host)
 {
-	$process = curl_init($host . $verification2);
+	$process = curl_init($host ."bills/" . $verification2);
 	curl_setopt($process, CURLOPT_HEADER, 0);
 	curl_setopt($process, CURLOPT_USERPWD, $api_key . ":");
 	curl_setopt($process, CURLOPT_TIMEOUT, 30);
@@ -60,7 +60,7 @@ function check_api_coll($api_key, $collection_id, $host)
 		'amount' => 150, // RM20
 		'callback_url' => "http://yourwebsite.com/return_url"
 	);
-	$process = curl_init($host);
+	$process = curl_init($host."bills/");
 	curl_setopt($process, CURLOPT_HEADER, 0);
 	curl_setopt($process, CURLOPT_USERPWD, $api_key . ":");
 	curl_setopt($process, CURLOPT_TIMEOUT, 30);
@@ -69,6 +69,41 @@ function check_api_coll($api_key, $collection_id, $host)
 	$return = curl_exec($process);
 	curl_close($process);
 	$arr = json_decode($return, true);
+	if (isset($arr['error']['type'])){
+		
+		$type = isset($arr['error']['type']) ? $arr['error']['type'] : null;
+		$message = isset($arr['error']['message']) ? $arr['error']['message'] : null;
+		
+		if ($type=='RecordNotFound' AND $message=='ActiveRecord::RecordNotFound'){
+			$data = array('title' => $collection_id);
+			$process = curl_init($host. "collections/" );
+
+			curl_setopt($process, CURLOPT_HEADER, 0);
+			curl_setopt($process, CURLOPT_USERPWD, $api_key . ":");
+			curl_setopt($process, CURLOPT_TIMEOUT, 30);
+			curl_setopt($process, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt($process, CURLOPT_POSTFIELDS, http_build_query($data) );
+
+			$return = curl_exec($process);
+			curl_close($process);
+			$arr = json_decode($return,true);
+			global $wpdb;
+			$test = "SELECT option_value
+			 FROM   $wpdb->options
+			 WHERE  option_name = 'woocommerce_billplz_settings'
+			 ";
+			 $gelimis = $wpdb->get_var( $test );
+			 $arrayex = unserialize( $gelimis);
+			 $arrayex['collection_id'] = $arr['id'];
+			 $arrayse = serialize($arrayex);
+			 $boolj = $wpdb->update($wpdb->options,array('option_value'=> $arrayse),array('option_name'=> 'woocommerce_billplz_settings'));
+			 $message = '<div class="updated">';
+			 $message .= '<p>' . sprintf(__('<strong>Your Collection ID has been automatically generated and will be reflected on page Refresh!</strong> %sClick here to refresh page!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
+			 $message .= '</div>';
+			 echo $message;
+			 return null;
+		}
+	}
 	if (isset($arr['error'])) {
 		$message = '<div class="error">';
 		$message .= '<p>' . sprintf(__('<strong>API Key or Collection ID is INVALID</strong> Check your API Key & Collection ID! %sClick here to re-configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=wc_billplz_gateway">', '</a>') . '</p>';
@@ -76,7 +111,7 @@ function check_api_coll($api_key, $collection_id, $host)
 		echo $message;
 	} else {
 		$idk     = $arr['id'];
-		$process = curl_init($host . $idk);
+		$process = curl_init($host ."bills/" . $idk);
 		curl_setopt($process, CURLOPT_USERPWD, $api_key . ":");
 		curl_setopt($process, CURLOPT_CUSTOMREQUEST, "DELETE");
 		curl_setopt($process, CURLOPT_TIMEOUT, 30);
@@ -132,7 +167,7 @@ function wcbillplz_gateway_load()
 			// Load the settings.
 			$this->init_settings();
 			//Billplz Staging
-			$this->host = $this->settings['teststaging'] == "no" ? 'https://www.billplz.com/api/v3/bills/' : 'https://billplz-staging.herokuapp.com/api/v3/bills/';
+			$this->host = $this->settings['teststaging'] == "no" ? 'https://www.billplz.com/api/v3/' : 'https://billplz-staging.herokuapp.com/api/v3/';
 			// Define user setting variables.
 			$this->title         = $this->settings['title'];
 			$this->description   = $this->settings['description'];
@@ -245,7 +280,7 @@ function wcbillplz_gateway_load()
 				'collection_id' => array(
 					'title' => __('Collection ID', 'wcbillplz'),
 					'type' => 'text',
-					'description' => __('Please enter your Billplz Collection ID.', 'wcbillplz') . ' ' . sprintf(__('Collection ID can be generated here: %sWanzul.Net%s.', 'wcbillplz'), '<a href="https://www.wanzul.net/billplz/createcc.php" target="_blank">', '</a>'),
+					'description' => __('Please enter your Billplz Collection ID. ', 'wcbillplz') . ' ' . sprintf(__('Collection ID can be generated here: %sWanzul.Net%s. If you unsure just key in your website domain name.', 'wcbillplz'), '<a href="https://www.wanzul.net/billplz/createcc.php" target="_blank">', '</a>'),
 					'default' => ''
 				),
 				'smsnoti' => array(
@@ -396,7 +431,7 @@ function wcbillplz_gateway_load()
 		{
 			@ob_clean();
 			if (isset($_GET['billplz'])) {
-				$tranID = $_GET['billplz']['id'];
+				$tranID        = $_GET['billplz']['id'];
 			} else {
 				$tranID = $_POST['id'];
 			}
@@ -422,7 +457,7 @@ function wcbillplz_gateway_load()
 			} else {
 				if (!isset($_GET['billplz']))
 					$order->add_order_note('Payment Status: CANCELLED BY USER' . '<br>Transaction ID: ' . $tranID . $referer);
-				wc_add_notice(__('Payment Error:', 'woothemes') . "Payment are cancelled when making payment", 'error');
+				wc_add_notice(__('Payment Error: ', 'woothemes') . "Payment are cancelled when making payment", 'error');
 				wp_redirect($order->get_cancel_order_url());
 			}
 			exit;
