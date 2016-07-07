@@ -455,8 +455,10 @@ function wcbillplz_gateway_load()
 				}
 				wp_redirect($order->get_checkout_order_received_url());
 			} else {
-				if (!isset($_GET['billplz']))
-					$order->add_order_note('Payment Status: CANCELLED BY USER' . '<br>Transaction ID: ' . $tranID . $referer);
+				if (!isset($_GET['billplz'])){
+					if ($order->status == 'pending')
+						$order->add_order_note('Payment Status: CANCELLED BY USER' . '<br>Transaction ID: ' . $tranID . $referer);
+				}
 				wc_add_notice(__('Payment Error: ', 'woothemes') . "Payment are cancelled when making payment", 'error');
 				wp_redirect($order->get_cancel_order_url());
 			}
