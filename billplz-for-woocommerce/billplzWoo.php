@@ -10,6 +10,14 @@
  * Text Domain: wcbillplz
  * Domain Path: /languages/
  */
+ // Add settings link on plugin page
+function billplz_for_woocommerce_plugin_settings_link($links) { 
+  $settings_link = '<a href="admin.php?page=wc-settings&tab=checkout&section=billplz">Settings</a>'; 
+  array_unshift($links, $settings_link); 
+  return $links; 
+}
+$plugin = plugin_basename(__FILE__); 
+add_filter("plugin_action_links_$plugin", 'billplz_for_woocommerce_plugin_settings_link' );
 function wcbillplz_woocommerce_fallback_notice()
 {
     $message = '<div class="error">';
