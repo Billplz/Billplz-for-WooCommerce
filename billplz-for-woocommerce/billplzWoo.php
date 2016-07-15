@@ -299,7 +299,7 @@ function wcbillplz_gateway_load()
                     'title' => __('Description', 'wcbillplz'),
                     'type' => 'textarea',
                     'description' => __('This controls the description which the user sees during checkout.', 'wcbillplz'),
-                    'default' => __('Pay with Maybank2u, CIMB Clicks, Bank Islam, FPX', 'wcbillplz')
+                    'default' => __('Pay with Maybank2u, CIMB Clicks, Bank Islam, RHB, Hong Leong Bank, Bank Muamalat, Public Bank, Alliance Bank, Affin Bank, AmBank, Bank Rakyat, UOB, Standard Chartered. ', 'wcbillplz')
                 ),
                 'api_key' => array(
                     'title' => __('API Secret Key', 'wcbillplz'),
