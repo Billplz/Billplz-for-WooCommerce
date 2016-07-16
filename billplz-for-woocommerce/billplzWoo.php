@@ -463,8 +463,7 @@ function wcbillplz_gateway_load()
                     }
                 }
             }
-            return header("Location: " . $url_from_link);
-            //           return "<script>location.href = '$url_from_link'</script>";        
+            return "<script>location.href = '$url_from_link'</script>";        
         }
         /**
          * Order error button.
