@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Billplz for WooCommerce
  * Plugin URI: http://www.wanzul-hosting.com/
- * Description: Plugin Billplz untuk WooCommerce. Sokong projek Payment Gateway percuma untuk semua Online Shopping Cart. Sumbangan boleh dilakukan disini. <a href="https://www.billplz.com/form/sw2co7ig8" target="_blank">Donate Now</a>.
+ * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wanzul Hosting Enterprise
  * Author URI: http://www.wanzul-hosting.com/
  * Version: 3.7
