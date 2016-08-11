@@ -455,11 +455,11 @@ function wcbillplz_gateway_load()
                     $url_from_link = $arr['url'];
                     if ($this->pdbs == 'yes') {
                         update_post_meta($order_id, '_wc_billplz_orderid', $arr['id']);
-                        update_post_meta($order_id, '_wc_billplz_ordername', $order->billing_first_name . " " . $order->billing_last_name);
-                        update_post_meta($order_id, '_wc_billplz_ordercollection', $arr['collection_id']);
-                        update_post_meta($order_id, '_wc_billplz_orderemail', $emailCust);
-                        update_post_meta($order_id, '_wc_billplz_orderphone', $custTel);
-                        update_post_meta($order_id, '_wc_billplz_orderurl', $arr['url']);
+                        //update_post_meta($order_id, '_wc_billplz_ordername', $order->billing_first_name . " " . $order->billing_last_name);
+                        //update_post_meta($order_id, '_wc_billplz_ordercollection', $arr['collection_id']);
+                        //update_post_meta($order_id, '_wc_billplz_orderemail', $emailCust);
+                        //update_post_meta($order_id, '_wc_billplz_orderphone', $custTel);
+                        //update_post_meta($order_id, '_wc_billplz_orderurl', $arr['url']);
                     }
                 }
             }
