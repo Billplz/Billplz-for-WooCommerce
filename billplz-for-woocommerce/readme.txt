@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.6
-Stable tag: 3.7
+Stable tag: 3.8
 Donate link: https://www.billplz.com/form/sw2co7ig8/
 Requires at least: 4.3
 License: GPLv2 or later
@@ -23,6 +23,10 @@ For Installation Instruction, please refer to:
 * Will available soon
 
 == Changelog ==
+
+= 3.8 =
+* Update Post Meta only save Billplz Payment URL
+* NEW: Auto Submit Feature
 
 = 3.7 =
 * NEW: Collection ID will automatically generated if user incorrectly input the value
