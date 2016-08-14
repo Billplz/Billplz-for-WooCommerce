@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Billplz for WooCommerce
- * Plugin URI: http://www.wanzul-hosting.com/
+ * Plugin URI: http://www.facebook.com/billplzplugin
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wanzul Hosting Enterprise
  * Author URI: http://www.wanzul-hosting.com/
- * Version: 3.7
+ * Version: 3.8
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
@@ -206,6 +206,7 @@ function wcbillplz_gateway_load()
             $this->pdbs          = $this->settings['preventduplicatebill'];
             $this->emailnoti     = $this->settings['emailnoti'];
             $this->teststaging   = $this->settings['teststaging'];
+			$this->autosubmit    = $this->settings['autosubmit'];
             add_action('woocommerce_receipt_billplz', array(
                 &$this,
                 'receipt_page'
@@ -327,6 +328,19 @@ function wcbillplz_gateway_load()
                     'description' => __('Free.', 'wcbillplz'),
                     'default' => 'no'
                 ),
+				'autosubmit' => array(
+				'title'       => __( 'Auto Submit', 'wcbillplz' ),
+				'type'        => 'select',
+				'class'       => 'wc-enhanced-select',
+				'description' => __( 'Choose Payment Channels to Skip Billplz Payment Page.', 'wcbillplz' ),
+				'default'     => 'billplz',
+				'desc_tip'    => true,
+				'options'     => array(
+					'billplz'        => __( 'None', 'wcbillplz' ),
+					'fpx' 			 => __( 'FPX', 'wcbillplz' ),
+					'paypal'		 => __( 'PayPal', 'wcbillplz' )
+					)
+				),
                 'teststaging' => array(
                     'title' => __('Test Mode', 'wcbillplz'),
                     'type' => 'checkbox',
@@ -424,11 +438,11 @@ function wcbillplz_gateway_load()
                 $url_from_link = $arr['url'];
                 if ($this->pdbs == 'yes') {
                     update_post_meta($order_id, '_wc_billplz_orderid', $arr['id']);
-                    update_post_meta($order_id, '_wc_billplz_ordername', $order->billing_first_name . " " . $order->billing_last_name);
-                    update_post_meta($order_id, '_wc_billplz_ordercollection', $arr['collection_id']);
-                    update_post_meta($order_id, '_wc_billplz_orderemail', $emailCust);
-                    update_post_meta($order_id, '_wc_billplz_orderphone', $custTel);
-                    update_post_meta($order_id, '_wc_billplz_orderurl', $arr['url']);
+                    //update_post_meta($order_id, '_wc_billplz_ordername', $order->billing_first_name . " " . $order->billing_last_name);
+                    //update_post_meta($order_id, '_wc_billplz_ordercollection', $arr['collection_id']);
+                    //update_post_meta($order_id, '_wc_billplz_orderemail', $emailCust);
+                    //update_post_meta($order_id, '_wc_billplz_orderphone', $custTel);
+                    //update_post_meta($order_id, '_wc_billplz_orderurl', $arr['url']);
                 }
             } else {
                 $flagBoolean = true;
@@ -463,6 +477,8 @@ function wcbillplz_gateway_load()
                     }
                 }
             }
+			$autosubmit = $this->autosubmit;
+			$url_from_link.='?auto_submit='.$autosubmit;
             return "<script>location.href = '$url_from_link'</script>";        
         }
         /**
