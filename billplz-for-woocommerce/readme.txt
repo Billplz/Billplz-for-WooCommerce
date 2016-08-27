@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.6
-Stable tag: 3.8
+Stable tag: 3.9
 Donate link: https://www.billplz.com/form/sw2co7ig8/
 Requires at least: 4.3
 License: GPLv2 or later
@@ -17,7 +17,7 @@ For Installation Instruction, please refer to:
 [How to Install](http://bit.ly/1SwkWJL)
 
 == Upgrade Notice == 
-* None
+Upgrading from version 3.8 to earlier version will cause SMS and Email notification are reset to No Notification.
 
 == Screenshots ==
 * Will available soon
@@ -25,7 +25,13 @@ For Installation Instruction, please refer to:
 == Changelog ==
 
 = 3.9 =
-* None
+* NEW: Auto Delete Invoice when order are cancelled
+* NEW: Custom error message
+* NEW: Callback security check. Check the callback signal authenticity
+* IMPROVED: Better callback notes for manual verification
+* REMOVED: Automatically created collection id
+* CHANGED: Option to disable Prevent Duplicating Bills are removed. This feature is enabled by default
+* Some minor changes
 
 = 3.8 =
 * Update Post Meta only save Billplz Payment URL
