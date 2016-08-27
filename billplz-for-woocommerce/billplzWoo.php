@@ -239,7 +239,7 @@ function wcbillplz_gateway_load() {
                     'type' => 'select',
                     'class' => 'wc-enhanced-select',
                     'description' => __('Choose Payment Channels to Skip Billplz Payment Page.', 'wcbillplz'),
-                    'default' => 'billplz',
+                    'default' => 'fpx',
                     'desc_tip' => true,
                     'options' => array(
                         'billplz' => __('None', 'wcbillplz'),
