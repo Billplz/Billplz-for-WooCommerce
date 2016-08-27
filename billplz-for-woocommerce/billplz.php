@@ -1,4 +1,5 @@
 <?php
+
 /*
  * How to use?
  *  require_once('billplz.php');
@@ -74,10 +75,11 @@ class billplz {
 
     //------------------------------------------------------------------------//
     // Direct Use
-    public function setAutoSubmit($auto_submit){
+    public function setAutoSubmit($auto_submit) {
         $this->auto_submit = $auto_submit;
         return $this;
     }
+
     public function setCollection($collection_id) {
         $this->array['collection_id'] = $collection_id;
         return $this;
@@ -118,7 +120,7 @@ class billplz {
         $this->array['description'] = substr($description, 0, 199);
         return $this;
     }
-    
+
     public function setPassbackURL($redirect_url, $callback_url) {
         $this->array['redirect_url'] = $redirect_url;
         $this->array['callback_url'] = $callback_url;
@@ -133,30 +135,31 @@ class billplz {
         if (isset($data['error'])) {
             unset($this->array['mobile']);
             $data = $this->obj->curl_action($this->array);
-            $this->url = $data['url'].'?auto_submit='.$this->auto_submit;
+            $this->url = $data['url'] . '?auto_submit=' . $this->auto_submit;
         }
-        $this->url = $data['url'].'?auto_submit='.$this->auto_submit;
-        $this->id  = $data['id'];
+        $this->url = $data['url'] . '?auto_submit=' . $this->auto_submit;
+        $this->id = $data['id'];
         return $this;
     }
-    
-    public function getURL(){
+
+    public function getURL() {
         return $this->url;
     }
-    
-    public function getID(){
+
+    public function getID() {
         return $this->id;
     }
-    
+
     //------------------------------------------------------------------------//
     // Direct Use
-    public function check_bill($api_key, $collection_id, $bill_id, $mode){
+    public function check_bill($api_key, $bill_id, $mode) {
         $this->obj->setAPI($api_key);
         $this->obj->setAction('CHECK');
         $this->obj->setURL($mode, $bill_id);
         $data = $this->obj->curl_action();
         return $data;
     }
+
 }
 
 class curlaction {
@@ -179,10 +182,12 @@ class curlaction {
 
     public function setAPI($api_key) {
         $this->api_key = $api_key;
+        return $this;
     }
 
     public function setAction($action) {
         $this->action = $action;
+        return $this;
     }
 
     public function setURL($mode, $id = '') {
@@ -198,6 +203,7 @@ class curlaction {
         } else { //COLLECTIONS
             $this->url.='collections/';
         }
+        return $this;
     }
 
     public function curl_action($data = '') {
@@ -220,6 +226,7 @@ class curlaction {
     }
 
 }
+
 /*
  $obj = new billplz;
  $obj->setAutoSubmit('billplz')->setCollection('ugo_7dit')
