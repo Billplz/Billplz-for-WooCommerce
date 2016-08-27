@@ -19,17 +19,17 @@ class updatedb {
         if (isset($gatewayParam['smsnoti'])) {
             $smsnoti = $gatewayParam['smsnoti'];
             $mainoti = $gatewayParam['emailnoti'];
-            if ($smsnoti AND $mainnoti) {
+            if ($smsnoti=='yes' AND $mainnoti=='yes') {
                 $gatewayParam['notification'] = 'Both';
-            } elseif ($smsnoti AND ! $mainnoti) {
+            } elseif ($smsnoti=='no' AND $mainnoti=='yes') {
                 $gatewayParam['notification'] = 'Email';
-            } elseif (!$smsnoti AND $mainnoti) {
+            } elseif ($smsnoti=='yes' AND $mainnoti=='no') {
                 $gatewayParam['notification'] = 'SMS';
             } else {
                 $gatewayParam['notification'] = 'None';
             }
             if (isset($gatewayParam['teststaging'])) {
-                if ($gatewayParam['teststaging']) {
+                if ($gatewayParam['teststaging']=='yes') {
                     $gatewayParam['teststaging'] = 'Staging';
                 } else {
                     $gatewayParam['teststaging'] = 'Production';
