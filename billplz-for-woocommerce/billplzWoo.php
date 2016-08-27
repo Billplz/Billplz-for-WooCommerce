@@ -491,3 +491,5 @@ function wcbillplz_update_db() {
     $obj = new updatedb;
     unset($obj);
 }
+
+add_action('plugins_loaded', 'wcbillplz_update_db', 0);
