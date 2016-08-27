@@ -24,6 +24,9 @@ For Installation Instruction, please refer to:
 
 == Changelog ==
 
+= 3.9 =
+* None
+
 = 3.8 =
 * Update Post Meta only save Billplz Payment URL
 * NEW: Auto Submit Feature
