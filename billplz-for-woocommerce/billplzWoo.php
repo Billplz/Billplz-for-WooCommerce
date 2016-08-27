@@ -85,7 +85,8 @@ function wcbillplz_gateway_load() {
             $this->notification = $this->settings['notification'];
             $this->teststaging = $this->settings['teststaging'];
             $this->autosubmit = $this->settings['autosubmit'];
-            $this->custom_error =$this->settings['custom_error'];
+            $this->custom_error = $this->settings['custom_error'];
+            $this->version = $this->settings['version'];
             add_action('woocommerce_receipt_billplz', array(
                 &$this,
                 'receipt_page'
@@ -208,12 +209,14 @@ function wcbillplz_gateway_load() {
                 'api_key' => array(
                     'title' => __('API Secret Key', 'wcbillplz'),
                     'type' => 'text',
+                    'placeholder' => 'Example : ed586547-00b7-459a-a02e-7e876a744590',
                     'description' => __('Please enter your Billplz Api Key.', 'wcbillplz') . ' ' . sprintf(__('Get Your API Key: %sBillplz%s.', 'wcbillplz'), '<a href="https://www.billplz.com/enterprise/setting" target="_blank">', '</a>'),
                     'default' => ''
                 ),
                 'collection_id' => array(
                     'title' => __('Collection ID', 'wcbillplz'),
                     'type' => 'text',
+                    'placeholder' => 'Example : ugo_7dit',
                     'description' => __('Please enter your Billplz Collection ID. ', 'wcbillplz') . ' ' . sprintf(__('Login to Billplz >> Billing >> Create Collection.', 'wcbillplz')),
                     'default' => ''
                 ),
@@ -247,6 +250,7 @@ function wcbillplz_gateway_load() {
                 'custom_error' => array(
                     'title' => __('Error Message', 'wcbillplz'),
                     'type' => 'text',
+                    'placeholder' => 'Example : You have cancelled the payment. Please make a payment!',
                     'description' => __('Error message that will appear when customer cancel the payment.', 'wcbillplz'),
                     'default' => 'You have cancelled the payment. Please make a payment!'
                 )
@@ -317,7 +321,8 @@ function wcbillplz_gateway_load() {
         /**
          * Create bills function
          * Save to database
-         * Return URL
+         * 
+         * @return string Return URL
          */
         protected function bills_trigger($order, $deliver, $order_id, $desc) {
             require_once 'billplz.php';
@@ -401,7 +406,7 @@ function wcbillplz_gateway_load() {
                 if ($_GET['callback'] == $md5) {
                     $id = $_POST['id'];
                     $obj = new billplz;
-                    $data = $obj->check_bill($this->api_key, $this->collection_id, $id, $this->teststaging);
+                    $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
                     unset($obj);
                     $order = new WC_Order($data['reference_1']);
                     $referer = "<br>Receipt URL: " . urldecode($data['url']);
@@ -421,7 +426,7 @@ function wcbillplz_gateway_load() {
             elseif (isset($_GET['billplz']['id'])) {
                 $id = $_GET['billplz']['id'];
                 $obj = new billplz;
-                $data = $obj->check_bill($this->api_key, $this->collection_id, $id, $this->teststaging);
+                $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
                 $order = new WC_Order($data['reference_1']);
                 if ($data['paid']) {
                     wp_redirect($order->get_checkout_order_received_url());
@@ -461,4 +466,28 @@ function wcbillplz_gateway_load() {
 
     }
 
+}
+
+/*
+ * Automaticallly invalidate bills when overdue or not paid
+ * Load the function
+ */
+add_action('plugins_loaded', 'wcbillplz_invalidate_bills', 0);
+
+function wcbillplz_invalidate_bills() {
+    require_once 'invalidatebills.php';
+    $inv = new invalidatebills;
+}
+
+/*
+ *  Backward Compatible
+ *  Perform database upgrade if Version older than 3.9
+ *  This function will be removed starting version 4.0
+ *  
+ */
+
+function wcbillplz_update_db() {
+    require_once 'updatedb.php';
+    $obj = new updatedb;
+    unset($obj);
 }
