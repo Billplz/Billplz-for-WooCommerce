@@ -17,19 +17,9 @@ class updatedb {
         // Get result from SQL Query and Unserialize the Data
         $gatewayParam = unserialize($wpdb->get_var($sql));
         if (isset($gatewayParam['smsnoti'])) {
-            $smsnoti = $gatewayParam['smsnoti'];
-            $mainoti = $gatewayParam['emailnoti'];
-            if ($smsnoti=='yes' AND $mainnoti=='yes') {
-                $gatewayParam['notification'] = 'Both';
-            } elseif ($smsnoti=='no' AND $mainnoti=='yes') {
-                $gatewayParam['notification'] = 'Email';
-            } elseif ($smsnoti=='yes' AND $mainnoti=='no') {
-                $gatewayParam['notification'] = 'SMS';
-            } else {
-                $gatewayParam['notification'] = 'None';
-            }
+            $gatewayParam['notification'] = 'None';
             if (isset($gatewayParam['teststaging'])) {
-                if ($gatewayParam['teststaging']=='yes') {
+                if ($gatewayParam['teststaging'] == 'yes') {
                     $gatewayParam['teststaging'] = 'Staging';
                 } else {
                     $gatewayParam['teststaging'] = 'Production';
