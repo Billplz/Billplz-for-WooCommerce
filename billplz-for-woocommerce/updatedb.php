@@ -22,9 +22,9 @@ class updatedb {
             if ($smsnoti AND $mainnoti) {
                 $gatewayParam['notification'] = 'Both';
             } elseif ($smsnoti AND ! $mainnoti) {
-                $gatewayParam['notification'] = 'SMS';
-            } elseif (!$smsnoti AND $mainnoti) {
                 $gatewayParam['notification'] = 'Email';
+            } elseif (!$smsnoti AND $mainnoti) {
+                $gatewayParam['notification'] = 'SMS';
             } else {
                 $gatewayParam['notification'] = 'None';
             }
