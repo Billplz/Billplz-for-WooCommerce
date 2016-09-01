@@ -86,7 +86,6 @@ function wcbillplz_gateway_load() {
             $this->teststaging = $this->settings['teststaging'];
             $this->autosubmit = $this->settings['autosubmit'];
             $this->custom_error = $this->settings['custom_error'];
-            $this->version = $this->settings['version'];
             add_action('woocommerce_receipt_billplz', array(
                 &$this,
                 'receipt_page'
