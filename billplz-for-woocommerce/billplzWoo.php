@@ -428,6 +428,10 @@ function wcbillplz_gateway_load() {
                 $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
                 $order = new WC_Order($data['reference_1']);
                 if ($data['paid']) {
+                    if ($order->status == 'pending' || $order->status == 'failed' || $order->status == 'cancelled') {
+                        $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $data['id'] . 'Redirect URL');
+                        $order->payment_complete();
+                    }
                     wp_redirect($order->get_checkout_order_received_url());
                 } else {
                     wc_add_notice(__('ERROR: ', 'woothemes') . $this->custom_error, 'error');
