@@ -151,10 +151,10 @@ function wcbillplz_gateway_load() {
             }
             ?>
             <h3><?php
-                _e('Billplz Malaysia Online Payment', 'wcbillplz');
+                _e('Billplz Payment Gateway', 'wcbillplz');
                 ?></h3>
             <p><?php
-                _e('Billplz Online Payment works by sending the user to Billplz for payment. ', 'wcbillplz');
+                _e('Billplz Payment Gateway works by sending the user to Billplz for payment. ', 'wcbillplz');
                 ?></p>
             <p><?php
                 _e('To immediately reduce stock on add to cart, we strongly recommend you to use this plugin. ', 'wcbillplz');
@@ -185,7 +185,7 @@ function wcbillplz_gateway_load() {
                     'title' => __('Title', 'wcbillplz'),
                     'type' => 'text',
                     'description' => __('This controls the title which the user sees during checkout.', 'wcbillplz'),
-                    'default' => __('Billplz Malaysia Online Payment', 'wcbillplz')
+                    'default' => __('Billplz Payment Gateway', 'wcbillplz')
                 ),
                 'description' => array(
                     'title' => __('Description', 'wcbillplz'),
@@ -197,7 +197,7 @@ function wcbillplz_gateway_load() {
                     'title' => __('Mode', 'wcbillplz'),
                     'type' => 'select',
                     'class' => 'wc-enhanced-select',
-                    'description' => __('Choose Billplz Payment Mode.', 'wcbillplz'),
+                    'description' => __('Production mode is for merchant registered at www.billplz.com (Live Site). Staging mode is for merchant registered at billplz-staging.herokuapp.com (Testing Site).', 'wcbillplz'),
                     'default' => 'Production',
                     'desc_tip' => true,
                     'options' => array(
@@ -216,14 +216,14 @@ function wcbillplz_gateway_load() {
                     'title' => __('Collection ID', 'wcbillplz'),
                     'type' => 'text',
                     'placeholder' => 'Example : ugo_7dit',
-                    'description' => __('Please enter your Billplz Collection ID. ', 'wcbillplz') . ' ' . sprintf(__('Login to Billplz >> Billing >> Create Collection.', 'wcbillplz')),
+                    'description' => __('Please enter your Billplz Collection ID. ', 'wcbillplz') . ' ' . sprintf(__('Login to Billplz >> Billing >> Create Collection. %sLink%s.', 'wcbillplz'), '<a href="https://www.billplz.com/enterprise/billing" target="_blank">', '</a>'),
                     'default' => ''
                 ),
                 'notification' => array(
                     'title' => __('Bill Notification', 'wcbillplz'),
                     'type' => 'select',
                     'class' => 'wc-enhanced-select',
-                    'description' => __('Choose Notification Type.', 'wcbillplz'),
+                    'description' => __('No Notification - Customer will NOT receive any notification. Email Only - Customer will receive Email Notification for payment. SMS Only - Customer will receive SMS Notification for payment. Both - Customer will receive Email & SMS Notification for payment.', 'wcbillplz'),
                     'default' => 'None',
                     'desc_tip' => true,
                     'options' => array(
@@ -237,7 +237,7 @@ function wcbillplz_gateway_load() {
                     'title' => __('Auto Submit', 'wcbillplz'),
                     'type' => 'select',
                     'class' => 'wc-enhanced-select',
-                    'description' => __('Choose Payment Channels to Skip Billplz Payment Page.', 'wcbillplz'),
+                    'description' => __('Choose Payment Channels to Skip Billplz Payment Page. THIS FEATURE IS UNAVAILABLE AND WILL BE REMOVED SOON', 'wcbillplz'),
                     'default' => 'fpx',
                     'desc_tip' => true,
                     'options' => array(
