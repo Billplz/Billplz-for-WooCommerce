@@ -4,4 +4,6 @@ Accept payment using Billplz by using this plugin.
 
 # Installation
 
-Just go to Plugins >> Add New and Install
+- Login to your WordPress Dashboard
+- Navigate to Plugins >> Add New
+- Search Billplz for WooCommerce >> Install Now
