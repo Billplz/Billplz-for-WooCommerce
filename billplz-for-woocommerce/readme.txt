@@ -1,7 +1,7 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
-Tested up to: 4.6
+Tested up to: 4.7
 Stable tag: 3.9
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
