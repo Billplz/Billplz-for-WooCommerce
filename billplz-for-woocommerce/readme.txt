@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.7
-Stable tag: 3.9
+Stable tag: 3.10
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -24,8 +24,16 @@ Upgrading from version 3.8 to earlier version will cause SMS and Email notificat
 
 == Changelog ==
 
+= 3.10 =
+* REMOVED: Backwards compatible checks are removed
+* REMOVED: Auto Submit option. No longer supported by API
+* IMPROVED: Receipt URL can now easily tracked by cliking on it
+* IMPROVED: Billplz API Call using WordPress Library (wp_safe_remote_post)
+* NEW: Compatible with Windows-Based Server hosting
+* NEW: Option to choose type of payment validation
+
 = 3.9 =
-* NEW: Auto Delete Invoice when order are cancelled
+* NEW: Auto Delete Invoice when order are canceled
 * NEW: Custom error message
 * NEW: Callback security check. Check the callback signal authenticity
 * IMPROVED: Better callback notes for manual verification
