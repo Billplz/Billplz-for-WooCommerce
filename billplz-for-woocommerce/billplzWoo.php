@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wanzul Hosting Enterprise
  * Author URI: http://www.wanzul-hosting.com/
- * Version: 3.9
+ * Version: 3.10
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
@@ -83,8 +83,9 @@ function wcbillplz_gateway_load() {
             $this->api_key = $this->settings['api_key'];
             $this->collection_id = $this->settings['collection_id'];
             $this->notification = $this->settings['notification'];
+            $this->paymentverification = $this->settings['paymentverification'];
             $this->teststaging = $this->settings['teststaging'];
-            $this->autosubmit = $this->settings['autosubmit'];
+            // = $this->settings['autosubmit'];
             $this->custom_error = $this->settings['custom_error'];
             add_action('woocommerce_receipt_billplz', array(
                 &$this,
@@ -139,12 +140,12 @@ function wcbillplz_gateway_load() {
                 $status = $obj->check_apikey_collectionid($this->api_key, $this->collection_id, $this->teststaging);
                 if ($status) {
                     $message = '<div class="updated">';
-                    $message.= '<p>' . sprintf(__('Your API Key & Collection ID are Valid', 'wcbillplz')) . '</p>';
-                    $message.= '</div>';
+                    $message .= '<p>' . sprintf(__('Your API Key & Collection ID are Valid', 'wcbillplz')) . '</p>';
+                    $message .= '</div>';
                 } else {
                     $message = '<div class="error">';
-                    $message.= '<p>' . sprintf(__('Your API Key or Collection ID are Not Valid. Check your API Key and Collection ID', 'wcbillplz')) . '</p>';
-                    $message.= '</div>';
+                    $message .= '<p>' . sprintf(__('Your API Key or Collection ID are Not Valid. Check your API Key and Collection ID', 'wcbillplz')) . '</p>';
+                    $message .= '</div>';
                 }
                 echo $message;
                 unset($obj, $status, $message);
@@ -233,17 +234,17 @@ function wcbillplz_gateway_load() {
                         'Both' => __('Both (RM0.15)', 'wcbillplz')
                     )
                 ),
-                'autosubmit' => array(
-                    'title' => __('Auto Submit', 'wcbillplz'),
+                'paymentverification' => array(
+                    'title' => __('Verification Type', 'wcbillplz'),
                     'type' => 'select',
                     'class' => 'wc-enhanced-select',
-                    'description' => __('Choose Payment Channels to Skip Billplz Payment Page. THIS FEATURE IS UNAVAILABLE AND WILL BE REMOVED SOON', 'wcbillplz'),
-                    'default' => 'fpx',
+                    'description' => __('Leave it as Callback unless you are having problem, then change to Return.', 'wcbillplz'),
+                    'default' => 'Callback',
                     'desc_tip' => true,
                     'options' => array(
-                        'billplz' => __('None', 'wcbillplz'),
-                        'fpx' => __('FPX', 'wcbillplz'),
-                        'paypal' => __('PayPal', 'wcbillplz')
+                        'Both' => __('Both', 'wcbillplz'),
+                        'Callback' => __('Callback', 'wcbillplz'),
+                        'Return' => __('Return', 'wcbillplz')
                     )
                 ),
                 'custom_error' => array(
@@ -334,12 +335,12 @@ function wcbillplz_gateway_load() {
             }
             //Callback Security Verification
             $md5 = '&callback=' . md5($this->api_key . $this->collection_id . 'AABBCC');
-            $obj->setAutoSubmit($this->autosubmit)
-                    ->setCollection($this->collection_id)
+            $obj->setCollection($this->collection_id)
                     ->setName($order->billing_first_name . " " . $order->billing_last_name)
                     ->setAmount($order->order_total)
                     ->setDeliver($deliver)
                     ->setReference_1($order_id)
+                    ->setReference_1_Label('ID')
                     ->setDescription($desc)
                     ->setPassbackURL(home_url('/?wc-api=WC_Billplz_Gateway'), home_url('/?wc-api=WC_Billplz_Gateway' . $md5))
                     ->create_bill($this->api_key, $this->teststaging);
@@ -408,30 +409,15 @@ function wcbillplz_gateway_load() {
                     $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
                     unset($obj);
                     $order = new WC_Order($data['reference_1']);
-                    $referer = "<br>Receipt URL: " . urldecode($data['url']);
-                    $referer.= "<br>Order ID: " . $data['reference_1'];
-                    $referer.= "<br>Collection ID: " . $data['collection_id'];
-                    if ($order->status == 'pending' || $order->status == 'failed' || $order->status == 'cancelled') {
-                        if ($data['paid']) {
-                            $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $data['id'] . $referer);
-                            $order->payment_complete();
-                        } else {
-                            $order->add_order_note('Payment Status: CANCELLED BY USER' . '<br>Bill ID: ' . $data['id'] . $referer);
-                        }
-                    }
+                    $this->save_payment($order, $data, 'Callback');
                 }
-            }
-            //Handle Redirect. No Order Processing here
-            elseif (isset($_GET['billplz']['id'])) {
+            } elseif (isset($_GET['billplz']['id'])) {
                 $id = $_GET['billplz']['id'];
                 $obj = new billplz;
                 $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
                 $order = new WC_Order($data['reference_1']);
+                $this->save_payment($order, $data, 'Return');
                 if ($data['paid']) {
-                    if ($order->status == 'pending' || $order->status == 'failed' || $order->status == 'cancelled') {
-                        $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $data['id'] . 'Redirect URL');
-                        $order->payment_complete();
-                    }
                     wp_redirect($order->get_checkout_order_received_url());
                 } else {
                     wc_add_notice(__('ERROR: ', 'woothemes') . $this->custom_error, 'error');
@@ -443,6 +429,28 @@ function wcbillplz_gateway_load() {
                 exit('What Are You Doing Here?');
             }
             exit;
+        }
+
+        /**
+         * Save payment status to DB for successful return/callback
+         */
+        private function save_payment($order, $data, $type) {
+            $referer = "<br>Receipt URL: " . "<a href='" . urldecode($data['url']) . "' target=_blank>" . urldecode($data['url']) . "</a>";
+            $referer .= "<br>Order ID: " . $data['reference_1'];
+            $referer .= "<br>Collection ID: " . $data['collection_id'];
+            $referer .= "<br>Type: " . $type;
+            if ($order->status == 'pending' || $order->status == 'failed' || $order->status == 'cancelled') {
+                if ($data['paid']) {
+                    //Backward compatibility: !isset($this->paymentverification
+                    if ($this->paymentverification == $type || $this->paymentverification == 'Both' || (!isset($this->paymentverification))) {
+                        $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $data['id'] . $referer);
+                        $order->payment_complete();
+                    }
+                } else {
+                    $order->add_order_note('Payment Status: CANCELLED BY USER' . '<br>Bill ID: ' . $data['id'] . $referer);
+                }
+            }
+            return $this;
         }
 
         /**
@@ -488,7 +496,8 @@ function wcbillplz_invalidate_bills() {
  *  This function will be removed starting version 4.0
  *  
  */
-
+/*
+ *  Removed started in version 3.10
 function wcbillplz_update_db() {
     require_once 'updatedb.php';
     $obj = new updatedb;
@@ -496,3 +505,4 @@ function wcbillplz_update_db() {
 }
 
 add_action('plugins_loaded', 'wcbillplz_update_db', 0);
+*/
