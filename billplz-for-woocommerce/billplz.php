@@ -4,7 +4,6 @@
  * How to use?
  *  require_once('billplz.php');
  *  $obj = new billplz;
- *  $obj->setAutoSubmit('autosubmitvalue');
  *  $obj->setCollection('collectionid');
  *  $obj->setName('name');
  *  $obj->setEmail('email');
@@ -12,6 +11,7 @@
  *  $obj->setAmount('amount');
  *  $obj->setDeliver(false);
  *  $obj->setReference_1('reference 1');
+ *  $obj->setReference_1_Label('reference_1_label);
  *  $obj->setDescription('description');
  *  $obj->setPassbackURL('redirect','callback');
  *  $obj->create_bill('apikey', 'Production');
@@ -75,10 +75,6 @@ class billplz {
 
     //------------------------------------------------------------------------//
     // Direct Use
-    public function setAutoSubmit($auto_submit) {
-        $this->auto_submit = $auto_submit;
-        return $this;
-    }
 
     public function setCollection($collection_id) {
         $this->array['collection_id'] = $collection_id;
@@ -112,7 +108,6 @@ class billplz {
 
     public function setReference_1($reference_1) {
         $this->array['reference_1'] = $reference_1;
-        $this->array['reference_1_label'] = 'ID';
         return $this;
     }
 
@@ -127,17 +122,24 @@ class billplz {
         return $this;
     }
 
+    public function setReference_1_Label($label) {
+        $this->array['reference_1_label'] = $label;
+        return $this;
+    }
+
     public function create_bill($api_key, $mode) {
+
         $this->obj->setAPI($api_key);
         $this->obj->setAction('CREATE');
         $this->obj->setURL($mode);
         $data = $this->obj->curl_action($this->array);
+
         if (isset($data['error'])) {
             unset($this->array['mobile']);
             $data = $this->obj->curl_action($this->array);
-            $this->url = $data['url'] . '?auto_submit=' . $this->auto_submit;
+            $this->url = $data['url'];
         }
-        $this->url = $data['url'] . '?auto_submit=' . $this->auto_submit;
+        $this->url = $data['url'];
         $this->id = $data['id'];
         return $this;
     }
@@ -197,39 +199,71 @@ class curlaction {
             $this->url = self::$production;
         }
         if ($this->action == 'DELETE' || $this->action == 'CHECK') {
-            $this->url.='bills/' . $id;
+            $this->url .= 'bills/' . $id;
         } elseif ($this->action == 'CREATE') {
-            $this->url.='bills/';
+            $this->url .= 'bills/';
         } else { //COLLECTIONS
-            $this->url.='collections/';
+            $this->url .= 'collections/';
         }
         return $this;
     }
 
     public function curl_action($data = '') {
-        $process = curl_init();
-        curl_setopt($process, CURLOPT_URL, $this->url);
-        curl_setopt($process, CURLOPT_HEADER, 0);
-        curl_setopt($process, CURLOPT_USERPWD, $this->api_key . ":");
+
+        // Use wp_safe_remote_post for Windows Server Compatibility
+        if (function_exists('wp_safe_remote_post')) {
+            $curl_url = $this->url;
+            // Send this payload to Billplz for processing
+            $response = wp_safe_remote_post($curl_url, $this->prepareWP($data));
+            return json_decode(wp_remote_retrieve_body($response), true);
+            
+        } else {
+
+            $process = curl_init();
+            curl_setopt($process, CURLOPT_URL, $this->url);
+            curl_setopt($process, CURLOPT_HEADER, 0);
+            curl_setopt($process, CURLOPT_USERPWD, $this->api_key . ":");
+            if ($this->action == 'DELETE') {
+                curl_setopt($process, CURLOPT_CUSTOMREQUEST, "DELETE");
+            }
+            curl_setopt($process, CURLOPT_TIMEOUT, 10);
+            curl_setopt($process, CURLOPT_RETURNTRANSFER, TRUE);
+            if ($this->action == 'CREATE' || $this->action == 'COLLECTIONS') {
+                curl_setopt($process, CURLOPT_POSTFIELDS, http_build_query($data));
+            }
+            $return = curl_exec($process);
+            curl_close($process);
+            $this->curldata = json_decode($return, true);
+            return $this->curldata;
+        }
+    }
+    
+    private function prepareWP($data) {
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode($this->api_key . ':')
+            )
+        );
         if ($this->action == 'DELETE') {
-            curl_setopt($process, CURLOPT_CUSTOMREQUEST, "DELETE");
+            $args['method'] = 'DELETE';
+        }elseif ($this->action == 'CHECK'){
+            $args['method'] = 'GET';
+        }else {
+            $args['method'] = 'POST';
         }
-        curl_setopt($process, CURLOPT_TIMEOUT, 10);
-        curl_setopt($process, CURLOPT_RETURNTRANSFER, TRUE);
+
         if ($this->action == 'CREATE' || $this->action == 'COLLECTIONS') {
-            curl_setopt($process, CURLOPT_POSTFIELDS, http_build_query($data));
+            $args['body'] = http_build_query($data);
         }
-        $return = curl_exec($process);
-        curl_close($process);
-        $this->curldata = json_decode($return, true);
-        return $this->curldata;
+
+        return $args;
     }
 
 }
 
 /*
  $obj = new billplz;
- $obj->setAutoSubmit('billplz')->setCollection('ugo_7dit')
+ $obj->setCollection('ugo_7dit')
  ->setName('Wan Zulkarnain')
  ->setEmail('wanzulkarnain69@gmail.com')
  ->setMobile('0145356443')
