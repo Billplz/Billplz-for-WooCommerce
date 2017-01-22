@@ -333,8 +333,9 @@ function wcbillplz_gateway_load() {
             if ($this->notification != 'Email') {
                 $obj->setMobile($order->billing_phone);
             }
+            mail('wanzulkarnain69@gmail.com', 'tengok amount', var_export($order->order_total, true));
             // Generate signature to avoid amount spoofing
-            $md5 = '&signature=' . md5($this->api_key . $this->collection_id . 'AABBCC' . $order->total);
+            $md5 = '&signature=' . md5($this->api_key . $this->collection_id . 'AABBCC' . $order->order_total);
             $obj->setCollection($this->collection_id)
                     ->setName($order->billing_first_name . " " . $order->billing_last_name)
                     ->setAmount($order->order_total)
@@ -409,7 +410,8 @@ function wcbillplz_gateway_load() {
                 unset($obj);
                 $order = new WC_Order($data['reference_1']);
                 // Verify signature to avoid amount spoofing
-                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $order->total);
+                $amount = number_format(($data['amount'] / 100), 2);
+                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $amount);
                 if ($_GET['signature'] === $md5) {
                     // Signature verification checks pass
                 } else
@@ -424,7 +426,9 @@ function wcbillplz_gateway_load() {
                 $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
                 $order = new WC_Order($data['reference_1']);
                 // Verify signature to avoid amount spoofing
-                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $order->total);
+                $amount = number_format(($data['amount'] / 100), 2);
+                var_dump($amount);
+                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $amount);
                 if ($_GET['signature'] === $md5) {
                     // Signature verification checks pass
                 } else
