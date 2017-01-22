@@ -41,7 +41,7 @@ function wcbillplz_gateway_load() {
         add_action('admin_notices', 'wcbillplz_woocommerce_fallback_notice');
         return;
     }
-    //Load language
+//Load language
     load_plugin_textdomain('wcbillplz', false, dirname(plugin_basename(__FILE__)) . '/languages/');
     add_filter('woocommerce_payment_gateways', 'wcbillplz_add_gateway');
 
@@ -333,8 +333,8 @@ function wcbillplz_gateway_load() {
             if ($this->notification != 'Email') {
                 $obj->setMobile($order->billing_phone);
             }
-            //Callback Security Verification
-            $md5 = '&callback=' . md5($this->api_key . $this->collection_id . 'AABBCC');
+            // Generate signature to avoid amount spoofing
+            $md5 = '&signature=' . md5($this->api_key . $this->collection_id . 'AABBCC' . $order->total);
             $obj->setCollection($this->collection_id)
                     ->setName($order->billing_first_name . " " . $order->billing_last_name)
                     ->setAmount($order->order_total)
@@ -342,7 +342,7 @@ function wcbillplz_gateway_load() {
                     ->setReference_1($order_id)
                     ->setReference_1_Label('ID')
                     ->setDescription($desc)
-                    ->setPassbackURL(home_url('/?wc-api=WC_Billplz_Gateway'), home_url('/?wc-api=WC_Billplz_Gateway' . $md5))
+                    ->setPassbackURL(home_url('/?wc-api=WC_Billplz_Gateway' . $md5), home_url('/?wc-api=WC_Billplz_Gateway' . $md5))
                     ->create_bill($this->api_key, $this->teststaging);
             //------------------------------------------------------------//
             //Save to Database
@@ -400,22 +400,35 @@ function wcbillplz_gateway_load() {
             @ob_clean();
             global $woocommerce;
             require_once('billplz.php');
-            //Callback Security Verification
-            if (isset($_GET['callback'])) {
-                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC');
-                if ($_GET['callback'] == $md5) {
-                    $id = $_POST['id'];
-                    $obj = new billplz;
-                    $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
-                    unset($obj);
-                    $order = new WC_Order($data['reference_1']);
-                    $this->save_payment($order, $data, 'Callback');
-                }
-            } elseif (isset($_GET['billplz']['id'])) {
+
+            // Callback page
+            if (isset($_POST['id'])) {
+                $id = $_POST['id'];
+                $obj = new billplz;
+                $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
+                unset($obj);
+                $order = new WC_Order($data['reference_1']);
+                // Verify signature to avoid amount spoofing
+                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $order->total);
+                if ($_GET['signature'] === $md5) {
+                    // Signature verification checks pass
+                } else
+                    exit('Amount spoofing detected');
+                echo 'ALL IS WELL';
+                $this->save_payment($order, $data, 'Callback');
+            }
+            // Return Page
+            elseif (isset($_GET['billplz']['id'])) {
                 $id = $_GET['billplz']['id'];
                 $obj = new billplz;
                 $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
                 $order = new WC_Order($data['reference_1']);
+                // Verify signature to avoid amount spoofing
+                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $order->total);
+                if ($_GET['signature'] === $md5) {
+                    // Signature verification checks pass
+                } else
+                    exit('Amount spoofing detected');
                 $this->save_payment($order, $data, 'Return');
                 if ($data['paid']) {
                     wp_redirect($order->get_checkout_order_received_url());
@@ -498,11 +511,11 @@ function wcbillplz_invalidate_bills() {
  */
 /*
  *  Removed started in version 3.10
-function wcbillplz_update_db() {
-    require_once 'updatedb.php';
-    $obj = new updatedb;
-    unset($obj);
-}
+  function wcbillplz_update_db() {
+  require_once 'updatedb.php';
+  $obj = new updatedb;
+  unset($obj);
+  }
 
-add_action('plugins_loaded', 'wcbillplz_update_db', 0);
-*/
+  add_action('plugins_loaded', 'wcbillplz_update_db', 0);
+ */
