@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.7
-Stable tag: 3.10
+Stable tag: 3.11
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -23,6 +23,9 @@ Upgrading from version 3.8 to earlier version will cause SMS and Email notificat
 * Will available soon
 
 == Changelog ==
+
+= 3.11 =
+* SECURITY: Amount spoofing issue has been fixed. 
 
 = 3.10 =
 * REMOVED: Backwards compatible checks are removed
