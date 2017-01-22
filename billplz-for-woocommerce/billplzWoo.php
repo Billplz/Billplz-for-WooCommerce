@@ -333,7 +333,6 @@ function wcbillplz_gateway_load() {
             if ($this->notification != 'Email') {
                 $obj->setMobile($order->billing_phone);
             }
-            mail('wanzulkarnain69@gmail.com', 'tengok amount', var_export($order->order_total, true));
             // Generate signature to avoid amount spoofing
             $md5 = '&signature=' . md5($this->api_key . $this->collection_id . 'AABBCC' . $order->order_total);
             $obj->setCollection($this->collection_id)
