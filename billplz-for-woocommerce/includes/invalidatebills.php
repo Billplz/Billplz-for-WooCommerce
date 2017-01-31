@@ -112,7 +112,7 @@ class DeleteBill {
     var $api_key, $mode, $id, $objdelete, $objcheck;
 
     public function __construct($api_key, $mode) {
-        require_once 'billplz.php';
+        require_once(__DIR__ . '/billplz.php');
         $this->api_key = $api_key;
         $this->mode = $mode;
         $this->objdelete = new curlaction;

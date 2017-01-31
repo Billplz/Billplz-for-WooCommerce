@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
-Tested up to: 4.7
-Stable tag: 3.11
+Tested up to: 4.7.2
+Stable tag: 3.12
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -24,6 +24,13 @@ Upgrading from version 3.8 to earlier version will cause SMS and Email notificat
 
 == Changelog ==
 
+= 3.12 =
+
+* NEW: Logging feature
+* NEW: Clear cart option on checkout
+* CHANGED: Corrected Plugin URL
+* IMPROVED: Plugin file structure
+
 = 3.11 =
 * SECURITY: Amount spoofing issue has been fixed. 
 
@@ -43,69 +50,6 @@ Upgrading from version 3.8 to earlier version will cause SMS and Email notificat
 * REMOVED: Automatically created collection id
 * CHANGED: Option to disable Prevent Duplicating Bills are removed. This feature is enabled by default
 * Some minor changes
-
-= 3.8 =
-* Update Post Meta only save Billplz Payment URL
-* NEW: Auto Submit Feature
-
-= 3.7 =
-* NEW: Collection ID will automatically generated if user incorrectly input the value
-* NEW: Prevent bills created over and over again for the same order
-
-= 3.6 =
-* NEW: API Key & Collection ID will be validated instantly after setting it up
-* Immediate reduce stock option has been removed due to stock is not restored after expiry
-* Message recommending user to use WooCommerce Cart Stock Reducer are displayed
-
-= 3.5 =
-* Added new option for immediate reduce stock.
-
-= 3.4 =
-* Small bugfix
-
-= 3.3 =
-
-* Recheck the payment status for handling callback signal
-
-= 3.2 =
-* License: GPLv3
-
-= 3.1 =
-* Security: Minor security issue
-
-= 3.0 =
-* Using Billplz API V3
-
-= 1.10 =
-* New Features: Staging Mode
-* Garbage file for no callback method is now automatically removed
-* Fixed conflicting issue with GravityForms Billplz Plugin
-
-= 1.9 =
-* New Features: If you are having problem with payment response, tick No Callback Method
-* Improvement: Mobile number are checked twice. No more error if customer input "-" in their number
-* Improvement: If the user entering their home number (e.g.: 04xxxx), then the number will be skipped
-* Improvement: Only 1 payment response are given. No more response from ReturnURL
-
-= 1.8 =
-* Product stock reduce 2x times error. This bug has been fixed for this release
-
-= 1.7 =
-* Added Product Description on Billplz payment page
-* Callback terms are used instead of Billplz.com for callback
-
-= 1.6 =
-* Merchant ID String has changed to API Secret Key. 
-* New Payment Logo, By Akhi Joe. Thanks to Akhi Joe!
-
-= 1.5 =
-* Added Updates Capability
-
-= 1.1 =
-* Added compatibility for PHP 5.3
-
-= 1.0 =
-1. Initial Release
 
 == Installation ==
 

@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wanzul Hosting Enterprise
  * Author URI: http://www.wanzul-hosting.com/
- * Version: 3.11
+ * Version: 3.12
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
@@ -62,6 +62,12 @@ function wcbillplz_gateway_load() {
      */
     class WC_Billplz_Gateway extends WC_Payment_Gateway {
 
+        /** @var bool Whether or not logging is enabled */
+        public static $log_enabled = false;
+
+        /** @var WC_Logger Logger instance */
+        public static $log = false;
+
         /**
          * Construct the Billplz gateway class
          * 
@@ -70,9 +76,10 @@ function wcbillplz_gateway_load() {
         public function __construct() {
             global $woocommerce;
             $this->id = 'billplz';
-            $this->icon = plugins_url('images/billplz.gif', __FILE__);
+            $this->icon = plugins_url('assets/billplz.gif', __FILE__);
             $this->has_fields = false;
             $this->method_title = __('Billplz', 'wcbillplz');
+            $this->debug = 'yes' === $this->get_option('debug', 'no');
             // Load the form fields.
             $this->init_form_fields();
             // Load the settings.
@@ -82,11 +89,15 @@ function wcbillplz_gateway_load() {
             $this->description = $this->settings['description'];
             $this->api_key = $this->settings['api_key'];
             $this->collection_id = $this->settings['collection_id'];
+            $this->clearcart = $this->settings['clearcart'];
             $this->notification = $this->settings['notification'];
             $this->paymentverification = $this->settings['paymentverification'];
             $this->teststaging = $this->settings['teststaging'];
             // = $this->settings['autosubmit'];
             $this->custom_error = $this->settings['custom_error'];
+
+            self::$log_enabled = $this->debug;
+
             add_action('woocommerce_receipt_billplz', array(
                 &$this,
                 'receipt_page'
@@ -135,7 +146,7 @@ function wcbillplz_gateway_load() {
         public function admin_options() {
             // Checking API Key & Collection ID validity.
             if ($this->api_key != '' && $this->collection_id != '') {
-                require_once('billplz.php');
+                require_once(__DIR__ . '/includes/billplz.php');
                 $obj = new billplz;
                 $status = $obj->check_apikey_collectionid($this->api_key, $this->collection_id, $this->teststaging);
                 if ($status) {
@@ -175,86 +186,7 @@ function wcbillplz_gateway_load() {
          * 
          */
         public function init_form_fields() {
-            $this->form_fields = array(
-                'enabled' => array(
-                    'title' => __('Enable/Disable', 'wcbillplz'),
-                    'type' => 'checkbox',
-                    'label' => __('Enable Billplz', 'wcbillplz'),
-                    'default' => 'yes'
-                ),
-                'title' => array(
-                    'title' => __('Title', 'wcbillplz'),
-                    'type' => 'text',
-                    'description' => __('This controls the title which the user sees during checkout.', 'wcbillplz'),
-                    'default' => __('Billplz Payment Gateway', 'wcbillplz')
-                ),
-                'description' => array(
-                    'title' => __('Description', 'wcbillplz'),
-                    'type' => 'textarea',
-                    'description' => __('This controls the description which the user sees during checkout.', 'wcbillplz'),
-                    'default' => __('Pay with <strong>Maybank2u, CIMB Clicks, Bank Islam, RHB, Hong Leong Bank, Bank Muamalat, Public Bank, Alliance Bank, Affin Bank, AmBank, Bank Rakyat, UOB, Standard Chartered </strong>. ', 'wcbillplz')
-                ),
-                'teststaging' => array(
-                    'title' => __('Mode', 'wcbillplz'),
-                    'type' => 'select',
-                    'class' => 'wc-enhanced-select',
-                    'description' => __('Production mode is for merchant registered at www.billplz.com (Live Site). Staging mode is for merchant registered at billplz-staging.herokuapp.com (Testing Site).', 'wcbillplz'),
-                    'default' => 'Production',
-                    'desc_tip' => true,
-                    'options' => array(
-                        'Production' => __('Production', 'wcbillplz'),
-                        'Staging' => __('Staging', 'wcbillplz')
-                    )
-                ),
-                'api_key' => array(
-                    'title' => __('API Secret Key', 'wcbillplz'),
-                    'type' => 'text',
-                    'placeholder' => 'Example : ed586547-00b7-459a-a02e-7e876a744590',
-                    'description' => __('Please enter your Billplz Api Key.', 'wcbillplz') . ' ' . sprintf(__('Get Your API Key: %sBillplz%s.', 'wcbillplz'), '<a href="https://www.billplz.com/enterprise/setting" target="_blank">', '</a>'),
-                    'default' => ''
-                ),
-                'collection_id' => array(
-                    'title' => __('Collection ID', 'wcbillplz'),
-                    'type' => 'text',
-                    'placeholder' => 'Example : ugo_7dit',
-                    'description' => __('Please enter your Billplz Collection ID. ', 'wcbillplz') . ' ' . sprintf(__('Login to Billplz >> Billing >> Create Collection. %sLink%s.', 'wcbillplz'), '<a href="https://www.billplz.com/enterprise/billing" target="_blank">', '</a>'),
-                    'default' => ''
-                ),
-                'notification' => array(
-                    'title' => __('Bill Notification', 'wcbillplz'),
-                    'type' => 'select',
-                    'class' => 'wc-enhanced-select',
-                    'description' => __('No Notification - Customer will NOT receive any notification. Email Only - Customer will receive Email Notification for payment. SMS Only - Customer will receive SMS Notification for payment. Both - Customer will receive Email & SMS Notification for payment.', 'wcbillplz'),
-                    'default' => 'None',
-                    'desc_tip' => true,
-                    'options' => array(
-                        'None' => __('No Notification', 'wcbillplz'),
-                        'Email' => __('Email Only (FREE)', 'wcbillplz'),
-                        'SMS' => __('SMS Only (RM0.15)', 'wcbillplz'),
-                        'Both' => __('Both (RM0.15)', 'wcbillplz')
-                    )
-                ),
-                'paymentverification' => array(
-                    'title' => __('Verification Type', 'wcbillplz'),
-                    'type' => 'select',
-                    'class' => 'wc-enhanced-select',
-                    'description' => __('Leave it as Callback unless you are having problem, then change to Return.', 'wcbillplz'),
-                    'default' => 'Callback',
-                    'desc_tip' => true,
-                    'options' => array(
-                        'Both' => __('Both', 'wcbillplz'),
-                        'Callback' => __('Callback', 'wcbillplz'),
-                        'Return' => __('Return', 'wcbillplz')
-                    )
-                ),
-                'custom_error' => array(
-                    'title' => __('Error Message', 'wcbillplz'),
-                    'type' => 'text',
-                    'placeholder' => 'Example : You have cancelled the payment. Please make a payment!',
-                    'description' => __('Error message that will appear when customer cancel the payment.', 'wcbillplz'),
-                    'default' => 'You have cancelled the payment. Please make a payment!'
-                )
-            );
+            $this->form_fields = include(__DIR__ . '/includes/settings-billplz.php');
         }
 
         /**
@@ -325,7 +257,7 @@ function wcbillplz_gateway_load() {
          * @return string Return URL
          */
         protected function bills_trigger($order, $deliver, $order_id, $desc) {
-            require_once 'billplz.php';
+            require_once(__DIR__ . '/includes/billplz.php');
             $obj = new billplz;
             if ($this->notification != 'SMS') {
                 $obj->setEmail($order->billing_email);
@@ -352,7 +284,23 @@ function wcbillplz_gateway_load() {
             update_post_meta($order_id, '_wc_billplz_orderemail', $order->billing_email);
             update_post_meta($order_id, '_wc_billplz_orderphone', $order->billing_phone);
             update_post_meta($order_id, '_wc_billplz_orderurl', $obj->getURL());
+
+            // Log the bills creation
+            self::log('Creating bills ' . $obj->getID() . ' for order number #' . $order_id);
             return $obj->getURL();
+        }
+
+        /**
+         * Logging method.
+         * @param string $message
+         */
+        public static function log($message) {
+            if (self::$log_enabled) {
+                if (empty(self::$log)) {
+                    self::$log = new WC_Logger();
+                }
+                self::$log->add('billplz', $message);
+            }
         }
 
         /**
@@ -374,6 +322,10 @@ function wcbillplz_gateway_load() {
          * @return array
          */
         public function process_payment($order_id) {
+
+            if ($this->clearcart === 'yes')
+                WC()->cart->empty_cart();
+
             $order = new WC_Order($order_id);
             return array(
                 'result' => 'success',
@@ -398,53 +350,69 @@ function wcbillplz_gateway_load() {
          */
         function check_ipn_response() {
             @ob_clean();
-            global $woocommerce;
-            require_once('billplz.php');
+            //global $woocommerce;
+            require_once(__DIR__ . '/includes/billplz.php');
 
             // Callback page
             if (isset($_POST['id'])) {
-                $id = $_POST['id'];
-                $obj = new billplz;
-                $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
-                unset($obj);
-                $order = new WC_Order($data['reference_1']);
-                // Verify signature to avoid amount spoofing
-                $amount = number_format(($data['amount'] / 100), 2);
-                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $amount);
-                if ($_GET['signature'] === $md5) {
-                    // Signature verification checks pass
-                } else
-                    exit('Amount spoofing detected');
-                echo 'ALL IS WELL';
-                $this->save_payment($order, $data, 'Callback');
+                $this->callback_handle();
             }
             // Return Page
             elseif (isset($_GET['billplz']['id'])) {
-                $id = $_GET['billplz']['id'];
-                $obj = new billplz;
-                $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
-                $order = new WC_Order($data['reference_1']);
-                // Verify signature to avoid amount spoofing
-                $amount = number_format(($data['amount'] / 100), 2);
-                var_dump($amount);
-                $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $amount);
-                if ($_GET['signature'] === $md5) {
-                    // Signature verification checks pass
-                } else
-                    exit('Amount spoofing detected');
-                $this->save_payment($order, $data, 'Return');
-                if ($data['paid']) {
-                    wp_redirect($order->get_checkout_order_received_url());
-                } else {
-                    wc_add_notice(__('ERROR: ', 'woothemes') . $this->custom_error, 'error');
-                    wp_redirect($order->get_cancel_order_url());
-                }
+                $this->return_handle();
             }
             //Fake Request. Die!
             else {
                 exit('What Are You Doing Here?');
             }
             exit;
+        }
+
+        private function callback_handle() {
+            // Log the bills callback response
+            self::log('Callback response: ' . print_r($_POST, true));
+            $id = $_POST['id'];
+            $obj = new billplz;
+            $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
+            unset($obj);
+            $order = new WC_Order($data['reference_1']);
+            // Verify signature to avoid amount spoofing
+            $amount = number_format(($data['amount'] / 100), 2);
+            $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $amount);
+            if ($_GET['signature'] === $md5) {
+                self::log('Callback response for bills ' . $data['id'] . 'hash checked SUCCESS for order number #' . $data['reference_1']);
+            } else {
+                self::log('Callback response hash checked FAILED. Possible of order spoofing prevented');
+                exit('Amount spoofing detected');
+            }
+            echo 'ALL IS WELL';
+            $this->save_payment($order, $data, 'Callback');
+        }
+
+        private function return_handle() {
+            // Log the bills return response
+            self::log('Return response: ' . print_r($_GET['billplz'], true));
+            $id = $_GET['billplz']['id'];
+            $obj = new billplz;
+            $data = $obj->check_bill($this->api_key, $id, $this->teststaging);
+            $order = new WC_Order($data['reference_1']);
+            // Verify signature to avoid amount spoofing
+            $amount = number_format(($data['amount'] / 100), 2);
+            var_dump($amount);
+            $md5 = md5($this->api_key . $this->collection_id . 'AABBCC' . $amount);
+            if ($_GET['signature'] === $md5) {
+                self::log('Return response for bills ' . $data['id'] . 'hash checked SUCCESS for order number #' . $data['reference_1']);
+            } else {
+                self::log('Return response hash checked FAILED. Possible of order spoofing prevented');
+                exit('Amount spoofing detected');
+            }
+            $this->save_payment($order, $data, 'Return');
+            if ($data['paid']) {
+                wp_redirect($order->get_checkout_order_received_url());
+            } else {
+                wc_add_notice(__('ERROR: ', 'woothemes') . $this->custom_error, 'error');
+                wp_redirect($order->get_cancel_order_url());
+            }
         }
 
         /**
@@ -461,6 +429,7 @@ function wcbillplz_gateway_load() {
                     if ($this->paymentverification == $type || $this->paymentverification == 'Both' || (!isset($this->paymentverification))) {
                         $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $data['id'] . $referer);
                         $order->payment_complete();
+                        self::log($type . ', bills ' . $data['id'] . '. Order #' . $data['reference_1'] . ' updated in WooCommerce as Paid');
                     }
                 } else {
                     $order->add_order_note('Payment Status: CANCELLED BY USER' . '<br>Bill ID: ' . $data['id'] . $referer);
@@ -502,7 +471,7 @@ function wcbillplz_gateway_load() {
 add_action('plugins_loaded', 'wcbillplz_invalidate_bills', 0);
 
 function wcbillplz_invalidate_bills() {
-    require_once 'invalidatebills.php';
+    require_once __DIR__ . '/includes/invalidatebills.php';
     $inv = new invalidatebills;
 }
 
