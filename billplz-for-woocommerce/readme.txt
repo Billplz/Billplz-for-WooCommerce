@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.7.2
-Stable tag: 3.12
+Stable tag: 3.13
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -17,12 +17,24 @@ For Installation Instruction, please refer to:
 [How to Install](http://bit.ly/1SwkWJL)
 
 == Upgrade Notice == 
-Upgrading from version 3.8 to earlier version will cause SMS and Email notification are reset to No Notification.
+You need to do a Full Installation for this update due to changes that we do on Cron Jobs. 
+
+1. Deactivate this plugin
+2. Delete
+3. Add New >> Billplz
+4. Install & Activate
+5. Configure this plugin
+6. Save Changes (MANDATORY)
 
 == Screenshots ==
 * Will available soon
 
 == Changelog ==
+
+= 3.13 =
+* IMPROVED: Callback/Return response handling
+* IMPROVED: Plugin workaround
+* REMOVED: IPN Option. Will be Both by default
 
 = 3.12 =
 
@@ -41,15 +53,6 @@ Upgrading from version 3.8 to earlier version will cause SMS and Email notificat
 * IMPROVED: Billplz API Call using WordPress Library (wp_safe_remote_post)
 * NEW: Compatible with Windows-Based Server hosting
 * NEW: Option to choose type of payment validation
-
-= 3.9 =
-* NEW: Auto Delete Invoice when order are canceled
-* NEW: Custom error message
-* NEW: Callback security check. Check the callback signal authenticity
-* IMPROVED: Better callback notes for manual verification
-* REMOVED: Automatically created collection id
-* CHANGED: Option to disable Prevent Duplicating Bills are removed. This feature is enabled by default
-* Some minor changes
 
 == Installation ==
 
