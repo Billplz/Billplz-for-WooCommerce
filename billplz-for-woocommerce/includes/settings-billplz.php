@@ -66,19 +66,6 @@ return array(
             'Both' => __('Both (RM0.15)', 'wcbillplz')
         )
     ),
-    'paymentverification' => array(
-        'title' => __('Verification Type', 'wcbillplz'),
-        'type' => 'select',
-        'class' => 'wc-enhanced-select',
-        'description' => __('Leave it as Callback unless you are having problem, then change to Return.', 'wcbillplz'),
-        'default' => 'Callback',
-        'desc_tip' => true,
-        'options' => array(
-            'Both' => __('Both', 'wcbillplz'),
-            'Callback' => __('Callback', 'wcbillplz'),
-            'Return' => __('Return', 'wcbillplz')
-        )
-    ),
     'clearcart' => array(
         'title' => __('Clear Cart Session', 'wcbillplz'),
         'type' => 'checkbox',
