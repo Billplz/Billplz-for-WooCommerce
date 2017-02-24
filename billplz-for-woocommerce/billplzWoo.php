@@ -232,7 +232,7 @@ function wcbillplz_gateway_load() {
             $md5hash = substr(md5(strtolower($order->billing_first_name . $order->billing_last_name . $order->billing_email .
                                     $order->billing_phone . number_format($order->order_total) . $order_id . $this->collection_id)), 1, 6);
 
-            if (empty(get_post_meta($order_id, '_wc_billplz_hash', true))) {
+            if (get_post_meta($order_id, '_wc_billplz_hash', true) === '') {
                 update_post_meta($order_id, '_wc_billplz_hash', $md5hash);
                 $bills = $this->create_bill($order, $deliver, $order_id, $desc);
                 update_post_meta($order_id, '_wc_billplz_url', $bills['url']);
@@ -287,10 +287,10 @@ function wcbillplz_gateway_load() {
 
             // Log the bills creation
             self::log('Creating bills ' . $obj->getID() . ' for order number #' . $order_id);
-            return [
+            return array(
                 'url' => $obj->getURL(),
                 'id' => $obj->getID(),
-            ];
+            );
         }
 
         /**
