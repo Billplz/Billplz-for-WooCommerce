@@ -73,48 +73,52 @@ function wcbillplz_delete_bills() {
     }
 }
 
-class DeleteBill {
+if (!class_exists('DeleteBill')) {
 
-    var $api_key, $mode, $id, $objdelete, $objcheck;
+    class DeleteBill {
 
-    public function __construct($api_key, $mode) {
-        require_once(__DIR__ . '/billplz.php');
-        $this->api_key = $api_key;
-        $this->mode = $mode;
-        $this->objdelete = new curlaction;
-        $this->objcheck = new billplz;
-    }
+        var $api_key, $mode, $id, $objdelete, $objcheck;
 
-    public function prepare() {
-        $this->objdelete->setAPI($this->api_key)->setAction('DELETE');
-        return $this;
-    }
-
-    public function setInfo($id) {
-        //this->id is saved for checkBill() function
-        $this->id = $id;
-        $this->objdelete->setURL($this->mode, $id);
-        return $this;
-    }
-
-    public function process() {
-        $this->objdelete->curl_action('');
-        return $this;
-    }
-
-    public function checkBill() {
-        $data = $this->objcheck->check_bill($this->api_key, $this->id, $this->mode);
-        if (isset($data['state'])) {
-            // Hidden dah buang. Paid tak boleh buang
-            if ($data['state'] == 'hidden' || $data['state'] == 'paid') {
-                // True maksudnya dah buang
-                return true;
-            }
-            // False maknya tak buang
-            return false;
-        } else {
-            return false;
+        public function __construct($api_key, $mode) {
+            require_once(__DIR__ . '/billplz.php');
+            $this->api_key = $api_key;
+            $this->mode = $mode;
+            $this->objdelete = new curlaction;
+            $this->objcheck = new billplz;
         }
+
+        public function prepare() {
+            $this->objdelete->setAPI($this->api_key)->setAction('DELETE');
+            return $this;
+        }
+
+        public function setInfo($id) {
+            //this->id is saved for checkBill() function
+            $this->id = $id;
+            $this->objdelete->setURL($this->mode, $id);
+            return $this;
+        }
+
+        public function process() {
+            $this->objdelete->curl_action('');
+            return $this;
+        }
+
+        public function checkBill() {
+            $data = $this->objcheck->check_bill($this->api_key, $this->id, $this->mode);
+            if (isset($data['state'])) {
+                // Hidden dah buang. Paid tak boleh buang
+                if ($data['state'] == 'hidden' || $data['state'] == 'paid') {
+                    // True maksudnya dah buang
+                    return true;
+                }
+                // False maknya tak buang
+                return false;
+            } else {
+                return false;
+            }
+        }
+
     }
 
 }
