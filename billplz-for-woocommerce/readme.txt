@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.7.2
-Stable tag: 3.13
+Stable tag: 3.14
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -30,6 +30,10 @@ You need to do a Full Installation for this update due to changes that we do on 
 * Will available soon
 
 == Changelog ==
+
+= 3.14 =
+* NEW: Instruction added after payment
+* IMPROVED: PHP 5.3 Compatibility
 
 = 3.13 =
 * IMPROVED: Callback/Return response handling
