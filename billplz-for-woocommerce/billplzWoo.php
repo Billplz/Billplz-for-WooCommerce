@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wanzul Hosting Enterprise
  * Author URI: http://www.wanzul-hosting.com/
- * Version: 3.13
+ * Version: 3.14
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
@@ -97,6 +97,12 @@ function wcbillplz_gateway_load() {
             $this->notification = $this->settings['notification'];
             $this->teststaging = $this->settings['teststaging'];
             $this->custom_error = $this->settings['custom_error'];
+
+            // Payment instruction after payment
+            $this->instructions = isset($this->settings['instructions']) ? $this->settings['instructions'] : '';
+
+            add_action('woocommerce_thankyou_billplz', array($this, 'thankyou_page'));
+            add_action('woocommerce_email_before_order_table', array($this, 'email_instructions'), 10, 3);
 
             self::$log_enabled = $this->debug;
 
@@ -422,6 +428,30 @@ function wcbillplz_gateway_load() {
                 self::log($type . ', bills ' . $data['id'] . '. Order #' . $order->id . ' updated in WooCommerce as Paid');
             } elseif ($bill_id === $data['id']) {
                 self::log($type . ', bills ' . $data['id'] . '. Order #' . $order->id . ' not updated due to Duplicate');
+            }
+        }
+
+        /**
+         * Output for the order received page.
+         */
+        public function thankyou_page() {
+            if ($this->instructions) {
+                echo wpautop(wptexturize($this->instructions));
+            }
+        }
+
+        /**
+         * Add content to the WC emails.
+         *
+         * @access public
+         * @param WC_Order $order
+         * @param bool $sent_to_admin
+         * @param bool $plain_text
+         */
+        public function email_instructions($order, $sent_to_admin, $plain_text = false) {
+
+            if ($this->instructions && !$sent_to_admin && 'offline' === $order->payment_method && $order->has_status('on-hold')) {
+                echo wpautop(wptexturize($this->instructions)) . PHP_EOL;
             }
         }
 
