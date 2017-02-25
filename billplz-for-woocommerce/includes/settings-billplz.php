@@ -79,6 +79,13 @@ return array(
         'default' => 'no',
         'description' => sprintf(__('Log Billplz events, such as IPN requests, inside <code>%s</code>', 'wcbillplz'), wc_get_log_file_path('billplz'))
     ),
+    'instructions' => array(
+        'title' => __('Instructions', 'wcbillplz'),
+        'type' => 'textarea',
+        'description' => __('Instructions that will be added to the thank you page and emails.', 'wcbillplz'),
+        'default' => '',
+        'desc_tip' => true,
+    ),
     'custom_error' => array(
         'title' => __('Error Message', 'wcbillplz'),
         'type' => 'text',
