@@ -151,7 +151,6 @@ function wcbillplz_gateway_load() {
          *
          */
         public function admin_options() {
-            $this->check_api_validity();
             ?>
             <h3><?php
                 _e('Billplz Payment Gateway', 'wcbillplz');
@@ -175,30 +174,6 @@ function wcbillplz_gateway_load() {
                 ?>
             </table><!--/.form-table-->
             <?php
-        }
-
-        /*
-         *  Print ok if correct
-         *  Print error if not correct
-         */
-
-        private function check_api_validity() {
-            if ($this->api_key != '') {
-                require_once(__DIR__ . '/includes/billplz.php');
-                $obj = new Billplz;
-                $status = $obj->check_api_key();
-                if ($status != 'Invalid') {
-                    $message = '<div class="updated">';
-                    $message .= '<p>' . sprintf(__('Your API Key are Valid', 'wcbillplz')) . '</p>';
-                    $message .= '</div>';
-                } else {
-                    $message = '<div class="error">';
-                    $message .= '<p>' . sprintf(__('Your API Key Not Valid. Check your API Key and Collection ID', 'wcbillplz')) . '</p>';
-                    $message .= '</div>';
-                }
-                echo $message;
-                unset($obj, $status, $message);
-            }
         }
 
         /**
