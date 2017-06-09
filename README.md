@@ -27,7 +27,7 @@ There 2 ways to Install this plugin:
 
 * Login to WordPress Dashboard
 * Navigate to WooCommerce >> Settings >> Checkout >> Billplz
-* Set up API Secret Key & Collection ID
+* Set up API Secret Key, Collection ID and X Signature Key
 * Save changes
 
 # Other
