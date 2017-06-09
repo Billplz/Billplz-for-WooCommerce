@@ -1,12 +1,11 @@
 <?php
-
 /**
  * Plugin Name: Billplz for WooCommerce
  * Plugin URI: https://wordpress.org/plugins-wp/billplz-for-woocommerce/
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wanzul Hosting Enterprise
  * Author URI: http://www.wanzul-hosting.com/
- * Version: 3.14
+ * Version: 3.15
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
@@ -95,7 +94,7 @@ function wcbillplz_gateway_load() {
             $this->collection_id = $this->settings['collection_id'];
             $this->clearcart = $this->settings['clearcart'];
             $this->notification = $this->settings['notification'];
-            $this->teststaging = $this->settings['teststaging'];
+            $this->x_signature = $this->settings['x_signature'];
             $this->custom_error = $this->settings['custom_error'];
 
             // Payment instruction after payment
@@ -125,10 +124,10 @@ function wcbillplz_gateway_load() {
                                 &$this,
                                 'api_key_missing_message'
                             )) : '';
-            // Checking if collection_id is not empty.
-            $this->collection_id == '' ? add_action('admin_notices', array(
+            // Checking if x_signature is not empty.
+            $this->x_signature == '' ? add_action('admin_notices', array(
                                 &$this,
-                                'collection_id_missing_message'
+                                'x_signature_missing_message'
                             )) : '';
         }
 
@@ -184,17 +183,17 @@ function wcbillplz_gateway_load() {
          */
 
         private function check_api_validity() {
-            if ($this->api_key != '' && $this->collection_id != '') {
+            if ($this->api_key != '') {
                 require_once(__DIR__ . '/includes/billplz.php');
-                $obj = new billplz;
-                $status = $obj->check_apikey_collectionid($this->api_key, $this->collection_id, $this->teststaging);
-                if ($status) {
+                $obj = new Billplz;
+                $status = $obj->check_api_key();
+                if ($status != 'Invalid') {
                     $message = '<div class="updated">';
-                    $message .= '<p>' . sprintf(__('Your API Key & Collection ID are Valid', 'wcbillplz')) . '</p>';
+                    $message .= '<p>' . sprintf(__('Your API Key are Valid', 'wcbillplz')) . '</p>';
                     $message .= '</div>';
                 } else {
                     $message = '<div class="error">';
-                    $message .= '<p>' . sprintf(__('Your API Key or Collection ID are Not Valid. Check your API Key and Collection ID', 'wcbillplz')) . '</p>';
+                    $message .= '<p>' . sprintf(__('Your API Key Not Valid. Check your API Key and Collection ID', 'wcbillplz')) . '</p>';
                     $message .= '</div>';
                 }
                 echo $message;
@@ -225,32 +224,28 @@ function wcbillplz_gateway_load() {
                     if ($item['qty'])
                         $item_names[] = $item['name'] . ' x ' . $item['qty'];
             $desc = sprintf(__('Order %s', 'woocommerce'), $order->get_order_number()) . " - " . implode(', ', $item_names);
-            //----------------------------------------------------------------//
-
-            if ($this->notification == 'None') {
-                $deliver = false;
-            } else {
-                $deliver = true;
-            }
 
             // ---------------------------------------------------------------//
-            // Calculate MD5 Hash and Shorten it
+
+            /*
+             *  Calculate MD5 Hash and Shorten it
+             */
             $md5hash = substr(md5(strtolower($order->billing_first_name . $order->billing_last_name . $order->billing_email .
                                     $order->billing_phone . number_format($order->order_total) . $order_id . $this->collection_id)), 1, 6);
 
             if (get_post_meta($order_id, '_wc_billplz_hash', true) === '') {
                 update_post_meta($order_id, '_wc_billplz_hash', $md5hash);
-                $bills = $this->create_bill($order, $deliver, $order_id, $desc);
-                update_post_meta($order_id, '_wc_billplz_url', $bills['url']);
+                $bills = $this->create_bill($order, $this->notification, $order_id, $desc);
                 update_post_meta($order_id, '_wc_billplz_id', $bills['id']);
+                update_post_meta($order_id, '_wc_billplz_url', $bills['url']);
                 $url = $bills['url'];
             } elseif (get_post_meta($order_id, '_wc_billplz_hash', true) == $md5hash) {
                 $url = get_post_meta($order_id, '_wc_billplz_url', true);
             } else {
                 update_post_meta($order_id, '_wc_billplz_hash', $md5hash);
-                $bills = $this->create_bill($order, $deliver, $order_id, $desc);
-                update_post_meta($order_id, '_wc_billplz_url', $bills['url']);
+                $bills = $this->create_bill($order, $this->notification, $order_id, $desc);
                 add_post_meta($order_id, '_wc_billplz_id', $bills['id']);
+                update_post_meta($order_id, '_wc_billplz_url', $bills['url']);
                 $url = $bills['url'];
             }
 
@@ -275,21 +270,19 @@ function wcbillplz_gateway_load() {
          */
         protected function create_bill($order, $deliver, $order_id, $desc) {
             require_once(__DIR__ . '/includes/billplz.php');
-            $obj = new billplz;
-            if ($this->notification != 'SMS') {
-                $obj->setEmail($order->billing_email);
-            }
-            if ($this->notification != 'Email') {
-                $obj->setMobile($order->billing_phone);
-            }
-
+            $obj = new Billplz($this->api_key);
+            
             $obj->setCollection($this->collection_id)
                     ->setName($order->billing_first_name . " " . $order->billing_last_name)
                     ->setAmount($order->order_total)
                     ->setDeliver($deliver)
+                    ->setMobile($order->billing_phone)
+                    ->setEmail($order->billing_email)
                     ->setDescription($desc)
+                    ->setReference_1($order_id)
+                    ->setReference_1_Label('Order ID')
                     ->setPassbackURL(home_url('/?wc-api=WC_Billplz_Gateway'), home_url('/?wc-api=WC_Billplz_Gateway'))
-                    ->create_bill($this->api_key, $this->teststaging);
+                    ->create_bill(true);
 
             // Log the bills creation
             self::log('Creating bills ' . $obj->getID() . ' for order number #' . $order_id);
@@ -360,36 +353,45 @@ function wcbillplz_gateway_load() {
         function check_ipn_response() {
             @ob_clean();
             //global $woocommerce;
+
+            require_once(__DIR__ . '/includes/billplz.php');
             if (isset($_POST['id'])) {
                 $signal = 'Callback';
-                $bill_id = filter_var($_POST['id'], FILTER_SANITIZE_STRING);
+                $data = Billplz::getCallbackData($this->x_signature);
                 sleep(10);
             } elseif (isset($_GET['billplz']['id'])) {
                 $signal = 'Return';
-                $bill_id = filter_var($_GET['billplz']['id'], FILTER_SANITIZE_STRING);
+                $data = Billplz::getRedirectData($this->x_signature);
+            } else {
+                exit('Nothing to do');
             }
 
             // Log return type
             self::log('Response is: ' . $signal . ' ' . print_r($_REQUEST, true));
 
-            $order_id = $this->find_order_id($bill_id);
+            $bill_id = $data['id'];
 
-            if (empty($order_id)) {
-                self::log('Bill ID' . $bill_id . ' Not valid: ');
-                exit;
-            }
+            $billplz = new Billplz($this->api_key);
+            $moreData = $billplz->check_bill($bill_id);
+            self::log('Bills Re-Query: ' . print_r($data, true));
 
-            self::log('Bill ID found: ' . $bill_id . ' for Order ID: ' . $order_id);
+            //$order_id = $this->find_order_id($bill_id);
+            $order_id = $moreData['reference_1'];
+
+            /*
+              if (empty($order_id)) {
+              self::log('Bill ID' . $bill_id . ' Not valid: ');
+              exit;
+              }
+             * 
+             */
+
+            //self::log('Bill ID found: ' . $bill_id . ' for Order ID: ' . $order_id);
 
             $order = new WC_Order($order_id);
 
-            require_once(__DIR__ . '/includes/billplz.php');
-
-            $billplz = new billplz();
-            $data = $billplz->check_bill($this->api_key, $bill_id, $this->teststaging);
-            self::log('Bills Re-Query: ' . print_r($data, true));
-            if ($data['paid']) {
-                $this->save_payment($order, $data, $signal);
+            if ($moreData['paid']) {
+                $this->save_payment($order, $moreData, $signal);
                 $redirectpath = $order->get_checkout_order_received_url();
             } else {
                 $order->add_order_note('Payment Status: CANCELLED BY USER' . '<br>Bill ID: ' . $data['id']);
@@ -399,17 +401,18 @@ function wcbillplz_gateway_load() {
 
             if ($signal === 'Return')
                 wp_redirect($redirectpath);
-            else if ($signal === 'Callback')
-                echo 'RECEIVEOK';
             else
-                die();
+                echo 'RECEIVEOK';
         }
 
-        private function find_order_id($bill_id) {
-            global $wpdb;
-            $query = $wpdb->get_results("SELECT post_id FROM `" . $wpdb->postmeta . "` WHERE meta_key='_wc_billplz_id' AND meta_value='" . esc_sql($bill_id) . "'");
-            return $query[0]->post_id;
-        }
+        /*
+          private function find_order_id($bill_id) {
+          global $wpdb;
+          $query = $wpdb->get_results("SELECT post_id FROM `" . $wpdb->postmeta . "` WHERE meta_key='_wc_billplz_id' AND meta_value='" . esc_sql($bill_id) . "'");
+          return $query[0]->post_id;
+          }
+         * 
+         */
 
         /**
          * Save payment status to DB for successful return/callback
@@ -423,7 +426,7 @@ function wcbillplz_gateway_load() {
             $bill_id = get_post_meta($order->id, '_transaction_id', true);
 
             if (empty($bill_id)) {
-                $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $data['id'] . $referer);
+                $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $data['id'] . ' ' . $referer);
                 $order->payment_complete($data['id']);
                 self::log($type . ', bills ' . $data['id'] . '. Order #' . $order->id . ' updated in WooCommerce as Paid');
             } elseif ($bill_id === $data['id']) {
@@ -470,9 +473,9 @@ function wcbillplz_gateway_load() {
          * Adds error message when not configured the app_secret.
          * 
          */
-        public function collection_id_missing_message() {
+        public function x_signature_missing_message() {
             $message = '<div class="error">';
-            $message .= '<p>' . sprintf(__('<strong>Gateway Disabled</strong> You should inform your Collection ID in Billplz. %sClick here to configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
+            $message .= '<p>' . sprintf(__('<strong>Gateway Disabled</strong> You should inform your X Signature Key in Billplz. %sClick here to configure!%s', 'wcbillplz'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
             $message .= '</div>';
             echo $message;
         }

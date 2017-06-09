@@ -26,18 +26,6 @@ return array(
         'description' => __('This controls the description which the user sees during checkout.', 'wcbillplz'),
         'default' => __('Pay with <strong>Maybank2u, CIMB Clicks, Bank Islam, RHB, Hong Leong Bank, Bank Muamalat, Public Bank, Alliance Bank, Affin Bank, AmBank, Bank Rakyat, UOB, Standard Chartered </strong>. ', 'wcbillplz')
     ),
-    'teststaging' => array(
-        'title' => __('Mode', 'wcbillplz'),
-        'type' => 'select',
-        'class' => 'wc-enhanced-select',
-        'description' => __('Production mode is for merchant registered at www.billplz.com (Live Site). Staging mode is for merchant registered at billplz-staging.herokuapp.com (Testing Site).', 'wcbillplz'),
-        'default' => 'Production',
-        'desc_tip' => true,
-        'options' => array(
-            'Production' => __('Production', 'wcbillplz'),
-            'Staging' => __('Staging', 'wcbillplz')
-        )
-    ),
     'api_key' => array(
         'title' => __('API Secret Key', 'wcbillplz'),
         'type' => 'text',
@@ -52,6 +40,13 @@ return array(
         'description' => __('Please enter your Billplz Collection ID. ', 'wcbillplz') . ' ' . sprintf(__('Login to Billplz >> Billing >> Create Collection. %sLink%s.', 'wcbillplz'), '<a href="https://www.billplz.com/enterprise/billing" target="_blank">', '</a>'),
         'default' => ''
     ),
+    'x_signature' => array(
+        'title' => __('X Signature Key', 'wcbillplz'),
+        'type' => 'text',
+        'placeholder' => 'Example : S-0Sq67GFD9Y5iXmi5iXMKsA',
+        'description' => __('Please enter your Billplz X Signature Key. ', 'wcbillplz') . ' ' . sprintf(__('Login to Billplz >> Settings >> Enable X Signature. %sLink%s.', 'wcbillplz'), '<a href="https://www.billplz.com/enterprise/billing" target="_blank">', '</a>'),
+        'default' => ''
+    ),
     'notification' => array(
         'title' => __('Bill Notification', 'wcbillplz'),
         'type' => 'select',
@@ -60,10 +55,10 @@ return array(
         'default' => 'None',
         'desc_tip' => true,
         'options' => array(
-            'None' => __('No Notification', 'wcbillplz'),
-            'Email' => __('Email Only (FREE)', 'wcbillplz'),
-            'SMS' => __('SMS Only (RM0.15)', 'wcbillplz'),
-            'Both' => __('Both (RM0.15)', 'wcbillplz')
+            '0' => __('No Notification', 'wcbillplz'),
+            '1' => __('Email Only (FREE)', 'wcbillplz'),
+            '2' => __('SMS Only (RM0.15)', 'wcbillplz'),
+            '3' => __('Both (RM0.15)', 'wcbillplz')
         )
     ),
     'clearcart' => array(

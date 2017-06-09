@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
-Tested up to: 4.7.2
-Stable tag: 3.14
+Tested up to: 4.8
+Stable tag: 3.15
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -17,19 +17,22 @@ For Installation Instruction, please refer to:
 [How to Install](http://bit.ly/1SwkWJL)
 
 == Upgrade Notice == 
-You need to do a Full Installation for this update due to changes that we do on Cron Jobs. 
 
-1. Deactivate this plugin
-2. Delete
-3. Add New >> Billplz
-4. Install & Activate
-5. Configure this plugin
-6. Save Changes (MANDATORY)
+WARNING! THIS UPDATE MAY BREAK YOUR SITE!
+
+Please re-configure the plugin after updating to version 3.15
+1. Make sure your PHP Version is : 5.6/7.0/7.1
+2. Set X Signature Key
 
 == Screenshots ==
 * Will available soon
 
 == Changelog ==
+
+= 3.15 =
+* NEW: Implemented API Calls by using Billplz-API-Class (GitHub.com/wzul)
+* NEW: API Calls now will made by using GuzzleHttp 6.0
+* REMOVED: Option for Mode are removed. Automatic detection by API Key
 
 = 3.14 =
 * NEW: Instruction added after payment

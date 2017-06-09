@@ -39,7 +39,6 @@ function wcbillplz_delete_bills() {
     global $wpdb;
     $sql = "SELECT option_value FROM $wpdb->options WHERE  option_name = 'woocommerce_billplz_settings'";
     $gatewayParam = unserialize($wpdb->get_var($sql));
-    $mode = $gatewayParam['teststaging'];
     $api_key = $gatewayParam['api_key'];
 
     $sql = "SELECT $wpdb->posts.ID 
@@ -53,72 +52,34 @@ function wcbillplz_delete_bills() {
             WHERE meta_key = '_wc_billplz_id')";
 
     $post_id = $wpdb->get_results($sql);
-    $billplz = new DeleteBill($api_key, $mode);
+    require_once(__DIR__ . '/billplz.php');
+    $billplz = new Billplz($api_key);
     if (!empty($post_id)) {
         foreach ($post_id as $value) {
             $sql = get_post_meta($value->ID, '_wc_billplz_id', false);
             foreach ($sql as $bill_id) {
-                if ($billplz->prepare()->setInfo($bill_id)->process()->checkBill()) {
+                $deleteProcess = $billplz->deleteBill($bill_id);
+                if ($deleteProcess) {
                     delete_post_meta($value->ID, '_wc_billplz_hash');
                     delete_post_meta($value->ID, '_wc_billplz_url');
                     delete_post_meta($value->ID, '_wc_billplz_id');
                     //error_log('Bills ' . $bill_id . ' has successfully removed from DB and/or Billplz');
+                } elseif (!$deleteProcess) {
+                    $moreData = $billplz->check_bill($bill_id);
+                    if (isset($moreData['state'])) {
+                        if ($moreData['state'] == 'paid') {
+                            delete_post_meta($value->ID, '_wc_billplz_hash');
+                            delete_post_meta($value->ID, '_wc_billplz_url');
+                            delete_post_meta($value->ID, '_wc_billplz_id');
+                        }
+                    }
                 } else {
                     //error_log('Bills ' . $bill_id . ' has not removed from DB and Billplz');
+                    //Maybe because of pending payment by the user
                 }
             }
         }
     } else {
         //error_log('WP Cron for Billplz for WooCommerce does not delete anything because no order has been found');
     }
-}
-
-if (!class_exists('DeleteBill')) {
-
-    class DeleteBill {
-
-        var $api_key, $mode, $id, $objdelete, $objcheck;
-
-        public function __construct($api_key, $mode) {
-            require_once(__DIR__ . '/billplz.php');
-            $this->api_key = $api_key;
-            $this->mode = $mode;
-            $this->objdelete = new curlaction;
-            $this->objcheck = new billplz;
-        }
-
-        public function prepare() {
-            $this->objdelete->setAPI($this->api_key)->setAction('DELETE');
-            return $this;
-        }
-
-        public function setInfo($id) {
-            //this->id is saved for checkBill() function
-            $this->id = $id;
-            $this->objdelete->setURL($this->mode, $id);
-            return $this;
-        }
-
-        public function process() {
-            $this->objdelete->curl_action('');
-            return $this;
-        }
-
-        public function checkBill() {
-            $data = $this->objcheck->check_bill($this->api_key, $this->id, $this->mode);
-            if (isset($data['state'])) {
-                // Hidden dah buang. Paid tak boleh buang
-                if ($data['state'] == 'hidden' || $data['state'] == 'paid') {
-                    // True maksudnya dah buang
-                    return true;
-                }
-                // False maknya tak buang
-                return false;
-            } else {
-                return false;
-            }
-        }
-
-    }
-
 }
