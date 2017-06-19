@@ -5,7 +5,7 @@
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wanzul Hosting Enterprise
  * Author URI: http://www.wanzul-hosting.com/
- * Version: 3.15
+ * Version: 3.16
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
@@ -205,8 +205,8 @@ function wcbillplz_gateway_load() {
             /*
              *  Calculate MD5 Hash and Shorten it
              */
-            $md5hash = substr(md5(strtolower($order->billing_first_name . $order->billing_last_name . $order->billing_email .
-                                    $order->billing_phone . number_format($order->order_total) . $order_id . $this->collection_id)), 1, 6);
+            $md5hash = substr(md5(strtolower($order->get_billing_first_name() . $order->get_billing_last_name() . $order->get_billing_email() .
+                                    $order->get_billing_phone() . number_format($order->get_total()) . $order_id . $this->collection_id)), 1, 6);
 
             if (get_post_meta($order_id, '_wc_billplz_hash', true) === '') {
                 update_post_meta($order_id, '_wc_billplz_hash', $md5hash);
@@ -248,11 +248,11 @@ function wcbillplz_gateway_load() {
             $obj = new Billplz($this->api_key);
             
             $obj->setCollection($this->collection_id)
-                    ->setName($order->billing_first_name . " " . $order->billing_last_name)
-                    ->setAmount($order->order_total)
+                    ->setName($order->get_billing_first_name() . " " . $order->get_billing_last_name())
+                    ->setAmount($order->get_total())
                     ->setDeliver($deliver)
-                    ->setMobile($order->billing_phone)
-                    ->setEmail($order->billing_email)
+                    ->setMobile($order->get_billing_phone())
+                    ->setEmail($order->get_billing_email())
                     ->setDescription($desc)
                     ->setReference_1($order_id)
                     ->setReference_1_Label('Order ID')
@@ -394,18 +394,18 @@ function wcbillplz_gateway_load() {
          */
         private function save_payment($order, $data, $type) {
             $referer = "<br>Receipt URL: " . "<a href='" . urldecode($data['url']) . "' target=_blank>" . urldecode($data['url']) . "</a>";
-            $referer .= "<br>Order ID: " . $order->id;
+            $referer .= "<br>Order ID: " . $order->get_id();
             $referer .= "<br>Collection ID: " . $data['collection_id'];
             $referer .= "<br>Type: " . $type;
 
-            $bill_id = get_post_meta($order->id, '_transaction_id', true);
+            $bill_id = get_post_meta($order->get_id(), '_transaction_id', true);
 
             if (empty($bill_id)) {
                 $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $data['id'] . ' ' . $referer);
                 $order->payment_complete($data['id']);
-                self::log($type . ', bills ' . $data['id'] . '. Order #' . $order->id . ' updated in WooCommerce as Paid');
+                self::log($type . ', bills ' . $data['id'] . '. Order #' . $order->get_id() . ' updated in WooCommerce as Paid');
             } elseif ($bill_id === $data['id']) {
-                self::log($type . ', bills ' . $data['id'] . '. Order #' . $order->id . ' not updated due to Duplicate');
+                self::log($type . ', bills ' . $data['id'] . '. Order #' . $order->get_id() . ' not updated due to Duplicate');
             }
         }
 
@@ -428,7 +428,7 @@ function wcbillplz_gateway_load() {
          */
         public function email_instructions($order, $sent_to_admin, $plain_text = false) {
 
-            if ($this->instructions && !$sent_to_admin && 'offline' === $order->payment_method && $order->has_status('on-hold')) {
+            if ($this->instructions && !$sent_to_admin && 'offline' === $order->get_payment_method() && $order->has_status('on-hold')) {
                 echo wpautop(wptexturize($this->instructions)) . PHP_EOL;
             }
         }

@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.8
-Stable tag: 3.15
+Stable tag: 3.16
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -20,7 +20,7 @@ For Installation Instruction, please refer to:
 
 WARNING! THIS UPDATE MAY BREAK YOUR SITE!
 
-Please re-configure the plugin after updating to version 3.15
+Please re-configure the plugin if you upgrading from version 3.14 or ealier
 1. Make sure your PHP Version is : 5.6/7.0/7.1
 2. Set X Signature Key
 
@@ -29,9 +29,16 @@ Please re-configure the plugin after updating to version 3.15
 
 == Changelog ==
 
+= 3.16 =
+* IMPROVED: Fix for WooCommerce 3.0 API Issue (do_it_wrong: wc_order)
+* IMPROVED: Fix guzzle issue having same class name and function
+
 = 3.15 =
 * NEW: Implemented API Calls by using Billplz-API-Class (GitHub.com/wzul)
 * NEW: API Calls now will made by using GuzzleHttp 6.0
+* NEW: X Signature Key is MANDATORY to be set
+* CHANGED: Collection ID is optional to be set
+* REMOVED: Support for PHP 5.4 and older are removed
 * REMOVED: Option for Mode are removed. Automatic detection by API Key
 
 = 3.14 =
@@ -49,17 +56,6 @@ Please re-configure the plugin after updating to version 3.15
 * NEW: Clear cart option on checkout
 * CHANGED: Corrected Plugin URL
 * IMPROVED: Plugin file structure
-
-= 3.11 =
-* SECURITY: Amount spoofing issue has been fixed. 
-
-= 3.10 =
-* REMOVED: Backwards compatible checks are removed
-* REMOVED: Auto Submit option. No longer supported by API
-* IMPROVED: Receipt URL can now easily tracked by cliking on it
-* IMPROVED: Billplz API Call using WordPress Library (wp_safe_remote_post)
-* NEW: Compatible with Windows-Based Server hosting
-* NEW: Option to choose type of payment validation
 
 == Installation ==
 
