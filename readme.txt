@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.8
-Stable tag: 3.16
+Stable tag: 3.17
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -28,6 +28,16 @@ Please re-configure the plugin if you upgrading from version 3.14 or ealier
 * Will available soon
 
 == Changelog ==
+
+= 3.17 =
+* IMPROVED: Compatibility with WooCommerce 2.x and 3.x
+* IMPROVED: Some minor issue with template customization
+* IMPROVED: There will be no leftover table data after Uninstallation
+* IMPROVED: Reduced database query on Bills creation
+* IMPROVED: No additional page on redirection to Billplz
+* IMPROVED: Billplz Auto Invalidate Bills are also run on Hooks.
+* IMPROVED: No Bills will be left unpaid for Bills Created in version 3.17
+* UPDATED: Billplz API Class 3.04
 
 = 3.16 =
 * IMPROVED: Fix for WooCommerce 3.0 API Issue (do_it_wrong: wc_order)
