@@ -573,7 +573,7 @@ add_action('woocommerce_order_item_add_action_buttons', array('WC_Billplz_Gatewa
  * Delete Bills before deleting order
  */
 add_action('before_delete_post', array('WC_Billplz_Gateway', 'delete_order'), 10, 1);
-add_action('trash_post', array('WC_Billplz_Gateway', 'delete_order'));
+add_action('wp_trash_post', array('WC_Billplz_Gateway', 'delete_order'));
 
 require __DIR__ . '/includes/invalidatebills.php';
 
