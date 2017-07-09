@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wanzul Hosting Enterprise
  * Author URI: http://www.wanzul-hosting.com/
- * Version: 3.17
+ * Version: 3.18
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
@@ -18,8 +18,7 @@
 function billplz_for_wooocommerce_plugin_uninstall()
 {
     global $wpdb;
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'billplz_fwoo_order_id_%'");
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'billplz_fwoo_clutter_%'");
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'billplz_fwoo_%'");
 }
 register_uninstall_hook(__FILE__, 'billplz_for_wooocommerce_plugin_uninstall');
 
@@ -250,6 +249,8 @@ function wcbillplz_gateway_load()
                 );
             }
 
+            $data['name'] = $data['first_name'] . ' ' . $data['last_name'];
+
             /*
              * Compatibility with some themes
              */
@@ -267,12 +268,10 @@ function wcbillplz_gateway_load()
          * 
          * @return string Return URL
          */
-        protected function create_bill($order)
+        protected function create_bill($order, $order_data)
         {
             require_once(__DIR__ . '/includes/billplz.php');
             $deliver = $this->notification;
-
-            $order_data = self::get_order_data($order);
 
             /**
              * Generate Description for Bills
@@ -286,7 +285,7 @@ function wcbillplz_gateway_load()
             $obj = new Billplz($this->api_key);
 
             $obj->setCollection($this->collection_id)
-                ->setName($order_data['first_name'] . " " . $order_data['last_name'])
+                ->setName($order_data['name'])
                 ->setAmount($order_data['total'])
                 ->setDeliver($deliver)
                 ->setMobile($order_data['phone'])
@@ -349,20 +348,35 @@ function wcbillplz_gateway_load()
              */
 
             $order = new WC_Order($order_id);
+            $order_data = self::get_order_data($order);
 
-            $bills = $this->create_bill($order);
+            $md5 = substr(md5(strtolower($order_data['name'] . $order_data['email'] . $order_data['phone'])), 0, 6);
 
             /*
-             * If previously the order has 2 bills, store one to junk
+             * If previously the order has created Bills, use it if details are same
+             * Otherwise, set it to clutter and create new bills
+             * If previously the order has not created any Bills, create new bills
              */
             $bills_before = get_option('billplz_fwoo_order_id_' . $order_id, false);
+            $data_before = get_option('billplz_fwoo_order_id_data_' . $order_id, false);
             if ($bills_before) {
-                update_option('billplz_fwoo_clutter_' . $bills_before, $order_id, false);
+                if ($data_before === $md5) {
+                    $bills['id'] = $bills_before;
+                    $bills['url'] = get_option('billplz_fwoo_order_id_url_' . $order_id, false);
+                } else {
+                    $bills = $this->create_bill($order, $order_data);
+                    update_option('billplz_fwoo_clutter_' . $bills_before, $order_id, false);
+                }
+            }else {
+                $bills = $this->create_bill($order, $order_data);
             }
+            
             /*
              * Save to Database for cleaning later
              */
             update_option('billplz_fwoo_order_id_' . $order_id, $bills['id'], false);
+            update_option('billplz_fwoo_order_id_url_' . $order_id, $bills['url'], false);
+            update_option('billplz_fwoo_order_id_data_' . $order_id, $md5, false);
 
             return array(
                 'result' => 'success',

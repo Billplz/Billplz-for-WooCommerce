@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
 Tested up to: 4.8
-Stable tag: 3.17
+Stable tag: 3.18
 Donate link: https://www.billplz.com/hpojtffm3
 Requires at least: 4.3
 License: GPLv2 or later
@@ -29,6 +29,10 @@ Please re-configure the plugin if you upgrading from version 3.14 or ealier
 
 == Changelog ==
 
+= 3.18 =
+
+* IMPROVED: Bills will not be created twice in some circumstances
+
 = 3.17 =
 * IMPROVED: Compatibility with WooCommerce 2.x and 3.x
 * IMPROVED: Some minor issue with template customization
@@ -54,18 +58,6 @@ Please re-configure the plugin if you upgrading from version 3.14 or ealier
 = 3.14 =
 * NEW: Instruction added after payment
 * IMPROVED: PHP 5.3 Compatibility
-
-= 3.13 =
-* IMPROVED: Callback/Return response handling
-* IMPROVED: Plugin workaround
-* REMOVED: IPN Option. Will be Both by default
-
-= 3.12 =
-
-* NEW: Logging feature
-* NEW: Clear cart option on checkout
-* CHANGED: Corrected Plugin URL
-* IMPROVED: Plugin file structure
 
 == Installation ==
 
