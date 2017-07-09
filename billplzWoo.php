@@ -108,6 +108,7 @@ function wcbillplz_gateway_load()
             $this->has_fields = false;
             $this->method_title = __('Billplz', 'wcbillplz');
             $this->debug = 'yes' === $this->get_option('debug', 'no');
+            $this->order_button_text = __('Proceed to Billplz', 'woocommerce');
 
             // Load the form fields.
             $this->init_form_fields();
@@ -233,8 +234,8 @@ function wcbillplz_gateway_load()
                 $data = array(
                     'first_name' => !empty($order->billing_first_name) ? $order->billing_first_name : $order->shipping_first_name,
                     'last_name' => !empty($order->billing_last_name) ? $order->billing_last_name : $order->shipping_last_name,
-                    'email' => !empty($order->billing_email) ? $order->billing_email : $order->shipping_email,
-                    'phone' => !empty($order->billing_phone) ? $order->billing_phone : $order->shipping_phone,
+                    'email' => $order->billing_email,
+                    'phone' => $order->billing_phone,
                     'total' => $order->order_total,
                     'id' => $order->id,
                 );
@@ -242,15 +243,20 @@ function wcbillplz_gateway_load()
                 $data = array(
                     'first_name' => !empty($order->get_billing_first_name()) ? $order->get_billing_first_name() : $order->get_shipping_first_name(),
                     'last_name' => !empty($order->get_billing_last_name()) ? $order->get_billing_last_name() : $order->get_shipping_last_name(),
-                    'email' => !empty($order->get_billing_email()) ? $order->get_billing_email() : $order->get_shipping_email(),
-                    'phone' => !empty($order->get_billing_phone()) ? $order->get_billing_phone() : $order->get_shipping_phone(),
+                    'email' => $order->get_billing_email(),
+                    'phone' => $order->get_billing_phone(),
                     'total' => $order->get_total(),
                     'id' => $order->get_id(),
                 );
             }
 
+            /*
+             * Compatibility with some themes
+             */
             $data['email'] = !empty($data['email']) ? $data['email'] : $order->get_meta('_shipping_email');
             $data['email'] = !empty($data['email']) ? $data['email'] : $order->get_meta('shipping_email');
+            $data['phone'] = !empty($data['phone']) ? $data['phone'] : $order->get_meta('_shipping_phone');
+            $data['phone'] = !empty($data['phone']) ? $data['phone'] : $order->get_meta('shipping_phone');
 
             return $data;
         }
@@ -553,7 +559,6 @@ function wcbillplz_gateway_load()
     }
 
 }
-
 /*
  * If the order status is changed, try to delet Bills
  */
@@ -568,6 +573,7 @@ add_action('woocommerce_order_item_add_action_buttons', array('WC_Billplz_Gatewa
  * Delete Bills before deleting order
  */
 add_action('before_delete_post', array('WC_Billplz_Gateway', 'delete_order'), 10, 1);
+add_action('trash_post', array('WC_Billplz_Gateway', 'delete_order'));
 
 require __DIR__ . '/includes/invalidatebills.php';
 
