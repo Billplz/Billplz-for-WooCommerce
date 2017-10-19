@@ -1,20 +1,18 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
-Tested up to: 4.8
+Tested up to: 4.8.2
 Stable tag: 3.18
-Donate link: https://www.billplz.com/hpojtffm3
+Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Requires PHP: 5.6
 
 Accept Internet Banking Payment by using Billplz. 
 
 == Description ==
 Install this plugin to accept payment using Billplz (Maybank2u, CIMB Clicks, Bank Islam, FPX). 
-
-For Installation Instruction, please refer to:
-[How to Install](http://bit.ly/1SwkWJL)
 
 == Upgrade Notice == 
 
@@ -25,7 +23,10 @@ Please re-configure the plugin if you upgrading from version 3.14 or ealier
 2. Set X Signature Key
 
 == Screenshots ==
-* Will available soon
+* Installing Billplz for WooCommerce
+* Activate plugin after installation
+* Set API Secret Key and X Signature Key
+* Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
 
@@ -61,24 +62,41 @@ Please re-configure the plugin if you upgrading from version 3.14 or ealier
 
 == Installation ==
 
-For Installation Instruction, please refer to:
-[How to Install](http://bit.ly/1SwkWJL)
+**Step 1:**
+
+- Login to your *WordPress Dashboard*
+- Navigate to **Plugins >> Add New**
+- Search **Billplz for WooCommerce >> Install Now**
+
+**Step 2:**
+
+- Activate Plugin
+
+**Step 3:**
+
+- Insert your **API Secret Key** and **X Signature Key**
+- Save changes
 
 == Frequently Asked Questions ==
 
-= Where can I get Collection ID? =
 
-You can the Collection ID at your Billplz Billing. Login to http://www.billplz.com
+= Where can I get **API Secret Key**? =
 
+You can the API Secret Key at your Billplz Account Settings. [Get it here](https://www.billplz.com/enterprise/setting)
+
+= Where can I get X Signature Key? =
+
+You can the X Signature Key at your Billplz Account Settings. [Get it here](https://www.billplz.com/enterprise/setting)
 
 = Troubleshooting =
 
-If you get infinite loop or JSON-like error:
-1. Ensure the correct API Key and Collection ID has been set up
-2. Contact us at sales@wanzul-hosting.com
+1. If you are not getting a **Callback/Redirect** response from Billplz:
+
+	Please make sure you have **Tick "Enable XSignature Payment Completion"** on Billplz Account Settings and make sure you have set your **X Signature Key**.
+	
+2. If you want both Email & Phone Number to be captured on Bills:
+
+	Set Notification settings to **No Notification** or **Both**	
 
 == Links ==
-[Wanzul Hosting](http://wanzul-hosting.com/) is the most reliable, cheap, recommended by the most web master around the world.
-
-== Thanks ==
-Special thanks to Akhie Joe for designing the button/banner and all donators! Thank You so much!
+[Sign Up](http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/) for Billplz account to accept payment using Billplz now!
