@@ -74,6 +74,7 @@ Please re-configure the plugin if you upgrading from version 3.14 or ealier
 
 **Step 3:**
 
+- Navigate to **WooCommerce >> Settings >> Checkout >> Billplz**
 - Insert your **API Secret Key** and **X Signature Key**
 - Save changes
 
