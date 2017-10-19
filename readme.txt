@@ -80,7 +80,7 @@ Please re-configure the plugin if you upgrading from version 3.14 or ealier
 == Frequently Asked Questions ==
 
 
-= Where can I get **API Secret Key**? =
+= Where can I get API Secret Key? =
 
 You can the API Secret Key at your Billplz Account Settings. [Get it here](https://www.billplz.com/enterprise/setting)
 
