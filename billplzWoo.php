@@ -4,12 +4,15 @@
  * Plugin Name: Billplz for WooCommerce
  * Plugin URI: https://wordpress.org/plugins-wp/billplz-for-woocommerce/
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
- * Author: Wanzul Hosting Enterprise
- * Author URI: http://www.wanzul-hosting.com/
+ * Author: Wan @ Billplz
+ * Author URI: http://fb.com/billplzplugin
  * Version: 3.18
+ * Requires PHP: 5.6
  * License: GPLv3
  * Text Domain: wcbillplz
  * Domain Path: /languages/
+ * WC requires at least: 3.0
+ * WC tested up to: 3.2.6
  */
 /*
  * Remove databaser record on uninstallation
