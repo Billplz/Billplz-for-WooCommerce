@@ -39,7 +39,7 @@ class Connect
         }
     }
 
-    public function setMode(bool $is_staging = false)
+    public function setMode($is_staging = false)
     {
         $this->is_staging = $is_staging;
         if ($is_staging) {
@@ -427,7 +427,7 @@ class Connect
         throw new \Exception('X Signature Calculation Mismatch!');
     }
 
-    public function deactivateColletionArray(array $parameter, string $option = 'deactivate')
+    public function deactivateColletionArray(array $parameter, $option = 'deactivate')
     {
         $return_array = array();
 
@@ -452,7 +452,7 @@ class Connect
         return $return_array;
     }
 
-    public function deactivateCollection(string $title, string $option = 'deactivate')
+    public function deactivateCollection(string $title, $option = 'deactivate')
     {
         $url = $this->url . 'v3/collections/'.$title.'/'.$option;
 

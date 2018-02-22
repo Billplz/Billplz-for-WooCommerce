@@ -132,7 +132,7 @@ class API
         throw new \Exception('Activate Collection Error!');
     }
 
-    public function createBill(array $parameter, array $optional = array(), string $sendCopy = '')
+    public function createBill(array $parameter, array $optional = array(), $sendCopy = '')
     {
         /* Email or Mobile must be set */
         if (empty($parameter['email']) && empty($parameter['mobile'])) {
