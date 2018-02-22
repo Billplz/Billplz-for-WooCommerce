@@ -13,7 +13,7 @@
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 3.3.2
+ * WC tested up to: 3.3.3
  */
 
 /* Load Billplz Class */
@@ -316,25 +316,23 @@ function bfw_load()
                 'name' => $order_data['name'],
                 'amount' => intval($order_data['total'] * 100),
                 'callback_url' => home_url('/?wc-api=WC_Billplz_Gateway'),
-                'description' => apply_filters('bfw_description', $description)
+                'description' => mb_substr(apply_filters('bfw_description', $description), 0, 199)
             );
 
             $optional = array(
                 'redirect_url' => home_url('/?wc-api=WC_Billplz_Gateway'),
-                'reference_1_label' => apply_filters('bfw_reference_1_label', $this->reference_1_label),
-                'reference_1' => apply_filters('bfw_reference_1', $this->reference_1),
+                'reference_1_label' => mb_substr(apply_filters('bfw_reference_1_label', $this->reference_1_label), 0, 19),
+                'reference_1' => mb_substr(apply_filters('bfw_reference_1', $this->reference_1), 0, 119),
                 'reference_2_label' => 'Order ID',
                 'reference_2' => $order_data['id']
             );
-
-            $deliver = $this->notification;
 
             self::log('Connecting to Billplz API for order number #' . $order_data['id']);
             $connnect = (new \Billplz\WPConnect($this->api_key))->detectMode();
             self::log('Creating bill for order number #' . $order_data['id']);
 
             $billplz = new \Billplz\API($connnect);
-            list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, $deliver));
+            list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, $this->notification));
 
             if ($rheader !== 200) {
                 self::log('Error Creating bill for order number #' . $order_data['id'] . print_r($rbody, true));
@@ -415,8 +413,8 @@ function bfw_load()
                 wp_redirect($redirectpath);
             } else {
                 echo 'RECEIVEOK';
+                exit;
             }
-            exit;
         }
 
         /**
@@ -500,16 +498,25 @@ function bfw_delete_order($post_id)
     if ($post_type !== 'shop_order') {
         return;
     }
+
     $bill_id = get_post_meta($post_id, 'billplz_id', true);
     $api_key = get_post_meta($post_id, 'billplz_api_key', true);
     $bill_paid = get_post_meta($post_id, 'billplz_paid', true);
+
+    if (empty($bill_id) || empty($api_key) || empty($bill_paid)) {
+        return;
+    }
+
+    if ($bill_paid === 'true') {
+        return;
+    }
 
     $connnect = (new \Billplz\WPConnect($api_key))->detectMode();
     $billplz = new \Billplz\API($connnect);
     list($rheader, $rbody) = $billplz->deleteBill($bill_id);
 
-    if ($rheader !== 200 && $bill_paid === 'false') {
-        wp_die('Bill cannot be deleted since the payment is ongoing. Deleting this posts has been prevented. '.print_r($rbody, true));
+    if ($rheader !== 200) {
+        wp_die('Deleting this order has been prevented. '.print_r($rbody, true));
     }
 }
 add_action('before_delete_post', 'bfw_delete_order');

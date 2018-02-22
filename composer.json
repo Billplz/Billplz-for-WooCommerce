@@ -1,0 +1,16 @@
+{
+    "name": "billplz/billplz-for-woocommerce",
+    "description": "A Billplz plugin for integration with WooCommerce",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Wan",
+            "email": "wan@billplz.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.6"
+    }
+}
