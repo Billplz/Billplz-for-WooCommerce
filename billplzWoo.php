@@ -401,6 +401,7 @@ function bfw_load()
                     $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $bill['id'] . ' ' . $referer);
                     $order->payment_complete($bill['id']);
                     self::log($type . ', bills ' . $bill['id'] . '. Order #' . $order_data['id'] . ' updated in WooCommerce as Paid');
+                    do_action('bfw_on_payment_success_update', $order);
                 } elseif ($bill_id === $bill['id']) {
                     self::log($type . ', bills ' . $bill['id'] . '. Order #' . $order_data['id'] . ' not updated due to Duplicate');
                 }
