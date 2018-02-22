@@ -108,7 +108,6 @@ function bfw_load()
             $this->has_fields = apply_filters('bfw_has_fields', false);
             $this->method_title = __('Billplz', 'bfw');
             $this->debug = 'yes' === $this->get_option('debug', 'no');
-            $this->order_button_text = apply_filters('bfw_proceed_to_billplz', __('Proceed to Billplz', 'bfw'));
 
             // Load the form fields.
             $this->init_form_fields();
@@ -117,6 +116,9 @@ function bfw_load()
 
             /* Enable settings value alteration through plugins/themes function */
             $this->settings = apply_filters('bfw_settings_value', $this->settings);
+
+            /* Customize checkout button label */
+            $this->order_button_text = apply_filters('bfw_proceed_to_billplz', __($this->settings['checkout_label'], 'bfw'));
 
             // Define user setting variables.
             $this->title = $this->settings['title'];

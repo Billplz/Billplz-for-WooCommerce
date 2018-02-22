@@ -97,5 +97,12 @@ return array(
         'title' => __('Reference 1', 'bfw'),
         'type' => 'text',
         'default' => ''
+    ),
+    'checkout_label' => array(
+        'title' => __('Checkout Label', 'bfw'),
+        'type' => 'text',
+        'placeholder' => 'Example: Pay with Billplz',
+        'description' => __('Button label on checkout.', 'bfw'),
+        'default' => 'Pay with Billplz'
     )
 );

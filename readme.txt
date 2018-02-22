@@ -1,26 +1,24 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
-Tested up to: 4.8.2
-Stable tag: 3.18
+Tested up to: 4.9.4
+Stable tag: 3.20.0
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
-Requires at least: 4.3
-License: GPLv2 or later
+Requires at least: 4.6
+License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP: 5.6
 
-Accept Internet Banking Payment by using Billplz. 
+Accept Internet Banking Payment by using Billplz.
 
 == Description ==
-Install this plugin to accept payment using Billplz (Maybank2u, CIMB Clicks, Bank Islam, FPX). 
+Install this plugin to accept payment using Billplz (Maybank2u, CIMB Clicks, Bank Islam, FPX).
 
-== Upgrade Notice == 
+== Upgrade Notice ==
 
-WARNING! THIS UPDATE MAY BREAK YOUR SITE!
+WARNING! THIS UPDATE WILL BREAK YOUR SITE!
 
-Please re-configure the plugin if you upgrading from version 3.14 or ealier
-1. Make sure your PHP Version is : 5.6/7.0/7.1
-2. Set X Signature Key
+Please re-configure the plugin if you upgrading from version 3.19.0 or earlier
 
 == Screenshots ==
 * Installing Billplz for WooCommerce
@@ -30,35 +28,19 @@ Please re-configure the plugin if you upgrading from version 3.14 or ealier
 
 == Changelog ==
 
+= 3.20.0 =
+
+* NEW: Introduced semantic versioning. X.Y.Z (X: API Version, Y: Major Release, Z: Minor Release)
+* NEW: Ability to customize Proceed to Checkout button label
+* NEW: Ability to add more information on Bills using Reference 2
+* IMPROVED: Order is now strongly coupled with Bill
+* IMPROVED: CPU usage spike by previous version caused by Cron Jobs
+* IMPROVED: Filters and Action Hooks are introduced
+* IMPROVED: Support for using composer
+
 = 3.18 =
 
 * IMPROVED: Bills will not be created twice in some circumstances
-
-= 3.17 =
-* IMPROVED: Compatibility with WooCommerce 2.x and 3.x
-* IMPROVED: Some minor issue with template customization
-* IMPROVED: There will be no leftover table data after Uninstallation
-* IMPROVED: Reduced database query on Bills creation
-* IMPROVED: No additional page on redirection to Billplz
-* IMPROVED: Billplz Auto Invalidate Bills are also run on Hooks.
-* IMPROVED: No Bills will be left unpaid for Bills Created in version 3.17
-* UPDATED: Billplz API Class 3.04
-
-= 3.16 =
-* IMPROVED: Fix for WooCommerce 3.0 API Issue (do_it_wrong: wc_order)
-* IMPROVED: Fix guzzle issue having same class name and function
-
-= 3.15 =
-* NEW: Implemented API Calls by using Billplz-API-Class (GitHub.com/wzul)
-* NEW: API Calls now will made by using GuzzleHttp 6.0
-* NEW: X Signature Key is MANDATORY to be set
-* CHANGED: Collection ID is optional to be set
-* REMOVED: Support for PHP 5.4 and older are removed
-* REMOVED: Option for Mode are removed. Automatic detection by API Key
-
-= 3.14 =
-* NEW: Instruction added after payment
-* IMPROVED: PHP 5.3 Compatibility
 
 == Installation ==
 
@@ -94,10 +76,10 @@ You can the X Signature Key at your Billplz Account Settings. [Get it here](http
 1. If you are not getting a **Callback/Redirect** response from Billplz:
 
 	Please make sure you have **Tick "Enable XSignature Payment Completion"** on Billplz Account Settings and make sure you have set your **X Signature Key**.
-	
+
 2. If you want both Email & Phone Number to be captured on Bills:
 
-	Set Notification settings to **No Notification** or **Both**	
+	Set Notification settings to **No Notification** or **Both**
 
 == Links ==
 [Sign Up](http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/) for Billplz account to accept payment using Billplz now!
