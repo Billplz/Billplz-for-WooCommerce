@@ -205,7 +205,11 @@ function bfw_load()
 
         public function payment_fields()
         {
-            do_action('bfw_payment_fileds', $this);
+            if ($this->has_fields) {
+                do_action('bfw_payment_fileds', $this);
+            } elseif ($description = $this->get_description()) {
+                echo wpautop(wptexturize($description));
+            }
         }
 
         /**
