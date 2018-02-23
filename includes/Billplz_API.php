@@ -134,6 +134,7 @@ class API
 
     public function createBill(array $parameter, array $optional = array(), $sendCopy = '')
     {
+
         /* Email or Mobile must be set */
         if (empty($parameter['email']) && empty($parameter['mobile'])) {
             throw new \Exception("Email or Mobile must be set!");
@@ -179,8 +180,8 @@ class API
         $collection = $this->toArray($this->getCollection($parameter['collection_id']));
 
         /* If doesn't exists or belong to another merchant */
-        if ($collection[0] === 404 || $collection[0] === 401) {
-
+        /* + In-case the collection id is an empty string */
+        if ($collection[0] === 404 || $collection[0] === 401 || empty($parameter['collection_id'])) {
             /* Get All Active & Inactive Collection List */
             $collectionIndexActive = $this->toArray($this->getCollectionIndex(array('page'=>'1', 'status'=>'active')));
             $collectionIndexInactive = $this->toArray($this->getCollectionIndex(array('page'=>'1', 'status'=>'inactive')));
@@ -202,8 +203,6 @@ class API
                 $collection = $this->toArray($this->createCollection('Payment for Purchase'));
                 $parameter['collection_id'] = $collection[1]['id'];
             }
-        } else {
-            return $bill;
         }
 
         /* Create Bills */
