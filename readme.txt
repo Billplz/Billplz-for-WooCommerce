@@ -33,6 +33,7 @@ Please re-configure the plugin if you upgrading from version 3.19.0 or earlier
 * NEW: Introduced semantic versioning. X.Y.Z (X: API Version, Y: Major Release, Z: Minor Release)
 * NEW: Ability to customize Proceed to Checkout button label
 * NEW: Ability to add more information on Bills using Reference 2
+* NEW: Ability to re-query bill and order for payment status
 * IMPROVED: Order is now strongly coupled with Bill
 * IMPROVED: CPU usage spike by previous version caused by Cron Jobs
 * IMPROVED: Filters and Action Hooks are introduced

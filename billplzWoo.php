@@ -23,6 +23,9 @@ if (!class_exists('Billplz\API') && !class_exists('Billplz\WPConnect')) {
     require(__DIR__ . '/includes/Billplz_WPConnect.php');
 }
 
+/* Load Requery Bill Module */
+require 'includes/RequeryBill.php';
+
 function bfw_plugin_uninstall()
 {
     global $wpdb;
@@ -531,5 +534,4 @@ function bfw_delete_order($post_id)
     }
 }
 add_action('before_delete_post', 'bfw_delete_order');
-//add_action('wp_trash_post', array('WC_Billplz_Gateway', 'delete_order'));
-//add_action('billplz_bills_invalidator', 'bfw_delete_bills');
+//add_action('wp_trash_post', 'bfw_delete_order');
