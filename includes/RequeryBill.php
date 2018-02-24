@@ -142,7 +142,7 @@ class BfwRequery
         // Set class property
         // $this->options = get_option('bfw_option_name');?>
         <div class="wrap">
-        <h1>Billplz Bill Requery Tool</h1>
+        <h1>Billplz Bill Requery Tool (Experimental)</h1>
         <form method="post" action="options.php">
         <?php
         // This prints out all hidden setting fields
