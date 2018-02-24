@@ -501,6 +501,10 @@ function bfw_delete_order($post_id)
 {
     //global $post_type;
 
+    if (defined('BFW_DISABLE_DELETE') && BFW_DISABLE_DELETE) {
+        return;
+    }
+
     $post_type = get_post_type($post_id);
     if ($post_type !== 'shop_order') {
         return;
