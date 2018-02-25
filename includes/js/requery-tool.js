@@ -14,15 +14,16 @@ jQuery(document).ready(function($) {
    });
 
    $('#requery-all').click(function(){
-       $('#status_callback').text('Scanning...');
-       var data = {
+        $('#status_callback').text('Scanning...');
+        var data = {
            'action': 'bfw_requery_all'
-      };
-      // We can also pass the url value separately from ajaxurl for front end AJAX implementations
-      jQuery.post(ajax_object.ajax_url, data, function(response) {
-           $('#status_callback').html(response);
-      });
-      return false;
-  });
+        };
+
+        // We can also pass the url value separately from ajaxurl for front end AJAX implementations
+        jQuery.post(ajax_object.ajax_url, data, function(response) {
+            $('#status_callback').html(response);
+        });
+        return false;
+    });
 
 });

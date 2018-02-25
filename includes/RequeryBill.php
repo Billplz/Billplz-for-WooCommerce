@@ -73,8 +73,14 @@ function bfw_requery_single()
 function bfw_requery_all()
 {
     global $wpdb;
-    $results = $wpdb->get_results("select post_id, meta_key from $wpdb->postmeta where meta_value = 'false' AND meta_key = 'billplz_paid'", ARRAY_A);
+
+    set_time_limit(1800);
+    ignore_user_abort(true);
+
+    $sql = "select postmeta.post_id from $wpdb->postmeta postmeta, $wpdb->posts posts where postmeta.meta_value = 'false' AND postmeta.meta_key = 'billplz_paid'  AND posts.post_status<>'trash' AND posts.id=postmeta.post_id";
+    $results = $wpdb->get_results($sql, ARRAY_A);
     $output= array();
+
     foreach ($results as $result) {
         $order_id = $result['post_id'];
         $bill_id = get_post_meta($order_id, 'billplz_id', true);
@@ -84,6 +90,7 @@ function bfw_requery_all()
         if (empty($bill_id) || empty($bill_api_key) || empty($bill_paid)) {
             continue;
         }
+
         $connnect = (new \Billplz\WPConnect($bill_api_key))->detectMode();
         $billplz = new \Billplz\API($connnect);
         list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
