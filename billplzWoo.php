@@ -323,7 +323,7 @@ function bfw_load()
                 'email' => $order_data['email'],
                 'mobile'=> trim($order_data['phone']),
                 'name' => empty(trim($order_data['name'])) ? $order_data['email']: $order_data['name'],
-                'amount' => intval($order_data['total'] * 100),
+                'amount' => strval($order_data['total'] * 100),
                 'callback_url' => home_url('/?wc-api=WC_Billplz_Gateway'),
                 'description' => mb_substr(apply_filters('bfw_description', $description), 0, 199)
             );
