@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.0
+ * Version: 3.20.1
  * Requires PHP: 5.6
  * Requires at least: 4.6
  * License: GPLv3

@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,malaysia
-Tested up to: 4.9.4
-Stable tag: 3.20.0
+Tested up to: 4.9.6
+Stable tag: 3.18
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -28,6 +28,9 @@ Please re-configure the plugin if you upgrading from version 3.19.0 or earlier
 
 == Changelog ==
 
+= 3.20.1 =
+* FIX: Floating number precision issue.
+
 = 3.20.0 =
 
 * NEW: Introduced semantic versioning. X.Y.Z (X: API Version, Y: Major Release, Z: Minor Release)
@@ -38,10 +41,6 @@ Please re-configure the plugin if you upgrading from version 3.19.0 or earlier
 * IMPROVED: CPU usage spike by previous version caused by Cron Jobs
 * IMPROVED: Filters and Action Hooks are introduced
 * IMPROVED: Support for using composer
-
-= 3.18 =
-
-* IMPROVED: Bills will not be created twice in some circumstances
 
 == Installation ==
 
