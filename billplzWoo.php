@@ -420,12 +420,12 @@ function bfw_load()
 
                 if (empty($bill_id)) {
                     update_post_meta($order_id, 'billplz_paid', 'true');
-                    $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $bill['id'] . ' ' . $referer);
-                    $order->payment_complete($bill['id']);
-                    self::log($type . ', bills ' . $bill['id'] . '. Order #' . $order_data['id'] . ' updated in WooCommerce as Paid');
+                    $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $rbody['id'] . ' ' . $referer);
+                    $order->payment_complete($rbody['id']);
+                    self::log($type . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' updated in WooCommerce as Paid');
                     do_action('bfw_on_payment_success_update', $order);
-                } elseif ($bill_id === $bill['id']) {
-                    self::log($type . ', bills ' . $bill['id'] . '. Order #' . $order_data['id'] . ' not updated due to Duplicate');
+                } elseif ($bill_id === $rbody['id']) {
+                    self::log($type . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' not updated due to Duplicate');
                 }
                 $redirectpath = $order->get_checkout_order_received_url();
             } else {
