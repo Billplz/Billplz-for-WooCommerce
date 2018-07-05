@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.1
+ * Version: 3.20.2
  * Requires PHP: 5.6
  * Requires at least: 4.6
  * License: GPLv3
@@ -294,6 +294,24 @@ function bfw_load()
 
             /* Redirect to Bill Payment Page if has been created */
             $url = get_post_meta($order_id, 'billplz_url', true);
+
+            /* Check if the Bill is already deleted.
+             * Bill can be deleted via Billplz website too.
+            **/
+
+            $bill_id = get_post_meta($order_id, 'billplz_id', true);
+
+            self::log('Connecting to Billplz API for order id #' . $order_id);
+            $connnect = (new \Billplz\WPConnect($this->api_key))->detectMode();
+            $billplz = new \Billplz\API($connnect);
+
+            if (!empty($id)) {
+                list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
+                if ($rbody['state'] === 'hidden') {
+                    $url = '';
+                }
+            }
+
             if (!empty($url)) {
                 return array(
                     'result' => 'success',
@@ -336,11 +354,8 @@ function bfw_load()
                 'reference_2' => $order_data['id']
             );
 
-            self::log('Connecting to Billplz API for order number #' . $order_data['id']);
-            $connnect = (new \Billplz\WPConnect($this->api_key))->detectMode();
             self::log('Creating bill for order number #' . $order_data['id']);
 
-            $billplz = new \Billplz\API($connnect);
             list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, $this->notification));
 
             if ($rheader !== 200) {
