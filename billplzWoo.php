@@ -305,7 +305,7 @@ function bfw_load()
             $connnect = (new \Billplz\WPConnect($this->api_key))->detectMode();
             $billplz = new \Billplz\API($connnect);
 
-            if (!empty($id)) {
+            if (!empty($bill_id)) {
                 list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
                 if ($rbody['state'] === 'hidden') {
                     $url = '';
