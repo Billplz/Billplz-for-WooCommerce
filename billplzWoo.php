@@ -413,15 +413,15 @@ function bfw_load()
                 $referer .= "<br>Collection ID: " . $rbody['collection_id'];
                 $referer .= "<br>Type: " . $data['type'];
 
-                $bill_id = get_post_meta($order_data['id'], '_transaction_id', true);
+                $bill_paid = get_post_meta($order_data['id'], 'billplz_paid', true);
 
-                if (empty($bill_id)) {
+                if ($bill_paid === 'false') {
                     update_post_meta($order_id, 'billplz_paid', 'true');
                     $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $rbody['id'] . ' ' . $referer);
                     $order->payment_complete($rbody['id']);
                     self::log($type . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' updated in WooCommerce as Paid');
                     do_action('bfw_on_payment_success_update', $order);
-                } elseif ($bill_id === $rbody['id']) {
+                } elseif ($bill_paid === 'true') {
                     self::log($type . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' not updated due to Duplicate');
                 }
                 $redirectpath = $order->get_checkout_order_received_url();
