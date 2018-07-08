@@ -505,7 +505,7 @@ register_deactivation_hook(__FILE__, 'bfw_deactivate_cron');
 function bfw_add_bill_id($order)
 {
     $order_data = WC_Billplz_Gateway::get_order_data($order);
-    $bill_id = get_post_meta($order->ID, 'billplz_id', true);?>
+    $bill_id = get_post_meta($order->ID, '_transaction_id', true);?>
     <span class="description"><?php echo wc_help_tip(__('You may refer to Custom Fields to get more information', 'bfw')); ?> <?php echo 'Bill ID: ' . $bill_id; ?></span><?php
 }
 add_action('woocommerce_order_item_add_action_buttons', 'bfw_add_bill_id');
@@ -524,7 +524,7 @@ function bfw_delete_order($post_id)
         return;
     }
 
-    $bill_id = get_post_meta($post_id, 'billplz_id', true);
+    $bill_id = get_post_meta($post_id, '_transaction_id', true);
     $api_key = get_post_meta($post_id, 'billplz_api_key', true);
     $bill_paid = get_post_meta($post_id, 'billplz_paid', true);
 
