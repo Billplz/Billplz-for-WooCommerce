@@ -3,11 +3,11 @@
 /**
  * Plugin Name: Billplz for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/billplz-for-woocommerce/
- * Description: Billplz Payment Gateway | Accept Payment using all participating FPX Banking Channels. <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
+ * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.3
- * Requires PHP: 5.6
+ * Version: 3.20.4
+ * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
@@ -19,7 +19,6 @@
 /* Load Billplz Class */
 if (!class_exists('Billplz\API') && !class_exists('Billplz\WPConnect')) {
     require(__DIR__ . '/includes/Billplz_API.php');
-    require(__DIR__ . '/includes/Billplz_Connect.php');
     require(__DIR__ . '/includes/Billplz_WPConnect.php');
 }
 
@@ -30,7 +29,7 @@ function bfw_plugin_uninstall()
 {
     global $wpdb;
 
-    /* Retained for compatibility with previous version */
+    /* Remove rows that created from previous version */
     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'billplz_fwoo_%'");
 }
 register_uninstall_hook(__FILE__, 'bfw_plugin_uninstall');
@@ -190,6 +189,9 @@ function bfw_load()
             <p><?php
                 _e('To immediately reduce stock on add to cart, we strongly recommend you to use this plugin. ', 'bfw'); ?><a href="http://bit.ly/1UDOQKi" target="_blank">
                     WooCommerce Cart Stock Reducer</a></p>
+            <p><?php
+                _e('You may do a bill requery in-case order is not updated. ', 'bfw'); ?><a href="options-general.php?page=bfw-requery-tool" target="_blank">
+                    BFW Tool</a></p>
             <table class="form-table">
                 <?php
                     $this->generate_settings_html(); ?>
@@ -491,13 +493,13 @@ function bfw_load()
 }
 add_action('plugins_loaded', 'bfw_load', 0);
 
-function bfw_deactivate_cron()
+function bfw_clear_cron()
 {
-    /* Retained for compatibility with previous version */
-    $timestamp = wp_next_scheduled('billplz_bills_invalidator');
-    wp_unschedule_event($timestamp, 'billplz_bills_invalidator');
+    /* Removed hook that registered from previous version */
+    wp_clear_scheduled_hook('billplz_bills_invalidator');
 }
-register_deactivation_hook(__FILE__, 'bfw_deactivate_cron');
+register_deactivation_hook(__FILE__, 'bfw_clear_cron');
+add_action('upgrader_process_complete', 'bfw_clear_cron', 10, 2);
 
 /*
  * Display Billplz Bills URL on the Order Admin Page

@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
-Tags: billplz,paymentgateway,fpx,malaysia
-Tested up to: 4.9.6
-Stable tag: 3.19.0
+Tags: billplz,paymentgateway,fpx,boost
+Tested up to: 4.9.7
+Stable tag: 3.20.4
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -28,6 +28,10 @@ Please re-configure the plugin if you upgrading from version 3.19.0 or earlier
 
 == Changelog ==
 
+= 3.20.4 =
+* NEW: Added link on setting page to BFW Tool for Bill Requery
+* FIX: Added action hook to automatically remove cron created in version 3.19 and earlier
+
 = 3.20.1 =
 * FIX: Floating number precision issue.
 
@@ -40,7 +44,6 @@ Please re-configure the plugin if you upgrading from version 3.19.0 or earlier
 * IMPROVED: Order is now strongly coupled with Bill
 * IMPROVED: CPU usage spike by previous version caused by Cron Jobs
 * IMPROVED: Filters and Action Hooks are introduced
-* IMPROVED: Support for using composer
 
 == Installation ==
 

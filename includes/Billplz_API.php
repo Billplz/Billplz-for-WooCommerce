@@ -6,7 +6,7 @@ class API
 {
     private $connect;
 
-    public function __construct(\Billplz\Connect $connect)
+    public function __construct(\Billplz\WPConnect $connect)
     {
         $this->connect = $connect;
     }
@@ -155,7 +155,6 @@ class API
 
         /* Validate Mobile Number first */
         if (!empty($parameter['mobile'])) {
-
             /* Strip all unwanted character */
             $parameter['mobile'] = preg_replace('/[^0-9]/', '', $parameter['mobile']);
 
@@ -188,7 +187,6 @@ class API
 
             /* If Active Collection not available but Inactive Collection is available */
             if (empty($collectionIndexActive[1]['collections']) && !empty($collectionIndexInactive[1]['collections'])) {
-
                 /* Use inactive collection */
                 $parameter['collection_id'] = $collectionIndexInactive[1]['collections'][0]['id'];
             }
