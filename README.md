@@ -32,4 +32,4 @@ There 2 ways to Install this plugin:
 
 # Other
 
-Please open an issue or email to wan@wanzul-hosting.com
+Facebook: [Billplz Dev Jam](https://www.facebook.com/groups/billplzdevjam/)
