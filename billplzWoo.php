@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.4
+ * Version: 3.20.5
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
