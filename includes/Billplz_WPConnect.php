@@ -28,7 +28,7 @@ class WPConnect
         );
     }
 
-    public function setMode(bool $is_staging = false)
+    public function setMode($is_staging = false)
     {
         $this->is_staging = $is_staging;
         if ($is_staging) {
