@@ -16,9 +16,7 @@ Install this plugin to accept payment using Billplz.
 
 == Upgrade Notice ==
 
-WARNING! THIS UPDATE WILL BREAK YOUR SITE!
-
-Please re-configure the plugin if you upgrading from version 3.19.0 or earlier
+None
 
 == Screenshots ==
 * Installing Billplz for WooCommerce
