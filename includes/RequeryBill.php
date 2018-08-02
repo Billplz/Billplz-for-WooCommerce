@@ -42,7 +42,7 @@ function bfw_requery_single()
 
     foreach ($order_id_array as $order_id) {
         if (!empty($order_id)) {
-            $order_bill_id = get_post_meta($order_id, 'billplz_id', true);
+            $order_bill_id = get_post_meta($order_id, '_transaction_id', true);
             $order_bill_api_key = get_post_meta($order_id, 'billplz_api_key', true);
             $order_bill_paid = get_post_meta($order_id, 'billplz_paid', true);
 
@@ -83,7 +83,7 @@ function bfw_requery_all()
 
     foreach ($results as $result) {
         $order_id = $result['post_id'];
-        $bill_id = get_post_meta($order_id, 'billplz_id', true);
+        $bill_id = get_post_meta($order_id, '_transaction_id', true);
         $bill_api_key = get_post_meta($order_id, 'billplz_api_key', true);
         $bill_paid = get_post_meta($order_id, 'billplz_paid', true);
 
@@ -94,7 +94,6 @@ function bfw_requery_all()
         $connnect = (new \Billplz\WPConnect($bill_api_key))->detectMode();
         $billplz = new \Billplz\API($connnect);
         list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
-
         if ($rbody['paid']) {
             update_post_meta($order_id, 'billplz_paid', 'true');
             $order = new WC_Order($order_id);
@@ -249,15 +248,15 @@ class BfwRequery
     public function order_id_callback()
     {
         printf(
-             '<input type="text" id="order_id" name="bfw_option_name[order_id]" value="%s" />',
-             isset($this->options['order_id']) ? esc_attr($this->options['order_id']) : ''
-         );
+            '<input type="text" id="order_id" name="bfw_option_name[order_id]" value="%s" />',
+            isset($this->options['order_id']) ? esc_attr($this->options['order_id']) : ''
+        );
     }
 
     public function status_callback()
     {
         printf(
-             '<p id="status_callback"></p>'
+            '<p id="status_callback"></p>'
         );
     }
 

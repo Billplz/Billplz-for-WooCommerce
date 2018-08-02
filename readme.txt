@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.7
-Stable tag: 3.20.5
+Stable tag: 3.20.6
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -25,6 +25,12 @@ None
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.20.6 =
+* FIX: Fixed broken Requery Tool
+
+= 3.20.5 =
+* IMPROVED: Support for PHP 5.6
 
 = 3.20.4 =
 * NEW: Added link on setting page to BFW Tool for Bill Requery
