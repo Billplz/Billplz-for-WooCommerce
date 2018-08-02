@@ -44,6 +44,7 @@ Please re-configure the plugin if you upgrading from version 3.19.0 or earlier
 * IMPROVED: Order is now strongly coupled with Bill
 * IMPROVED: CPU usage spike by previous version caused by Cron Jobs
 * IMPROVED: Filters and Action Hooks are introduced
+* IMPROVED: Full support for PHP 7.2
 
 == Installation ==
 
