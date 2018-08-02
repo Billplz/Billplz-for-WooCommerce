@@ -12,7 +12,7 @@ Requires PHP: 5.6
 Accept Internet Banking Payment by using Billplz.
 
 == Description ==
-Install this plugin to accept payment using Billplz (Maybank2u, CIMB Clicks, Bank Islam, FPX).
+Install this plugin to accept payment using Billplz.
 
 == Upgrade Notice ==
 
