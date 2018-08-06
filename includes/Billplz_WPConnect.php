@@ -1,6 +1,6 @@
 <?php
 
-namespace Billplz;
+namespace Billplz\WooCommerce;
 
 class WPConnect
 {
@@ -10,6 +10,7 @@ class WPConnect
 
     private $process; //cURL or GuzzleHttp
     public $is_staging;
+    public $detect_mode;
     public $url;
     public $webhook_rank;
 
@@ -41,20 +42,8 @@ class WPConnect
     public function detectMode()
     {
         $this->url = self::PRODUCTION_URL;
-        $collection = $this->toArray($this->getWebhookRank());
-        if ($collection[0] === 200) {
-            $this->is_staging = false;
-            $this->webhook_rank = $webhook_rank[1]['rank'];
-            return $this;
-        }
-        $this->url = self::STAGING_URL;
-        $collection = $this->toArray($this->getWebhookRank());
-        if ($collection[0] === 200) {
-            $this->is_staging = true;
-            $this->webhook_rank = $webhook_rank[1]['rank'];
-            return $this;
-        }
-        throw new \Exception('The API Key is not valid. Check your API Key');
+        $this->detect_mode = true;
+        return $this;
     }
 
     public function getWebhookRank()
@@ -90,12 +79,28 @@ class WPConnect
     {
         $url = $this->url . 'v4/collections';
 
-        $title = ['title' => $title];
-        $data = array_merge($title, $optional);
+        $body = http_build_query(['title' => $title]);
+        if (isset($optional['split_header'])) {
+            $split_header = http_build_query(array('split_header' => $optional['split_header']));
+        }
+
+        $split_payments = [];
+        if (isset($optional['split_payments'])) {
+            foreach ($optional['split_payments'] as $param) {
+                $split_payments[] = http_build_query($param);
+            }
+        }
+
+        if (!empty($split_payments)) {
+            $body.= '&' . implode('&', $split_payments);
+            if (!empty($split_header)) {
+                $body.= '&' . $split_header;
+            }
+        }
 
         $wp_remote_data['sslverify'] = false;
         $wp_remote_data['headers'] = $this->header;
-        $wp_remote_data['body'] = http_build_query($data);
+        $wp_remote_data['body'] = $body;
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
@@ -109,15 +114,34 @@ class WPConnect
     {
         $url = $this->url . 'v4/open_collections';
 
-        //if (sizeof($parameter) !== sizeof($optional) && !empty($optional)){
-        //    throw new \Exception('Optional parameter size is not match with Required parameter');
-        //}
+        $body = http_build_query($parameter);
+        if (isset($optional['split_header'])) {
+            $split_header = http_build_query(array('split_header' => $optional['split_header']));
+        }
 
-        $data = array_merge($parameter, $optional);
+        $split_payments = [];
+        if (isset($optional['split_payments'])) {
+            foreach ($optional['split_payments'] as $param) {
+                $split_payments[] = http_build_query($param);
+            }
+        }
+
+        if (!empty($split_payments)) {
+            unset($optional['split_payments']);
+            $body.= '&' . implode('&', $split_payments);
+            if (!empty($split_header)) {
+                unset($optional['split_header']);
+                $body.= '&' . $split_header;
+            }
+        }
+
+        if (!empty($optional)) {
+            $body.= '&' . http_build_query($optional);
+        }
 
         $wp_remote_data['sslverify'] = false;
         $wp_remote_data['headers'] = $this->header;
-        $wp_remote_data['body'] = http_build_query($data);
+        $wp_remote_data['body'] = $body;
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
@@ -125,28 +149,6 @@ class WPConnect
         $body = \wp_remote_retrieve_body($response);
 
         return array($header,$body);
-    }
-
-    public function getCollectionArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v4/collections/' . $id;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['method'] = 'GET';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return= array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
     }
 
     public function getCollection($id)
@@ -162,28 +164,6 @@ class WPConnect
         $body = \wp_remote_retrieve_body($response);
 
         return array($header,$body);
-    }
-
-    public function getOpenCollectionArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v4/open_collections/'.$id;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['method'] = 'GET';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return = array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
     }
 
     public function getOpenCollection($id)
@@ -216,31 +196,6 @@ class WPConnect
         return array($header,$body);
     }
 
-    public function createMPICollectionArray($parameter)
-    {
-        $url = $this->url . 'v4/mass_payment_instruction_collections';
-
-        $return_array = array();
-
-        foreach ($parameter as $title) {
-            $data = ['title' => $title];
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['body'] = http_build_query($data);
-            $wp_remote_data['method'] = 'POST';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return= array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
-    }
-
     public function createMPICollection($title)
     {
         $url = $this->url . 'v4/mass_payment_instruction_collections';
@@ -257,28 +212,6 @@ class WPConnect
         $body = \wp_remote_retrieve_body($response);
 
         return array($header,$body);
-    }
-
-    public function getMPICollectionArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v4/mass_payment_instruction_collections/'.$id;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['method'] = 'GET';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return= array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
     }
 
     public function getMPICollection($id)
@@ -318,28 +251,6 @@ class WPConnect
         return array($header,$body);
     }
 
-    public function getMPIArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v4/mass_payment_instructions/'.$id;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['method'] = 'GET';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return= array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
-    }
-
     public function getMPI($id)
     {
         $url = $this->url . 'v4/mass_payment_instructions/'.$id;
@@ -358,7 +269,7 @@ class WPConnect
 
     public static function getXSignature($x_signature_key)
     {
-        $signingString = '';
+        $signing= '';
 
         if (isset($_GET['billplz']['id']) &&isset($_GET['billplz']['paid_at']) && isset($_GET['billplz']['paid']) && isset($_GET['billplz']['x_signature'])) {
             $data = array(
@@ -391,14 +302,14 @@ class WPConnect
 
         foreach ($data as $key => $value) {
             if (isset($_GET['billplz']['id'])) {
-                $signingString .= 'billplz'.$key . $value;
+                $signing.= 'billplz'.$key . $value;
             } else {
-                $signingString .= $key . $value;
+                $signing.= $key . $value;
             }
             if (($key === 'url' && isset($_POST['x_signature']))|| ($key === 'paid' && isset($_GET['billplz']['id']))) {
                 break;
             } else {
-                $signingString .= '|';
+                $signing.= '|';
             }
         }
 
@@ -407,37 +318,14 @@ class WPConnect
          */
         $data['paid'] = $data['paid'] === 'true' ? true : false;
 
-        $signedString = hash_hmac('sha256', $signingString, $x_signature_key);
+        $signed= hash_hmac('sha256', $signing, $x_signature_key);
 
-        if ($data['x_signature'] === $signedString) {
+        if ($data['x_signature'] === $signed) {
             $data['type'] = $type;
             return $data;
         }
 
         throw new \Exception('X Signature Calculation Mismatch!');
-    }
-
-    public function deactivateColletionArray($parameter, $option = 'deactivate')
-    {
-        $return_array = array();
-
-        foreach ($parameter as $title) {
-            $url = $this->url . 'v3/collections/'.$title.'/'.$option;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['body'] = http_build_query(array());
-            $wp_remote_data['method'] = 'POST';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return =array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
     }
 
     public function deactivateCollection($title, $option = 'deactivate')
@@ -480,28 +368,6 @@ class WPConnect
         return array($header,$body);
     }
 
-    public function getBillArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v3/bills/'.$id;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['method'] = 'GET';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return = array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
-    }
-
     public function getBill($id)
     {
         $url = $this->url . 'v3/bills/'.$id;
@@ -515,29 +381,6 @@ class WPConnect
         $body = \wp_remote_retrieve_body($response);
 
         return array($header,$body);
-    }
-
-    public function deleteBillArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v3/bills/'.$id;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['body'] = http_build_query(array());
-            $wp_remote_data['method'] = 'DELETE';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return= array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
     }
 
     public function deleteBill($id)
@@ -556,28 +399,6 @@ class WPConnect
         return array($header,$body);
     }
 
-    public function bankAccountCheckArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v3/check/bank_account_number/'.$id;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['method'] = 'GET';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return = array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
-    }
-
     public function bankAccountCheck($id)
     {
         $url = $this->url . 'v3/check/bank_account_number/'.$id;
@@ -591,28 +412,6 @@ class WPConnect
         $body = \wp_remote_retrieve_body($response);
 
         return array($header,$body);
-    }
-
-    public function getPaymentMethodIndexArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v3/collections/'.$id.'/payment_methods';
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['method'] = 'GET';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return =array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
     }
 
     public function getPaymentMethodIndex($id)
@@ -653,11 +452,14 @@ class WPConnect
         $url = $this->url . 'v3/collections/'.$parameter['collection_id'].'/payment_methods';
 
         unset($parameter['collection_id']);
-        $data = $parameter;
+        $body = [];
+        foreach ($parameter['payment_methods'] as $param) {
+            $body[] = http_build_query($param);
+        }
 
         $wp_remote_data['sslverify'] = false;
         $wp_remote_data['headers'] = $this->header;
-        $wp_remote_data['body'] = http_build_query($data);
+        $wp_remote_data['body'] = implode('&', $body);
         $wp_remote_data['method'] = 'PUT';
 
         $response = \wp_remote_post($url, $wp_remote_data);
@@ -687,28 +489,6 @@ class WPConnect
         $body = \wp_remote_retrieve_body($response);
 
         return array($header,$body);
-    }
-
-    public function getBankAccountArray($parameter)
-    {
-        $return_array = array();
-
-        foreach ($parameter as $id) {
-            $url = $this->url . 'v3/bank_verification_services/'.$id;
-
-            $wp_remote_data['sslverify'] = false;
-            $wp_remote_data['headers'] = $this->header;
-            $wp_remote_data['method'] = 'GET';
-
-            $response = \wp_remote_post($url, $wp_remote_data);
-            $header = $response['response']['code'];
-            $body = \wp_remote_retrieve_body($response);
-
-            $return= array($header,$body);
-            array_push($return_array, $return);
-        }
-
-        return $return_array;
     }
 
     public function getBankAccount($id)

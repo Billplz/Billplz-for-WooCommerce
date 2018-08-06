@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.6
+ * Version: 3.20.7
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
@@ -157,6 +157,9 @@ function bfw_load()
 
             /* Display error if X Signature Key is not set */
             $this->x_signature == '' ? add_action('admin_notices', array(&$this,'x_signature_missing_message')) : '';
+
+            /* Display warning if Collection ID is not set */
+            $this->collection_id == '' ? add_action('admin_notices', array(&$this,'collection_id_missing_message')) : '';
         }
 
         /**
@@ -302,8 +305,8 @@ function bfw_load()
             **/
 
             self::log('Connecting to Billplz API for order id #' . $order_id);
-            $connnect = (new \Billplz\WPConnect($this->api_key))->detectMode();
-            $billplz = new \Billplz\API($connnect);
+            $connnect = (new \Billplz\WooCommerce\WPConnect($this->api_key))->detectMode();
+            $billplz = new \Billplz\WooCommerce\API($connnect);
 
             $shouldCreateBill = true;
 
@@ -395,13 +398,13 @@ function bfw_load()
             @ob_clean();
             //global $woocommerce;
 
-            $data = \Billplz\WPConnect::getXSignature($this->x_signature);
+            $data = \Billplz\WooCommerce\WPConnect::getXSignature($this->x_signature);
 
             // Log return type
             self::log('Billplz response '. print_r($data, true));
 
-            $connnect = (new \Billplz\WPConnect($this->api_key))->detectMode();
-            $billplz = new \Billplz\API($connnect);
+            $connnect = (new \Billplz\WooCommerce\WPConnect($this->api_key))->detectMode();
+            $billplz = new \Billplz\WooCommerce\API($connnect);
             list($rheader, $rbody) = $billplz->toArray($billplz->getBill($data['id']));
 
             $order_id = $rbody['reference_2'];
@@ -467,7 +470,7 @@ function bfw_load()
         }
 
         /**
-         * Adds error message when not configured the app_key.
+         * Adds error message when not configured the API Secret Key.
          *
          */
         public function api_key_missing_message()
@@ -479,13 +482,25 @@ function bfw_load()
         }
 
         /**
-         * Adds error message when not configured the app_secret.
+         * Adds error message when not configured the X Signature Key.
          *
          */
         public function x_signature_missing_message()
         {
             $message = '<div class="error">';
             $message .= '<p>' . sprintf(__('<strong>Gateway Disabled</strong> You should inform your X Signature Key in Billplz. %sClick here to configure!%s', 'bfw'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
+            $message .= '</div>';
+            echo $message;
+        }
+
+        /**
+         * Adds error message when not configured the Collection ID.
+         *
+         */
+        public function collection_id_missing_message()
+        {
+            $message = '<div class="error">';
+            $message .= '<p>' . sprintf(__('<strong>Gateway Notice!</strong> You should inform your Collection ID in Billplz. %sClick here to configure!%s', 'bfw'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
             $message .= '</div>';
             echo $message;
         }
@@ -538,8 +553,8 @@ function bfw_delete_order($post_id)
         return;
     }
 
-    $connnect = (new \Billplz\WPConnect($api_key))->detectMode();
-    $billplz = new \Billplz\API($connnect);
+    $connnect = (new \Billplz\WooCommerce\WPConnect($api_key))->detectMode();
+    $billplz = new \Billplz\WooCommerce\API($connnect);
     list($rheader, $rbody) = $billplz->deleteBill($bill_id);
 
     if ($rheader !== 200) {

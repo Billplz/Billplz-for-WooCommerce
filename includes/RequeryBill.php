@@ -23,8 +23,8 @@ function bfw_requery_single()
                 $bill_order_api_key = get_post_meta($bill_order_id, 'billplz_api_key', true);
                 $bill_order_paid = get_post_meta($bill_order_id, 'billplz_paid', true);
 
-                $connnect = (new \Billplz\WPConnect($bill_order_api_key))->detectMode();
-                $billplz = new \Billplz\API($connnect);
+                $connnect = (new \Billplz\WooCommerce\WPConnect($bill_order_api_key))->detectMode();
+                $billplz = new \Billplz\WooCommerce\API($connnect);
                 list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
 
                 if ($rbody['paid']) {
@@ -49,8 +49,8 @@ function bfw_requery_single()
             if (empty($order_bill_id) || empty($order_bill_api_key) || empty($order_bill_paid)) {
                 $output[]= 'Order ID #'.$order_id.' not found';
             } else {
-                $connnect = (new \Billplz\WPConnect($order_bill_api_key))->detectMode();
-                $billplz = new \Billplz\API($connnect);
+                $connnect = (new \Billplz\WooCommerce\WPConnect($order_bill_api_key))->detectMode();
+                $billplz = new \Billplz\WooCommerce\API($connnect);
                 list($rheader, $rbody) = $billplz->toArray($billplz->getBill($order_bill_id));
 
                 if ($rbody['paid']) {
@@ -91,8 +91,8 @@ function bfw_requery_all()
             continue;
         }
 
-        $connnect = (new \Billplz\WPConnect($bill_api_key))->detectMode();
-        $billplz = new \Billplz\API($connnect);
+        $connnect = (new \Billplz\WooCommerce\WPConnect($bill_api_key))->detectMode();
+        $billplz = new \Billplz\WooCommerce\API($connnect);
         list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
         if ($rbody['paid']) {
             update_post_meta($order_id, 'billplz_paid', 'true');

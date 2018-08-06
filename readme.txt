@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
-Tested up to: 4.9.7
-Stable tag: 3.20.6
+Tested up to: 4.9.8
+Stable tag: 3.20.7
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -25,6 +25,10 @@ None
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.20.7 =
+* NEW: Alert will be given if Collection ID is not set
+* IMPROVED: Reduced Billplz API query for Production Mode
 
 = 3.20.6 =
 * FIX: Fixed broken Requery Tool
@@ -65,7 +69,7 @@ None
 **Step 3:**
 
 - Navigate to **WooCommerce >> Settings >> Checkout >> Billplz**
-- Insert your **API Secret Key** and **X Signature Key**
+- Insert your **API Secret Key**, **Collection ID** and **X Signature Key**
 - Save changes
 
 == Frequently Asked Questions ==
