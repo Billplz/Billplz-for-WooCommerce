@@ -6,8 +6,8 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.7
- * Requires PHP: 7.0
+ * Version: 3.20.8
+ * Requires PHP: 5.6
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
@@ -522,7 +522,7 @@ add_action('upgrader_process_complete', 'bfw_clear_cron', 10, 2);
 function bfw_add_bill_id($order)
 {
     $order_data = WC_Billplz_Gateway::get_order_data($order);
-    $bill_id = get_post_meta($order->ID, '_transaction_id', true);?>
+    $bill_id = get_post_meta($order_data['id'], '_transaction_id', true);?>
     <span class="description"><?php echo wc_help_tip(__('You may refer to Custom Fields to get more information', 'bfw')); ?> <?php echo 'Bill ID: ' . $bill_id; ?></span><?php
 }
 add_action('woocommerce_order_item_add_action_buttons', 'bfw_add_bill_id');

@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.8
-Stable tag: 3.20.7
+Stable tag: 3.20.8
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,9 @@ None
 
 == Changelog ==
 
+= 3.20.8 =
+* FIX: Order ID should not be accessed directly according to WooCommerce 3.x
+
 = 3.20.7 =
 * NEW: Alert will be given if Collection ID is not set
 * IMPROVED: Reduced Billplz API query for Production Mode
@@ -42,17 +45,6 @@ None
 
 = 3.20.1 =
 * FIX: Floating number precision issue.
-
-= 3.20.0 =
-
-* NEW: Introduced semantic versioning. X.Y.Z (X: API Version, Y: Major Release, Z: Minor Release)
-* NEW: Ability to customize Proceed to Checkout button label
-* NEW: Ability to add more information on Bills using Reference 2
-* NEW: Ability to re-query bill and order for payment status
-* IMPROVED: Order is now strongly coupled with Bill
-* IMPROVED: CPU usage spike by previous version caused by Cron Jobs
-* IMPROVED: Filters and Action Hooks are introduced
-* IMPROVED: Full support for PHP 7.2
 
 == Installation ==
 
