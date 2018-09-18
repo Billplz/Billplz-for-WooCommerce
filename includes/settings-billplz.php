@@ -18,13 +18,13 @@ return array(
         'title' => __('Title', 'bfw'),
         'type' => 'text',
         'description' => __('This controls the title which the user sees during checkout.', 'bfw'),
-        'default' => __('Billplz Payment Gateway', 'bfw')
+        'default' => __('Billplz Internet Banking & Boost e-Wallet', 'bfw')
     ),
     'description' => array(
         'title' => __('Description', 'bfw'),
         'type' => 'textarea',
         'description' => __('This controls the description which the user sees during checkout.', 'bfw'),
-        'default' => __('Pay with <strong>Maybank2u, CIMB Clicks, Bank Islam, RHB, Hong Leong Bank, Bank Muamalat, Public Bank, Alliance Bank, Affin Bank, AmBank, Bank Rakyat, UOB, Standard Chartered </strong>. ', 'bfw')
+        'default' => __('Pay with <strong>Maybank2u, CIMB Clicks, Bank Islam, RHB, Hong Leong Bank, Bank Muamalat, Public Bank, Alliance Bank, Affin Bank, AmBank, Bank Rakyat, UOB, Standard Chartered, Boost e-Wallet</strong>. ', 'bfw')
     ),
     'api_key' => array(
         'title' => __('API Secret Key', 'bfw'),

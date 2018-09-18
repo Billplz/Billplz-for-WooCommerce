@@ -7,13 +7,13 @@
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
  * Version: 3.20.8
- * Requires PHP: 5.6
+ * Requires PHP: 5.5
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 3.3.3
+ * WC tested up to: 3.4.5
  */
 
 /* Load Billplz Class */
