@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.8
-Stable tag: 3.20.9
+Stable tag: 3.20.10
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,9 @@ None
 
 == Changelog ==
 
+= 3.20.10 =
+* NEW: Added more hooks to support premium features!
+
 = 3.20.9 =
 * IMPROVED: Added PHP version support from 5.2.4 to 7.2
 
@@ -35,12 +38,6 @@ None
 = 3.20.7 =
 * NEW: Alert will be given if Collection ID is not set
 * IMPROVED: Reduced Billplz API query for Production Mode
-
-= 3.20.6 =
-* FIX: Fixed broken Requery Tool
-
-= 3.20.5 =
-* IMPROVED: Support for PHP 5.6
 
 == Installation ==
 

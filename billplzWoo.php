@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.9
+ * Version: 3.20.10
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
@@ -323,7 +323,7 @@ function bfw_load()
             if (!$shouldCreateBill) {
                 return array(
                     'result' => 'success',
-                    'redirect' => $rbody['url']
+                    'redirect' => apply_filters('bfw_url', $rbody['url'])
                 );
             }
 
@@ -386,7 +386,7 @@ function bfw_load()
 
             return array(
                 'result' => 'success',
-                'redirect' => $rbody['url']
+                'redirect' => apply_filters('bfw_url', $rbody['url'])
             );
         }
 
