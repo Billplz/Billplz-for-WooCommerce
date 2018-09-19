@@ -401,7 +401,7 @@ function bfw_load()
             @ob_clean();
             //global $woocommerce;
 
-            $data = WPConnect::getXSignature($this->x_signature);
+            $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature);
 
             // Log return type
             self::log('Billplz response '. print_r($data, true));
