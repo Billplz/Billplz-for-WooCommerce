@@ -1,8 +1,6 @@
 <?php
 
-namespace Billplz\WooCommerce;
-
-class API
+class BillplzWooCommerceAPI
 {
     private $connect;
 

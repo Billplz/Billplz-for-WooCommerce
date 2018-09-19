@@ -7,7 +7,7 @@
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
  * Version: 3.20.9
- * Requires PHP: 5.3
+ * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
@@ -17,9 +17,9 @@
  */
 
 /* Load Billplz Class */
-if (!class_exists('Billplz\API') && !class_exists('Billplz\WPConnect')) {
-    require(__DIR__ . '/includes/Billplz_API.php');
-    require(__DIR__ . '/includes/Billplz_WPConnect.php');
+if (!class_exists('BillplzWooCommerceAPI') && !class_exists('BillplzWooCommerceWPConnect')) {
+    require('includes/Billplz_API.php');
+    require('includes/Billplz_WPConnect.php');
 }
 
 /* Load Requery Bill Module */
@@ -208,7 +208,7 @@ function bfw_load()
          */
         public function init_form_fields()
         {
-            $this->form_fields = include(__DIR__ . '/includes/settings-billplz.php');
+            $this->form_fields = include('includes/settings-billplz.php');
         }
 
         public function payment_fields()
@@ -307,9 +307,9 @@ function bfw_load()
             **/
 
             self::log('Connecting to Billplz API for order id #' . $order_id);
-            $connnect = new \Billplz\WooCommerce\WPConnect($this->api_key);
+            $connnect = new BillplzWooCommerceWPConnect($this->api_key);
             $connnect->detectMode();
-            $billplz = new \Billplz\WooCommerce\API($connnect);
+            $billplz = new BillplzWooCommerceAPI($connnect);
 
             $shouldCreateBill = true;
 
@@ -401,14 +401,14 @@ function bfw_load()
             @ob_clean();
             //global $woocommerce;
 
-            $data = \Billplz\WooCommerce\WPConnect::getXSignature($this->x_signature);
+            $data = WPConnect::getXSignature($this->x_signature);
 
             // Log return type
             self::log('Billplz response '. print_r($data, true));
 
-            $connnect = new \Billplz\WooCommerce\WPConnect($this->api_key);
+            $connnect = new BillplzWooCommerceWPConnect($this->api_key);
             $connnect->detectMode();
-            $billplz = new \Billplz\WooCommerce\API($connnect);
+            $billplz = new BillplzWooCommerceAPI($connnect);
             list($rheader, $rbody) = $billplz->toArray($billplz->getBill($data['id']));
 
             $order_id = $rbody['reference_2'];
@@ -557,9 +557,9 @@ function bfw_delete_order($post_id)
         return;
     }
 
-    $connnect = new \Billplz\WooCommerce\WPConnect($api_key);
+    $connnect = new BillplzWooCommerceWPConnect($api_key);
     $connnect->detectMode();
-    $billplz = new \Billplz\WooCommerce\API($connnect);
+    $billplz = new BillplzWooCommerceAPI($connnect);
     list($rheader, $rbody) = $billplz->deleteBill($bill_id);
 
     if ($rheader !== 200) {

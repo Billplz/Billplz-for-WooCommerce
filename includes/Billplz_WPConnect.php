@@ -1,8 +1,6 @@
 <?php
 
-namespace Billplz\WooCommerce;
-
-class WPConnect
+class BillplzWooCommerceWPConnect
 {
     private $api_key;
     private $x_signature_key;

@@ -7,7 +7,7 @@ Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires PHP: 5.3
+Requires PHP: 5.2.4
 
 Accept Internet Banking Payment by using Billplz.
 
@@ -27,7 +27,7 @@ None
 == Changelog ==
 
 = 3.20.9 =
-* IMPROVED: Added PHP version support from 5.3 to 7.2
+* IMPROVED: Added PHP version support from 5.2.4 to 7.2
 
 = 3.20.8 =
 * FIX: Order ID should not be accessed directly according to WooCommerce 3.x
