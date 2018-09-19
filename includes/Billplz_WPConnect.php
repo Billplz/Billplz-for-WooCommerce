@@ -79,12 +79,12 @@ class WPConnect
     {
         $url = $this->url . 'v4/collections';
 
-        $body = http_build_query(['title' => $title]);
+        $body = http_build_query(array('title' => $title));
         if (isset($optional['split_header'])) {
             $split_header = http_build_query(array('split_header' => $optional['split_header']));
         }
 
-        $split_payments = [];
+        $split_payments = array();
         if (isset($optional['split_payments'])) {
             foreach ($optional['split_payments'] as $param) {
                 $split_payments[] = http_build_query($param);
@@ -119,7 +119,7 @@ class WPConnect
             $split_header = http_build_query(array('split_header' => $optional['split_header']));
         }
 
-        $split_payments = [];
+        $split_payments = array();
         if (isset($optional['split_payments'])) {
             foreach ($optional['split_payments'] as $param) {
                 $split_payments[] = http_build_query($param);
@@ -200,7 +200,7 @@ class WPConnect
     {
         $url = $this->url . 'v4/mass_payment_instruction_collections';
 
-        $data = ['title' => $title];
+        $data = array('title' => $title);
 
         $wp_remote_data['sslverify'] = false;
         $wp_remote_data['headers'] = $this->header;
@@ -332,7 +332,7 @@ class WPConnect
     {
         $url = $this->url . 'v3/collections/'.$title.'/'.$option;
 
-        $data = ['title' => $title];
+        $data = array('title' => $title);
 
         $wp_remote_data['sslverify'] = false;
         $wp_remote_data['headers'] = $this->header;
@@ -452,7 +452,7 @@ class WPConnect
         $url = $this->url . 'v3/collections/'.$parameter['collection_id'].'/payment_methods';
 
         unset($parameter['collection_id']);
-        $body = [];
+        $body = array();
         foreach ($parameter['payment_methods'] as $param) {
             $body[] = http_build_query($param);
         }

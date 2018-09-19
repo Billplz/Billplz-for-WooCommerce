@@ -2,12 +2,12 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.8
-Stable tag: 3.20.8
+Stable tag: 3.20.9
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires PHP: 5.5
+Requires PHP: 5.3
 
 Accept Internet Banking Payment by using Billplz.
 
@@ -26,6 +26,9 @@ None
 
 == Changelog ==
 
+= 3.20.9 =
+* IMPROVED: Added PHP version support from 5.3 to 7.2
+
 = 3.20.8 =
 * FIX: Order ID should not be accessed directly according to WooCommerce 3.x
 
@@ -38,13 +41,6 @@ None
 
 = 3.20.5 =
 * IMPROVED: Support for PHP 5.6
-
-= 3.20.4 =
-* NEW: Added link on setting page to BFW Tool for Bill Requery
-* FIX: Added action hook to automatically remove cron created in version 3.19 and earlier
-
-= 3.20.1 =
-* FIX: Floating number precision issue.
 
 == Installation ==
 

@@ -288,7 +288,7 @@ class API
         return $response;
     }
 
-    public function getBankAccountIndex($parameter = array('account_numbers'=>['0','1']))
+    public function getBankAccountIndex($parameter = array('account_numbers'=>array('0','1')))
     {
         $response = $this->connect->getBankAccountIndex($parameter);
         if ($detect_mode = $this->detectMode(__FUNCTION__, $response, $parameter)) {

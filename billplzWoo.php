@@ -6,8 +6,8 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Wan @ Billplz
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.8
- * Requires PHP: 5.5
+ * Version: 3.20.9
+ * Requires PHP: 5.3
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
@@ -238,16 +238,18 @@ function bfw_load()
                 );
             } else {
                 $data = array(
-                    'first_name' => !empty($order->get_billing_first_name()) ? $order->get_billing_first_name() : $order->get_shipping_first_name(),
-                    'last_name' => !empty($order->get_billing_last_name()) ? $order->get_billing_last_name() : $order->get_shipping_last_name(),
+                    'first_name' => $order->get_billing_first_name(),
+                    'last_name' => $order->get_billing_last_name(),
                     'email' => $order->get_billing_email(),
                     'phone' => $order->get_billing_phone(),
                     'total' => $order->get_total(),
                     'id' => $order->get_id(),
                 );
+                $data['first_name'] = empty($data['first_name']) ? $order->get_shipping_first_name() : $data['first_name'];
+                $data['last_name'] = empty($data['last_name']) ? $order->get_shipping_last_name() : $data['last_name'];
             }
 
-            $data['name'] = $data['first_name'] . ' ' . $data['last_name'];
+            $data['name'] = trim($data['first_name'] . ' ' . $data['last_name']);
 
             /*
              * Compatibility with some themes
@@ -305,7 +307,8 @@ function bfw_load()
             **/
 
             self::log('Connecting to Billplz API for order id #' . $order_id);
-            $connnect = (new \Billplz\WooCommerce\WPConnect($this->api_key))->detectMode();
+            $connnect = new \Billplz\WooCommerce\WPConnect($this->api_key);
+            $connnect->detectMode();
             $billplz = new \Billplz\WooCommerce\API($connnect);
 
             $shouldCreateBill = true;
@@ -345,7 +348,7 @@ function bfw_load()
                 'collection_id' => $this->collection_id,
                 'email' => $order_data['email'],
                 'mobile'=> trim($order_data['phone']),
-                'name' => empty(trim($order_data['name'])) ? $order_data['email']: $order_data['name'],
+                'name' => empty($order_data['name']) ? $order_data['email']: $order_data['name'],
                 'amount' => strval($order_data['total'] * 100),
                 'callback_url' => home_url('/?wc-api=WC_Billplz_Gateway'),
                 'description' => mb_substr(apply_filters('bfw_description', $description), 0, 199)
@@ -403,7 +406,8 @@ function bfw_load()
             // Log return type
             self::log('Billplz response '. print_r($data, true));
 
-            $connnect = (new \Billplz\WooCommerce\WPConnect($this->api_key))->detectMode();
+            $connnect = new \Billplz\WooCommerce\WPConnect($this->api_key);
+            $connnect->detectMode();
             $billplz = new \Billplz\WooCommerce\API($connnect);
             list($rheader, $rbody) = $billplz->toArray($billplz->getBill($data['id']));
 
@@ -553,7 +557,8 @@ function bfw_delete_order($post_id)
         return;
     }
 
-    $connnect = (new \Billplz\WooCommerce\WPConnect($api_key))->detectMode();
+    $connnect = new \Billplz\WooCommerce\WPConnect($api_key);
+    $connnect->detectMode();
     $billplz = new \Billplz\WooCommerce\API($connnect);
     list($rheader, $rbody) = $billplz->deleteBill($bill_id);
 
