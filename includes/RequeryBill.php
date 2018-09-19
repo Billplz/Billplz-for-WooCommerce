@@ -24,7 +24,7 @@ function bfw_requery_single()
                 $bill_order_paid = get_post_meta($bill_order_id, 'billplz_paid', true);
 
                 $connnect = new BillplzWooCommerceWPConnect($bill_order_api_key);
-                $connect->detectMode();
+                $connnect->detectMode();
                 $billplz = new BillplzWooCommerceAPI($connnect);
                 list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
 
@@ -94,7 +94,7 @@ function bfw_requery_all()
         }
 
         $connnect = new BillplzWooCommerceWPConnect($bill_api_key);
-        $connect->detectMode();
+        $connnect->detectMode();
         $billplz = new BillplzWooCommerceAPI($connnect);
         list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
         if ($rbody['paid']) {
