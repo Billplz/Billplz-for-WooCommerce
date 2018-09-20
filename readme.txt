@@ -26,6 +26,9 @@ None
 
 == Changelog ==
 
+= 3.21.0 =
+* NEW: Premium features for Auto Submit
+
 = 3.20.10 =
 * NEW: Added more hooks to support premium features!
 
@@ -34,10 +37,6 @@ None
 
 = 3.20.8 =
 * FIX: Order ID should not be accessed directly according to WooCommerce 3.x
-
-= 3.20.7 =
-* NEW: Alert will be given if Collection ID is not set
-* IMPROVED: Reduced Billplz API query for Production Mode
 
 == Installation ==
 

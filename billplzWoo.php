@@ -4,9 +4,9 @@
  * Plugin Name: Billplz for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/billplz-for-woocommerce/
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
- * Author: Wan @ Billplz
+ * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.20.10
+ * Version: 3.21.0
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
@@ -25,12 +25,18 @@ if (!class_exists('BillplzWooCommerceAPI') && !class_exists('BillplzWooCommerceW
 /* Load Requery Bill Module */
 require 'includes/RequeryBill.php';
 
+/* Load Bank Name List */
+require 'includes/Billplz_BankName.php';
+
 function bfw_plugin_uninstall()
 {
     global $wpdb;
 
     /* Remove rows that created from previous version */
     $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'billplz_fwoo_%'");
+
+    delete_option('billplz_fpx_banks');
+    delete_option('billplz_fpx_banks_last');
 }
 register_uninstall_hook(__FILE__, 'bfw_plugin_uninstall');
 
@@ -107,7 +113,6 @@ function bfw_load()
 
             $this->id = 'billplz';
             $this->icon = apply_filters('bfw_icon', plugins_url('assets/billplz.gif', __FILE__));
-            $this->has_fields = apply_filters('bfw_has_fields', false);
             $this->method_title = __('Billplz', 'bfw');
             $this->debug = 'yes' === $this->get_option('debug', 'no');
 
@@ -135,6 +140,15 @@ function bfw_load()
             $this->reference_1_label = $this->settings['reference_1_label'];
             $this->reference_1 = $this->settings['reference_1'];
 
+            /* Enable Premium Features */
+            $this->has_fields = apply_filters('bfw_has_fields', $this->settings['has_fields']);
+            add_filter('bfw_reference_1', array($this, 'reference_1'));
+            add_filter('bfw_reference_1_label', array($this, 'reference_1_label'));
+            add_filter('bfw_url', array($this, 'url'));
+            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+                $this->notification = '0';
+            }
+
             // Payment instruction after payment
             $this->instructions = $this->settings['instructions'];
 
@@ -160,6 +174,34 @@ function bfw_load()
 
             /* Display warning if Collection ID is not set */
             $this->collection_id == '' ? add_action('admin_notices', array(&$this,'collection_id_missing_message')) : '';
+        }
+
+        public function reference_1_label($reference_1_label)
+        {
+            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+                return 'Bank Code';
+            }
+            return $reference_1_label;
+        }
+
+        public function reference_1($reference_1)
+        {
+            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+                $bank_name = BillplzBankName::get();
+                if (isset($bank_name[$_POST['billplz_bank']])) {
+                    return $_POST['billplz_bank'];
+                }
+                return '';
+            }
+            return $reference_1;
+        }
+
+        public function url($url)
+        {
+            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+                return $url . '?auto_submit=true';
+            }
+            return $url;
         }
 
         /**
@@ -213,8 +255,43 @@ function bfw_load()
 
         public function payment_fields()
         {
-            if ($this->has_fields) {
-                do_action('bfw_payment_fileds', $this);
+            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+                $rbody = get_option('billplz_fpx_banks');
+                $date = get_option('billplz_fpx_banks_last');
+
+                if (!$rbody || ($date !== date('d/m/Y/H'))) {
+                    $connnect = new BillplzWooCommerceWPConnect($this->api_key);
+                    $connnect->detectMode();
+                    $billplz = new BillplzWooCommerceAPI($connnect);
+                    list($rheader, $rbody) = $billplz->toArray($billplz->getFpxBanks());
+
+                    update_option('billplz_fpx_banks', $rbody);
+                    update_option('billplz_fpx_banks_last', date('d/m/Y/H'));
+                }
+            
+                $bank_name = BillplzBankName::get();
+                
+                /* Allow theme/plugin to override the way form is represented */
+                if (has_action('bfw_payment_fields')) :
+                    do_action('bfw_payment_fields', $rbody, $bank_name);
+                else :
+                    ?>
+                <p class="form-row validate-required">
+                    <label><?php echo 'Choose Bank'; ?> <span class="required">*</span></label>
+                    <select name="billplz_bank">
+                    <?php
+                    foreach ($bank_name as $key => $value) {
+                        foreach ($rbody['banks'] as $bank) {
+                            if ($bank['name'] === $key && $bank['active']) {
+                                ?><option value="<?php echo $bank['name']; ?>"><?php echo $bank_name[$bank['name']] ? strtoupper($bank_name[$bank['name']]) : $bank['name']; ?></option><?php
+                            }
+                        }
+                    }
+                    ?>
+                    </select>
+                </p> 
+                    <?php
+                endif;
             } elseif ($description = $this->get_description()) {
                 echo wpautop(wptexturize($description));
             }
@@ -317,6 +394,9 @@ function bfw_load()
                 list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
                 if ($rbody['state'] !== 'hidden') {
                     $shouldCreateBill = false;
+                }
+                if ($rbody['reference_1'] !== $_POST['billplz_bank']) {
+                    $shouldCreateBill = true;
                 }
             }
 

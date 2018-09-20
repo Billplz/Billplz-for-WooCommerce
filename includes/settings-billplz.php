@@ -104,5 +104,12 @@ return array(
         'placeholder' => 'Example: Pay with Billplz',
         'description' => __('Button label on checkout.', 'bfw'),
         'default' => 'Pay with Billplz'
-    )
+    ),
+    'has_fields' => array(
+        'title' => __('Direct to Bank', 'bfw'),
+        'type' => 'checkbox',
+        'label' => __('Enable Billplz Auto Submit Feature', 'bfw'),
+        'default' => 'no',
+        'desc_tip' => 'Note: This feature is not include Boost at the moment',
+    ),
 );
