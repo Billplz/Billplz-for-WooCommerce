@@ -260,9 +260,9 @@ function bfw_load()
                 $date = get_option('billplz_fpx_banks_last');
 
                 if (!$rbody || ($date !== date('d/m/Y/H'))) {
-                    $connnect = new BillplzWooCommerceWPConnect($this->api_key);
-                    $connnect->detectMode();
-                    $billplz = new BillplzWooCommerceAPI($connnect);
+                    $connect = new BillplzWooCommerceWPConnect($this->api_key);
+                    $connect->detectMode();
+                    $billplz = new BillplzWooCommerceAPI($connect);
                     list($rheader, $rbody) = $billplz->toArray($billplz->getFpxBanks());
 
                     update_option('billplz_fpx_banks', $rbody);
@@ -384,9 +384,9 @@ function bfw_load()
             **/
 
             self::log('Connecting to Billplz API for order id #' . $order_id);
-            $connnect = new BillplzWooCommerceWPConnect($this->api_key);
-            $connnect->detectMode();
-            $billplz = new BillplzWooCommerceAPI($connnect);
+            $connect = new BillplzWooCommerceWPConnect($this->api_key);
+            $connect->detectMode();
+            $billplz = new BillplzWooCommerceAPI($connect);
 
             $shouldCreateBill = true;
 
@@ -486,9 +486,9 @@ function bfw_load()
             // Log return type
             self::log('Billplz response '. print_r($data, true));
 
-            $connnect = new BillplzWooCommerceWPConnect($this->api_key);
-            $connnect->detectMode();
-            $billplz = new BillplzWooCommerceAPI($connnect);
+            $connect = new BillplzWooCommerceWPConnect($this->api_key);
+            $connect->detectMode();
+            $billplz = new BillplzWooCommerceAPI($connect);
             list($rheader, $rbody) = $billplz->toArray($billplz->getBill($data['id']));
 
             $order_id = $rbody['reference_2'];
@@ -637,9 +637,9 @@ function bfw_delete_order($post_id)
         return;
     }
 
-    $connnect = new BillplzWooCommerceWPConnect($api_key);
-    $connnect->detectMode();
-    $billplz = new BillplzWooCommerceAPI($connnect);
+    $connect = new BillplzWooCommerceWPConnect($api_key);
+    $connect->detectMode();
+    $billplz = new BillplzWooCommerceAPI($connect);
     list($rheader, $rbody) = $billplz->deleteBill($bill_id);
 
     if ($rheader !== 200) {

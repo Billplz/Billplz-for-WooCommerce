@@ -23,9 +23,9 @@ function bfw_requery_single()
                 $bill_order_api_key = get_post_meta($bill_order_id, 'billplz_api_key', true);
                 $bill_order_paid = get_post_meta($bill_order_id, 'billplz_paid', true);
 
-                $connnect = new BillplzWooCommerceWPConnect($bill_order_api_key);
-                $connnect->detectMode();
-                $billplz = new BillplzWooCommerceAPI($connnect);
+                $connect = new BillplzWooCommerceWPConnect($bill_order_api_key);
+                $connect->detectMode();
+                $billplz = new BillplzWooCommerceAPI($connect);
                 list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
 
                 if ($rbody['paid']) {
@@ -50,9 +50,9 @@ function bfw_requery_single()
             if (empty($order_bill_id) || empty($order_bill_api_key) || empty($order_bill_paid)) {
                 $output[]= 'Order ID #'.$order_id.' not found';
             } else {
-                $connnect = new BillplzWooCommerceWPConnect($order_bill_api_key);
-                $connnect->detectMode();
-                $billplz = new BillplzWooCommerceAPI($connnect);
+                $connect = new BillplzWooCommerceWPConnect($order_bill_api_key);
+                $connect->detectMode();
+                $billplz = new BillplzWooCommerceAPI($connect);
                 list($rheader, $rbody) = $billplz->toArray($billplz->getBill($order_bill_id));
 
                 if ($rbody['paid']) {
@@ -93,9 +93,9 @@ function bfw_requery_all()
             continue;
         }
 
-        $connnect = new BillplzWooCommerceWPConnect($bill_api_key);
-        $connnect->detectMode();
-        $billplz = new BillplzWooCommerceAPI($connnect);
+        $connect = new BillplzWooCommerceWPConnect($bill_api_key);
+        $connect->detectMode();
+        $billplz = new BillplzWooCommerceAPI($connect);
         list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
         if ($rbody['paid']) {
             update_post_meta($order_id, 'billplz_paid', 'true');
