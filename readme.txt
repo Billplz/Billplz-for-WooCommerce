@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.8
-Stable tag: 3.21.0
+Stable tag: 3.21.1
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,9 @@ None
 
 == Changelog ==
 
+= 3.21.1 =
+* IMPROVED: Removed redundant action hook
+
 = 3.21.0 =
 * NEW: Premium features for Auto Submit
 
@@ -34,9 +37,6 @@ None
 
 = 3.20.9 =
 * IMPROVED: Added PHP version support from 5.2.4 to 7.2
-
-= 3.20.8 =
-* FIX: Order ID should not be accessed directly according to WooCommerce 3.x
 
 == Installation ==
 

@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.21.0
+ * Version: 3.21.1
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
@@ -88,6 +88,7 @@ function bfw_load()
         return $methods;
     }
     add_filter('woocommerce_payment_gateways', 'bfw_add_gateway');
+    add_filter('bfw_settings_value', array('WC_Billplz_Gateway', 'settings_value'));
 
     /**
      * Define the Billplz gateway
@@ -125,11 +126,12 @@ function bfw_load()
             $this->settings = apply_filters('bfw_settings_value', $this->settings);
 
             /* Customize checkout button label */
-            $this->order_button_text = apply_filters('bfw_proceed_to_billplz', __($this->settings['checkout_label'], 'bfw'));
+            $this->order_button_text = __($this->settings['checkout_label'], 'bfw');
 
             // Define user setting variables.
             $this->title = $this->settings['title'];
             $this->description = $this->settings['description'];
+
             $this->api_key = $this->settings['api_key'];
             $this->x_signature = $this->settings['x_signature'];
             $this->collection_id = $this->settings['collection_id'];
@@ -141,13 +143,12 @@ function bfw_load()
             $this->reference_1 = $this->settings['reference_1'];
 
             /* Enable Premium Features */
-            $this->has_fields = apply_filters('bfw_has_fields', $this->settings['has_fields']);
-            add_filter('bfw_reference_1', array($this, 'reference_1'));
-            add_filter('bfw_reference_1_label', array($this, 'reference_1_label'));
-            add_filter('bfw_url', array($this, 'url'));
+            $this->has_fields = $this->settings['has_fields'];
             if (isset($this->has_fields) && $this->has_fields === 'yes') {
                 $this->notification = '0';
             }
+
+            add_filter('bfw_url', array($this, 'url'));
 
             // Payment instruction after payment
             $this->instructions = $this->settings['instructions'];
@@ -176,24 +177,18 @@ function bfw_load()
             $this->collection_id == '' ? add_action('admin_notices', array(&$this,'collection_id_missing_message')) : '';
         }
 
-        public function reference_1_label($reference_1_label)
+        public static function settings_value($settings)
         {
-            if (isset($this->has_fields) && $this->has_fields === 'yes') {
-                return 'Bank Code';
-            }
-            return $reference_1_label;
-        }
-
-        public function reference_1($reference_1)
-        {
-            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+            if (isset($settings['has_fields']) && $settings['has_fields'] === 'yes') {
+                $settings['reference_1_label'] = 'Bank Code';
                 $bank_name = BillplzBankName::get();
                 if (isset($bank_name[$_POST['billplz_bank']])) {
-                    return $_POST['billplz_bank'];
+                    $settings['reference_1'] = $_POST['billplz_bank'];
+                } else {
+                    $settings['reference_1'] = '';
                 }
-                return '';
             }
-            return $reference_1;
+            return $settings;
         }
 
         public function url($url)
@@ -436,8 +431,8 @@ function bfw_load()
 
             $optional = array(
                 'redirect_url' => home_url('/?wc-api=WC_Billplz_Gateway'),
-                'reference_1_label' => mb_substr(apply_filters('bfw_reference_1_label', $this->reference_1_label), 0, 19),
-                'reference_1' => mb_substr(apply_filters('bfw_reference_1', $this->reference_1), 0, 119),
+                'reference_1_label' => mb_substr($this->reference_1_label, 0, 19),
+                'reference_1' => mb_substr($this->reference_1, 0, 119),
                 'reference_2_label' => 'Order ID',
                 'reference_2' => $order_data['id']
             );
