@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.8
-Stable tag: 3.21.1
+Stable tag: 3.21.2
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,10 @@ None
 
 == Changelog ==
 
+= 3.21.2 =
+* NEW: Added hooks for Bank List
+* NEW: Added Boost option for payment list
+
 = 3.21.1 =
 * IMPROVED: Removed redundant action hook
 
@@ -34,9 +38,6 @@ None
 
 = 3.20.10 =
 * NEW: Added more hooks to support premium features!
-
-= 3.20.9 =
-* IMPROVED: Added PHP version support from 5.2.4 to 7.2
 
 == Installation ==
 

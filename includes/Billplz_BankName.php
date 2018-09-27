@@ -39,7 +39,8 @@ class BillplzBankName
             'TEST0021' => 'FPX TEST 21',
             'TEST0022' => 'FPX TEST 22',
             'TEST0023' => 'FPX TEST 23',
-            'LOAD001' => 'Merchant Webview'
+            'LOAD001' => 'Merchant Webview',
+            'BOOST' => 'Boost e-Wallet'
         );
         asort($bank_name);
         return $bank_name;

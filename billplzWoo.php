@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.21.1
+ * Version: 3.21.2
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
@@ -264,7 +264,7 @@ function bfw_load()
                     update_option('billplz_fpx_banks_last', date('d/m/Y/H'));
                 }
             
-                $bank_name = BillplzBankName::get();
+                $bank_name = apply_filters('bfw_bank_name_list', BillplzBankName::get());
                 
                 /* Allow theme/plugin to override the way form is represented */
                 if (has_action('bfw_payment_fields')) :
