@@ -182,7 +182,7 @@ function bfw_load()
             if (isset($settings['has_fields']) && $settings['has_fields'] === 'yes') {
                 $settings['reference_1_label'] = 'Bank Code';
                 $bank_name = BillplzBankName::get();
-                if (isset($bank_name[$_POST['billplz_bank']])) {
+                if (isset($bank_name[$_POST['billplz_bank']]) && $_POST['billplz_bank'] !== 'OTHERS') {
                     $settings['reference_1'] = $_POST['billplz_bank'];
                 } else {
                     $settings['reference_1'] = '';
@@ -250,6 +250,9 @@ function bfw_load()
 
         public function payment_fields()
         {
+            if ($description = $this->get_description()) {
+                echo wpautop(wptexturize($description));
+            }
             if (isset($this->has_fields) && $this->has_fields === 'yes') {
                 $rbody = get_option('billplz_fpx_banks');
                 $date = get_option('billplz_fpx_banks_last');
@@ -274,6 +277,7 @@ function bfw_load()
                 <p class="form-row validate-required">
                     <label><?php echo 'Choose Bank'; ?> <span class="required">*</span></label>
                     <select name="billplz_bank">
+                        <option value="" disabled selected>Choose your bank</option>
                     <?php
                     foreach ($bank_name as $key => $value) {
                         foreach ($rbody['banks'] as $bank) {
@@ -283,12 +287,11 @@ function bfw_load()
                         }
                     }
                     ?>
+                    <option value="OTHERS">OTHERS</option>
                     </select>
                 </p> 
                     <?php
                 endif;
-            } elseif ($description = $this->get_description()) {
-                echo wpautop(wptexturize($description));
             }
         }
 
@@ -370,6 +373,11 @@ function bfw_load()
         public function process_payment($order_id)
         {
             global $woocommerce;
+
+            if (!isset($_POST['billplz_bank'])) {
+                wc_add_notice(__('Please choose your bank to proceed', 'bfw'), 'error');
+                return;
+            }
 
             /* Redirect to Bill Payment Page if has been created */
             $bill_id = get_post_meta($order_id, '_transaction_id', true);
