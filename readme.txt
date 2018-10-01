@@ -29,13 +29,13 @@ None
 = 3.21.2 =
 * NEW: Added hooks for Bank List
 * NEW: Added Boost option for payment list
+* NEW: Ensure payer to choose Bank before proceeding
 
 = 3.21.1 =
 * IMPROVED: Removed redundant action hook
 
 = 3.21.0 =
 * NEW: Premium features for Auto Submit
-* NEW: Ensure payer to choose Bank before proceeding
 
 = 3.20.10 =
 * NEW: Added more hooks to support premium features!
