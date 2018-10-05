@@ -146,9 +146,8 @@ function bfw_load()
             $this->has_fields = $this->settings['has_fields'];
             if (isset($this->has_fields) && $this->has_fields === 'yes') {
                 $this->notification = '0';
+                add_filter('bfw_url', array($this, 'url'));
             }
-
-            add_filter('bfw_url', array($this, 'url'));
 
             // Payment instruction after payment
             $this->instructions = $this->settings['instructions'];
