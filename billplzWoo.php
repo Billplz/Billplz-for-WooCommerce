@@ -417,7 +417,7 @@ function bfw_load()
             }
 
             $order = new WC_Order($order_id);
-            $order = apply_filters('bfw_filter_order', $order);
+            $order = apply_filters('bfw_filter_order', $order, array());
             $order_data = self::get_order_data($order);
 
             if (sizeof($order->get_items()) > 0) {
