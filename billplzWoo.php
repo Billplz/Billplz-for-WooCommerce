@@ -415,6 +415,7 @@ function bfw_load()
             }
 
             $order = new WC_Order($order_id);
+            $order = apply_filters('bfw_filter_order', $order);
             $order_data = self::get_order_data($order);
 
             if (sizeof($order->get_items()) > 0) {
@@ -495,7 +496,7 @@ function bfw_load()
 
             $order_id = $rbody['reference_2'];
             $order = new WC_Order($order_id);
-
+            $order = apply_filters('bfw_filter_order', $order, $rbody);
             if ($rbody['paid']) {
                 $order_data = self::get_order_data($order);
 
