@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.21.3
+ * Version: 3.21.4
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
@@ -180,11 +180,13 @@ function bfw_load()
         {
             if (isset($settings['has_fields']) && $settings['has_fields'] === 'yes') {
                 $settings['reference_1_label'] = 'Bank Code';
-                $bank_name = BillplzBankName::get();
-                if (isset($bank_name[$_POST['billplz_bank']]) && $_POST['billplz_bank'] !== 'OTHERS') {
-                    $settings['reference_1'] = $_POST['billplz_bank'];
-                } else {
-                    $settings['reference_1'] = '';
+                if (isset($_POST['billplz_bank'])) {
+                    $bank_name = BillplzBankName::get();
+                    if (isset($bank_name[$_POST['billplz_bank']]) && $_POST['billplz_bank'] !== 'OTHERS') {
+                        $settings['reference_1'] = $_POST['billplz_bank'];
+                    } else {
+                        $settings['reference_1'] = '';
+                    }
                 }
             }
             return $settings;
@@ -397,7 +399,7 @@ function bfw_load()
                 if ($rbody['state'] !== 'hidden') {
                     $shouldCreateBill = false;
                 }
-                if ($rbody['reference_1'] !== $_POST['billplz_bank']) {
+                if (isset($_POST['billplz_bank']) && $rbody['reference_1'] !== $_POST['billplz_bank']) {
                     $shouldCreateBill = true;
                 }
             }
