@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.21.5
+ * Version: 3.21.6
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
@@ -406,7 +406,7 @@ function bfw_load()
                 if ($rbody['state'] !== 'hidden') {
                     $shouldCreateBill = false;
                 }
-                if (isset($_POST['billplz_bank']) && $rbody['reference_1'] !== $_POST['billplz_bank']) {
+                if (isset($_POST['billplz_bank']) && $rbody['reference_1'] !== $_POST['billplz_bank'] && !empty($rbody['reference_1'])) {
                     $shouldCreateBill = true;
                 }
             }
@@ -520,10 +520,10 @@ function bfw_load()
                     update_post_meta($order_id, 'billplz_paid', 'true');
                     $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $rbody['id'] . ' ' . $referer);
                     $order->payment_complete($rbody['id']);
-                    self::log($type . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' updated in WooCommerce as Paid');
+                    self::log($data['type'] . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' updated in WooCommerce as Paid');
                     do_action('bfw_on_payment_success_update', $order);
                 } elseif ($bill_paid === 'true') {
-                    self::log($type . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' not updated due to Duplicate');
+                    self::log($data['type'] . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' not updated due to Duplicate');
                 }
                 $redirectpath = $order->get_checkout_order_received_url();
             } else {

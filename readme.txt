@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.8
-Stable tag: 3.21.5
+Stable tag: 3.21.6
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,10 @@ None
 
 == Changelog ==
 
+= 3.21.6 =
+* FIXED: Undefined index for type variable
+* IMPROVED: Prevent multiple bill from being created if OTHERS option is choosen
+
 = 3.21.5 =
 * FIXED: Undefined index when no banks are active for auto submit
 * IMPROVED: Assigned empty array to $rbody var
@@ -37,11 +41,6 @@ None
 
 = 3.21.3 =
 * FIXED: Error for payment when user not activating Auto Submit feature
-
-= 3.21.2 =
-* NEW: Added hooks for Bank List
-* NEW: Added Boost option for payment list
-* NEW: Ensure payer to choose Bank before proceeding
 
 == Installation ==
 
