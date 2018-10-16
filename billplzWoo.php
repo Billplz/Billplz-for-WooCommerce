@@ -6,7 +6,7 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.21.4
+ * Version: 3.21.5
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
@@ -264,6 +264,10 @@ function bfw_load()
                     $billplz = new BillplzWooCommerceAPI($connect);
                     list($rheader, $rbody) = $billplz->toArray($billplz->getFpxBanks());
 
+                    if (isset($rbody['error'])) {
+                        $rbody = array();
+                    }
+
                     update_option('billplz_fpx_banks', $rbody);
                     update_option('billplz_fpx_banks_last', date('d/m/Y/H'));
                 }
@@ -281,6 +285,9 @@ function bfw_load()
                         <option value="" disabled selected>Choose your bank</option>
                     <?php
                     foreach ($bank_name as $key => $value) {
+                        if (empty($rbody)) {
+                            break;
+                        }
                         foreach ($rbody['banks'] as $bank) {
                             if ($bank['name'] === $key && $bank['active']) {
                                 ?><option value="<?php echo $bank['name']; ?>"><?php echo $bank_name[$bank['name']] ? strtoupper($bank_name[$bank['name']]) : $bank['name']; ?></option><?php

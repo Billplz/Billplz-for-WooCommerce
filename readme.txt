@@ -26,6 +26,10 @@ None
 
 == Changelog ==
 
+= 3.21.5 =
+* FIXED: Undefined index when no banks are active for auto submit
+* IMPROVED: Assigned empty array to $rbody var
+
 = 3.21.4 =
 * FIXED: Undefined index when accessing WooCommerce Settings page
 * FIXED: Undefined index when checkout without activating Auto Submit
@@ -38,15 +42,6 @@ None
 * NEW: Added hooks for Bank List
 * NEW: Added Boost option for payment list
 * NEW: Ensure payer to choose Bank before proceeding
-
-= 3.21.1 =
-* IMPROVED: Removed redundant action hook
-
-= 3.21.0 =
-* NEW: Premium features for Auto Submit
-
-= 3.20.10 =
-* NEW: Added more hooks to support premium features!
 
 == Installation ==
 
