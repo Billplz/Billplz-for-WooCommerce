@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.8
-Stable tag: 3.21.4
+Stable tag: 3.21.5
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
