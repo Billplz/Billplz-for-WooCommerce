@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Billplz for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/billplz-for-woocommerce/
- * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/join/8ant7x743awpuaqcxtqufg" target="_blank">Sign up Now</a>.
+ * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/enterprise/signup" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
  * Version: 3.21.6
