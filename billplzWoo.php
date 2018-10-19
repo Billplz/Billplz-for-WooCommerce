@@ -246,7 +246,8 @@ function bfw_load()
          */
         public function init_form_fields()
         {
-            $this->form_fields = include('includes/settings-billplz.php');
+            $form_fields = include('includes/settings-billplz.php');
+            $this->form_fields = apply_filters('bfw_form_fields', $form_fields);
         }
 
         public function payment_fields()
