@@ -22,7 +22,7 @@ class BillplzWooCommerceAPI
     {
         if ($response[0] === 401 && $this->connect->detect_mode) {
             $this->connect->detect_mode = false;
-            $this->connect->url = 'https://billplz-staging.herokuapp.com/api/';
+            $this->connect->setMode(false);
             if (!empty($extra)) {
                 return $this->{$method_name}($parameter, $optional, $extra);
             } elseif (!empty($optional)) {
