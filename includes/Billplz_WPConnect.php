@@ -510,7 +510,7 @@ class BillplzWooCommerceWPConnect
 
         $wp_remote_data['sslverify'] = false;
         $wp_remote_data['headers'] = $this->header;
-        $wp_remote_data['body'] = http_build_query($data);
+        $wp_remote_data['body'] = http_build_query($parameter);
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
