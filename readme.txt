@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 4.9.8
-Stable tag: 3.21.6
+Stable tag: 3.21.7
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,11 @@ None
 
 == Changelog ==
 
+= 3.21.7=
+* FIXED: Undefined index when upgrading from old verison
+* NEW: Added more hooks
+* REMOVED: Billplz sign up referral link
+
 = 3.21.6 =
 * FIXED: Undefined index for type variable
 * IMPROVED: Prevent multiple bill from being created if OTHERS option is choosen
@@ -33,14 +38,6 @@ None
 = 3.21.5 =
 * FIXED: Undefined index when no banks are active for auto submit
 * IMPROVED: Assigned empty array to $rbody var
-
-= 3.21.4 =
-* FIXED: Undefined index when accessing WooCommerce Settings page
-* FIXED: Undefined index when checkout without activating Auto Submit
-* NEW: Added more filters for order variable
-
-= 3.21.3 =
-* FIXED: Error for payment when user not activating Auto Submit feature
 
 == Installation ==
 

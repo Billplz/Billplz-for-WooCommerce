@@ -6,14 +6,14 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/enterprise/signup" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.21.6
+ * Version: 3.21.7
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 3.4.5
+ * WC tested up to: 3.5.1
  */
 
 /* Load Billplz Class */
@@ -28,6 +28,14 @@ require 'includes/RequeryBill.php';
 /* Load Bank Name List */
 require 'includes/Billplz_BankName.php';
 
+/* Load upgrade script to prevent error */
+require 'includes/Upgrade.php';
+
+function bfw_plugin_file_path()
+{
+    return __FILE__;
+}
+
 function bfw_plugin_uninstall()
 {
     global $wpdb;
@@ -38,7 +46,7 @@ function bfw_plugin_uninstall()
     delete_option('billplz_fpx_banks');
     delete_option('billplz_fpx_banks_last');
 }
-register_uninstall_hook(__FILE__, 'bfw_plugin_uninstall');
+register_uninstall_hook(bfw_plugin_file_path(), 'bfw_plugin_uninstall');
 
 /*
  *  Add settings link on plugin page
@@ -50,7 +58,7 @@ function bfw_plugin_settings_link($links)
     array_unshift($links, $settings_link);
     return $links;
 }
-$plugin_action_link = 'plugin_action_links_'.plugin_basename(__FILE__);
+$plugin_action_link = 'plugin_action_links_'.plugin_basename(bfw_plugin_file_path());
 add_filter($plugin_action_link, 'bfw_plugin_settings_link');
 
 function bfw_fallback_notice()
@@ -73,7 +81,7 @@ function bfw_load()
         return;
     }
     // Load language
-    load_plugin_textdomain('bfw', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+    load_plugin_textdomain('bfw', false, dirname(plugin_basename(bfw_plugin_file_path())) . '/languages/');
 
     /**
      * Add Billplz gateway to ensure WooCommerce can load it
@@ -113,7 +121,7 @@ function bfw_load()
             //global $woocommerce;
 
             $this->id = 'billplz';
-            $this->icon = apply_filters('bfw_icon', plugins_url('assets/billplz.gif', __FILE__));
+            $this->icon = apply_filters('bfw_icon', plugins_url('assets/billplz.gif', bfw_plugin_file_path()));
             $this->method_title = __('Billplz', 'bfw');
             $this->debug = 'yes' === $this->get_option('debug', 'no');
 
@@ -246,7 +254,7 @@ function bfw_load()
          */
         public function init_form_fields()
         {
-            $form_fields = include('includes/settings-billplz.php');
+            $form_fields = include 'includes/settings-billplz.php';
             $this->form_fields = apply_filters('bfw_form_fields', $form_fields);
         }
 
@@ -610,7 +618,7 @@ function bfw_clear_cron()
     /* Removed hook that registered from previous version */
     wp_clear_scheduled_hook('billplz_bills_invalidator');
 }
-register_deactivation_hook(__FILE__, 'bfw_clear_cron');
+register_deactivation_hook(bfw_plugin_file_path(), 'bfw_clear_cron');
 add_action('upgrader_process_complete', 'bfw_clear_cron', 10, 2);
 
 /*
