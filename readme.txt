@@ -26,7 +26,7 @@ None
 
 == Changelog ==
 
-= 3.21.7=
+= 3.21.7 =
 * FIXED: Undefined index when upgrading from old verison
 * NEW: Added more hooks
 * REMOVED: Billplz sign up referral link
