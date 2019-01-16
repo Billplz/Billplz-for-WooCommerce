@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
-Tested up to: 4.9.8
-Stable tag: 3.21.7
+Tested up to: 5.0.3
+Stable tag: 3.21.8
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,9 @@ None
 
 == Changelog ==
 
+= 3.21.8 =
+* FIXED: Prevent X Signature Key from being exposed when PHP display errors is On
+
 = 3.21.7 =
 * FIXED: Undefined index when upgrading from old verison
 * NEW: Added more hooks
@@ -34,10 +37,6 @@ None
 = 3.21.6 =
 * FIXED: Undefined index for type variable
 * IMPROVED: Prevent multiple bill from being created if OTHERS option is choosen
-
-= 3.21.5 =
-* FIXED: Undefined index when no banks are active for auto submit
-* IMPROVED: Assigned empty array to $rbody var
 
 == Installation ==
 

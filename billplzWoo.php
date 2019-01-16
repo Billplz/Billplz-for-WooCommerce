@@ -6,14 +6,14 @@
  * Description: Billplz Payment Gateway | <a href="https://www.billplz.com/enterprise/signup" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.21.7
+ * Version: 3.21.8
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 3.5.1
+ * WC tested up to: 3.5.3
  */
 
 /* Load Billplz Class */
@@ -499,7 +499,7 @@ function bfw_load()
 
             try {
                 $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature);
-            } catch (Exception $e){
+            } catch (Exception $e) {
                 exit('Failed X Signature Validation');
             }
 
