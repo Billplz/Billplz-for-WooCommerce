@@ -497,7 +497,11 @@ function bfw_load()
             @ob_clean();
             //global $woocommerce;
 
-            $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature);
+            try {
+                $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature);
+            } catch (Exception $e){
+                exit('Failed X Signature Validation');
+            }
 
             // Log return type
             self::log('Billplz response '. print_r($data, true));
