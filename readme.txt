@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz,paymentgateway,fpx,boost
 Tested up to: 5.0.3
-Stable tag: 3.21.8
+Stable tag: 3.21.8.1
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -25,6 +25,9 @@ None
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.21.8.1 =
+* IMPROVED: Removed Boost e-wallet as a default title
 
 = 3.21.8 =
 * FIXED: Prevent X Signature Key from being exposed when PHP display errors is On

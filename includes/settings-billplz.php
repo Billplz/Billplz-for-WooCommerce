@@ -18,7 +18,7 @@ return array(
         'title' => __('Title', 'bfw'),
         'type' => 'text',
         'description' => __('This controls the title which the user sees during checkout.', 'bfw'),
-        'default' => __('Billplz Internet Banking & Boost e-Wallet', 'bfw')
+        'default' => __('Billplz Internet Banking', 'bfw')
     ),
     'description' => array(
         'title' => __('Description', 'bfw'),
