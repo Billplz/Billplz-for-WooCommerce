@@ -1,15 +1,15 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
-Tags: billplz,paymentgateway,fpx,boost
-Tested up to: 5.0.3
-Stable tag: 3.21.8.1
+Tags: billplz
+Tested up to: 5.5.2
+Stable tag: 3.21.9
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP: 5.2.4
 
-Accept Internet Banking Payment by using Billplz.
+Accept payment by using Billplz.
 
 == Description ==
 Install this plugin to accept payment using Billplz.
@@ -19,12 +19,18 @@ Install this plugin to accept payment using Billplz.
 None
 
 == Screenshots ==
-* Installing Billplz for WooCommerce
+* Billplz for WooCommerce installation
 * Activate plugin after installation
-* Set API Secret Key and X Signature Key
+* Set API Secret Key, Collection ID and X Signature Key
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.21.9 =
+* IMPROVED: Add bfw_filter_order_data filter
+* IMPROVED: Auto disable plugin when using other than MYR Currency
+* IMPROVED: Webhook to have 403 forbidden status code if X Signature comparison failed
+* REMOVED: Support for WooCommerce 2.x
 
 = 3.21.8.1 =
 * IMPROVED: Removed Boost e-wallet as a default title

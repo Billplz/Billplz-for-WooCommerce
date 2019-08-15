@@ -1,6 +1,6 @@
 # Billplz for WooCommerce
 
-Accept payment using Billplz by using this plugin.
+Accept payment using Billplz.
 
 # Installation
 
@@ -15,7 +15,7 @@ There 2 ways to Install this plugin:
 
 ## Manual Installation
 
-* Download: https://github.com/wzul/Billplz-for-WooCommerce/archive/master.zip
+* Download: https://github.com/Billplz/Billplz-for-WooCommerce/archive/master.zip
 * Extract the folder billplz-for-woocommerce
 * ZIP the folder to billplz-for-woocommerce.zip
 * Login to WordPress Dashboard
