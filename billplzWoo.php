@@ -214,12 +214,14 @@ function bfw_load()
          */
         public function is_valid_for_use()
         {
-            if (!in_array(get_woocommerce_currency(), array(
-                'MYR',
-            ))) {
-                return false;
-            }
-            return true;
+            return in_array(
+                get_woocommerce_currency(),
+                apply_filters(
+                    'bfw_supported_currencies',
+                    array('MYR')
+                ),
+                true
+            );
         }
 
         /**
@@ -322,7 +324,7 @@ endif;
                 'last_name' => $order->get_billing_last_name(),
                 'email' => $order->get_billing_email(),
                 'phone' => $order->get_billing_phone(),
-                'total' => $order->get_total('total', $in_cents = true),
+                'total' => (string) ($order->get_total() * 100),
                 'id' => $order->get_id(),
             );
             $data['first_name'] = empty($data['first_name']) ? $order->get_shipping_first_name() : $data['first_name'];
