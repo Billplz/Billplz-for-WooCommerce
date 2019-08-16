@@ -72,6 +72,10 @@ None
 
 You can the API Secret Key at your Billplz Account Settings. [Get it here](https://www.billplz.com/enterprise/setting)
 
+= Where can I get Collection ID? =
+
+You can the Collection ID at your Billplz >> Billing. [Get it here](https://www.billplz.com/enterprise/billing)
+
 = Where can I get X Signature Key? =
 
 You can the X Signature Key at your Billplz Account Settings. [Get it here](https://www.billplz.com/enterprise/setting)
