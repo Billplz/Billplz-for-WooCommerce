@@ -1,7 +1,7 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 5.5.2
+Tested up to: 5.2
 Stable tag: 3.21.9
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
