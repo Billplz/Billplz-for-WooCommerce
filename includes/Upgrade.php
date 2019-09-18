@@ -1,7 +1,7 @@
 <?php
 
 // Exit if accessed directly
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -20,7 +20,7 @@ function bfw_3_21_7_fix()
 {
     if (!get_transient('bfw_3_21_7_fix')) {
         if ($settings = get_option('woocommerce_billplz_settings')) {
-            $settings['checkout_label'] =  isset($settings['checkout_label']) ? $settings['checkout_label'] : '';
+            $settings['checkout_label'] = isset($settings['checkout_label']) ? $settings['checkout_label'] : '';
             $settings['reference_1_label'] = isset($settings['reference_1_label']) ? $settings['reference_1_label'] : '';
             $settings['reference_1'] = isset($settings['reference_1']) ? $settings['reference_1'] : '';
             $settings['has_fields'] = isset($settings['has_fields']) ? $settings['has_fields'] : 'no';
@@ -30,7 +30,23 @@ function bfw_3_21_7_fix()
     }
 
     /* Delete transition
-    delete_transient('bfw_3_21_7_fix');
-    */
+delete_transient('bfw_3_21_7_fix');
+ */
 }
+
 add_action('init', 'bfw_3_21_7_fix');
+
+/**
+ * Remove unused option since we are using transient
+ */
+
+function bfw_3_22_0_fix()
+{
+    if (!get_transient('bfw_3_22_0_fix')) {
+        delete_option('billplz_fpx_banks');
+        delete_option('billplz_fpx_banks_last');
+        set_transient('bfw_3_22_0_fix', 1);
+    }
+}
+
+add_action('init', 'bfw_3_22_0_fix');

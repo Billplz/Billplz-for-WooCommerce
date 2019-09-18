@@ -2,7 +2,7 @@
 
 class BillplzBankName
 {
-    static function get()
+    public static function get()
     {
         $bank_name = array(
             'ABMB0212' => 'Alliance Bank Malaysia Berhad',
@@ -39,8 +39,13 @@ class BillplzBankName
             'TEST0021' => 'FPX TEST 21',
             'TEST0022' => 'FPX TEST 22',
             'TEST0023' => 'FPX TEST 23',
-            'LOAD001' => 'Merchant Webview',
-            'BOOST' => 'Boost e-Wallet'
+            'BP-FKR01' => 'Billplz Simulator',
+            'BP-PPL01' => 'PayPal',
+            'BP-2C2P1' => 'e-pay',
+            'BP-2C2PC' => 'Visa / Mastercard',
+            'BP-2C2PU' => 'UnionPay',
+            'BP-OCBC1' => 'Visa / Mastercard',
+            'BP-BST01' => 'Boost',
         );
         asort($bank_name);
         return $bank_name;

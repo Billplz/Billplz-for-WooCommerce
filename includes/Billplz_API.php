@@ -177,7 +177,7 @@ class BillplzWooCommerceAPI
             $parameter['mobile'] = preg_replace('/[^0-9]/', '', $parameter['mobile']);
 
             /* Add '6' if applicable */
-            $parameter['mobile'] = $parameter['mobile'][0] === '0' ? '6'.$parameter['mobile'] : $parameter['mobile'];
+            $parameter['mobile'] = $parameter['mobile'][0] === '0' ? '6' . $parameter['mobile'] : $parameter['mobile'];
 
             /* If the number doesn't have valid formatting, reject it */
             /* The ONLY valid format '<1 Number>' + <10 Numbers> or '<1 Number>' + <11 Numbers> */
@@ -205,8 +205,8 @@ class BillplzWooCommerceAPI
         /* + In-case the collection id is an empty */
         if ($collection[0] === 404 || $collection[0] === 401 || empty($parameter['collection_id'])) {
             /* Get All Active & Inactive Collection List */
-            $collectionIndexActive = $this->toArray($this->getCollectionIndex(array('page'=>'1', 'status'=>'active')));
-            $collectionIndexInactive = $this->toArray($this->getCollectionIndex(array('page'=>'1', 'status'=>'inactive')));
+            $collectionIndexActive = $this->toArray($this->getCollectionIndex(array('page' => '1', 'status' => 'active')));
+            $collectionIndexInactive = $this->toArray($this->getCollectionIndex(array('page' => '1', 'status' => 'inactive')));
 
             /* If Active Collection not available but Inactive Collection is available */
             if (empty($collectionIndexActive[1]['collections']) && !empty($collectionIndexInactive[1]['collections'])) {
@@ -259,7 +259,7 @@ class BillplzWooCommerceAPI
         return $response;
     }
 
-    public function getTransactionIndex($id, $parameter = array('page'=>'1'))
+    public function getTransactionIndex($id, $parameter = array('page' => '1'))
     {
         $response = $this->connect->getTransactionIndex($id, $parameter);
         if ($detect_mode = $this->detectMode(__FUNCTION__, $response, $id, $parameter)) {
@@ -286,7 +286,7 @@ class BillplzWooCommerceAPI
         return $response;
     }
 
-    public function getBankAccountIndex($parameter = array('account_numbers'=>array('0','1')))
+    public function getBankAccountIndex($parameter = array('account_numbers' => array('0', '1')))
     {
         $response = $this->connect->getBankAccountIndex($parameter);
         if ($detect_mode = $this->detectMode(__FUNCTION__, $response, $parameter)) {
@@ -316,7 +316,7 @@ class BillplzWooCommerceAPI
     public function bypassBillplzPage($bill)
     {
         $bills = \json_decode($bill, true);
-        if ($bills['reference_1_label']!=='Bank Code') {
+        if ($bills['reference_1_label'] !== 'Bank Code') {
             return \json_encode($bill);
         }
 
@@ -337,7 +337,7 @@ class BillplzWooCommerceAPI
         }
 
         if ($found) {
-            $bills['url'].='?auto_submit=true';
+            $bills['url'] .= '?auto_submit=true';
         }
 
         return json_encode($bills);
@@ -346,6 +346,15 @@ class BillplzWooCommerceAPI
     public function getFpxBanks()
     {
         $response = $this->connect->getFpxBanks();
+        if ($detect_mode = $this->detectMode(__FUNCTION__, $response)) {
+            return $detect_mode;
+        }
+        return $response;
+    }
+
+    public function getPaymentGateways()
+    {
+        $response = $this->connect->getPaymentGateways();
         if ($detect_mode = $this->detectMode(__FUNCTION__, $response)) {
             return $detect_mode;
         }

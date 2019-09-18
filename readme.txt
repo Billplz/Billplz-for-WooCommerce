@@ -16,7 +16,11 @@ Install this plugin to accept payment using Billplz.
 
 == Upgrade Notice ==
 
-None
+= 3.22.0 =
+* Changed of parameter key from banks to payment_gateways
+* Changed of parameter key from name to code
+* Added new parameter key category for categorizing payment method type.
+* This changes is based on upgrade from [Get FPX Banks](https://billplz.com/api#get-fpx-banks) to [Get Payment Gateways](https://billplz.com/api#get-payment-gateways) for support on all payment method available.
 
 == Screenshots ==
 * Billplz for WooCommerce installation
@@ -25,6 +29,10 @@ None
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.22.0 =
+* ADDED: Added support for all available payment methods. Custom integration should refer to upgrade notice for details.
+* IMPROVED: Using transient instead of normal wp option for storing payment method availability.
 
 = 3.21.9 =
 * IMPROVED: Add bfw_filter_order_data filter

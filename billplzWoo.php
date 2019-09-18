@@ -6,7 +6,7 @@
  * Description: Billplz. Fair payment platform. | <a href="https://www.billplz.com/enterprise/signup" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.21.9
+ * Version: 3.22.0
  * Requires PHP: 5.2.4
  * Requires at least: 4.6
  * License: GPLv3
@@ -189,7 +189,7 @@ function bfw_load()
                 $settings['reference_1_label'] = 'Bank Code';
                 if (isset($_POST['billplz_bank'])) {
                     $bank_name = BillplzBankName::get();
-                    if (isset($bank_name[$_POST['billplz_bank']]) && $_POST['billplz_bank'] !== 'OTHERS') {
+                    if (isset($bank_name[$_POST['billplz_bank']])) {
                         $settings['reference_1'] = $_POST['billplz_bank'];
                     } else {
                         $settings['reference_1'] = '';
@@ -197,6 +197,13 @@ function bfw_load()
                 }
             }
             return $settings;
+        }
+
+        public function process_admin_options()
+        {
+            delete_transient('billplz_get_payment_gateways');
+            delete_transient('billplz_get_collection_gateways');
+            parent::process_admin_options();
         }
 
         public function url($url)
@@ -233,21 +240,27 @@ function bfw_load()
         {
             ?>
             <h3><?php
-_e('Billplz Payment Gateway', 'bfw');?></h3>
+
+            _e('Billplz Payment Gateway', 'bfw');?></h3>
             <p><?php
-_e('Billplz Payment Gateway works by sending the user to Billplz for payment. ', 'bfw');?></p>
+
+            _e('Billplz Payment Gateway works by sending the user to Billplz for payment. ', 'bfw');?></p>
             <p><?php
-_e('To immediately reduce stock on add to cart, we strongly recommend you to use this plugin. ', 'bfw');?><a href="http://bit.ly/1UDOQKi" target="_blank">
+
+            _e('To immediately reduce stock on add to cart, we strongly recommend you to use this plugin. ', 'bfw');?><a href="http://bit.ly/1UDOQKi" target="_blank">
                     WooCommerce Cart Stock Reducer</a></p>
             <p><?php
-_e('You may do a bill requery in-case order is not updated. ', 'bfw');?><a href="options-general.php?page=bfw-requery-tool" target="_blank">
+
+            _e('You may do a bill requery in-case order is not updated. ', 'bfw');?><a href="options-general.php?page=bfw-requery-tool" target="_blank">
                     BFW Tool</a></p>
             <table class="form-table">
                 <?php
-$this->generate_settings_html();?>
+
+            $this->generate_settings_html();?>
             </table><!--/.form-table-->
             <?php
-}
+
+        }
 
         /**
          * Gateway Settings Form Fields.
@@ -264,52 +277,79 @@ $this->generate_settings_html();?>
             if ($description = $this->get_description()) {
                 echo wpautop(wptexturize($description));
             }
-            if (isset($this->has_fields) && $this->has_fields === 'yes') {
-                $rbody = get_option('billplz_fpx_banks');
-                $date = get_option('billplz_fpx_banks_last');
 
-                if (!$rbody || ($date !== date('d/m/Y/H'))) {
+            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+
+                if (false === ($gateways = get_transient('billplz_get_payment_gateways'))) {
                     $connect = new BillplzWooCommerceWPConnect($this->api_key);
                     $connect->detectMode();
-                    $billplz = new BillplzWooCommerceAPI($connect);
-                    list($rheader, $rbody) = $billplz->toArray($billplz->getFpxBanks());
 
-                    if (isset($rbody['error'])) {
-                        $rbody = array();
+                    $billplz = new BillplzWooCommerceAPI($connect);
+                    list($rheader, $rbody) = $billplz->toArray($billplz->getPaymentGateways());
+
+                    $gateways = array();
+
+                    if (isset($rbody['error']) || $rheader != 200) {
+                        /* Do nothing */
+                    } else {
+                        $gateways = $rbody;
                     }
 
-                    update_option('billplz_fpx_banks', $rbody);
-                    update_option('billplz_fpx_banks_last', date('d/m/Y/H'));
+                    set_transient('billplz_get_payment_gateways', $gateways, HOUR_IN_SECONDS * 1);
+                }
+
+                if (false === ($collection_gateways = get_transient('billplz_get_collection_gateways'))) {
+                    $connect = new BillplzWooCommerceWPConnect($this->api_key);
+                    $connect->detectMode();
+
+                    $billplz = new BillplzWooCommerceAPI($connect);
+                    list($rheader, $rbody) = $billplz->toArray($billplz->getPaymentMethodIndex($this->collection_id));
+
+                    $collection_gateways = array();
+
+                    if (isset($rbody['error']) || $rheader != 200) {
+                        /* Do nothing */
+                    } else {
+                        foreach ($rbody['payment_methods'] as $payment_method) {
+                            if ($payment_method['active']) {
+                                $collection_gateways[] = $payment_method['code'];
+                            }
+                        }
+                    }
+
+                    set_transient('billplz_get_collection_gateways', $collection_gateways, MINUTE_IN_SECONDS * 30);
                 }
 
                 $bank_name = apply_filters('bfw_bank_name_list', BillplzBankName::get());
 
                 /* Allow theme/plugin to override the way form is represented */
                 if (has_action('bfw_payment_fields')):
-                    do_action('bfw_payment_fields', $rbody, $bank_name);
+                    do_action('bfw_payment_fields', $gateways, $bank_name);
                 else:
                 ?>
                 <p class="form-row validate-required">
-                    <label><?php echo 'Choose Bank'; ?> <span class="required">*</span></label>
+                    <label><?php echo 'Choose Payment Method'; ?> <span class="required">*</span></label>
                     <select name="billplz_bank">
-                        <option value="" disabled selected>Choose your bank</option>
+                        <option value="" disabled selected>Choose your payment method</option>
                     <?php
-foreach ($bank_name as $key => $value) {
-                    if (empty($rbody)) {
+
+                foreach ($bank_name as $key => $value) {
+                    if (empty($gateways)) {
                         break;
                     }
-                    foreach ($rbody['banks'] as $bank) {
-                        if ($bank['name'] === $key && $bank['active']) {
-                            ?><option value="<?php echo $bank['name']; ?>"><?php echo $bank_name[$bank['name']] ? strtoupper($bank_name[$bank['name']]) : $bank['name']; ?></option><?php
-}
+                    foreach ($gateways['payment_gateways'] as $gateway) {
+                        if ($gateway['code'] === $key && $gateway['active'] && in_array($gateway['category'], $collection_gateways)) {
+                            ?><option value="<?php echo $gateway['code']; ?>"><?php echo $bank_name[$gateway['code']] ? strtoupper($bank_name[$gateway['code']]) : $gateway['code']; ?></option><?php
+
+                        }
                     }
                 }
                 ?>
-                    <option value="OTHERS">OTHERS</option>
                     </select>
                 </p>
                     <?php
-endif;
+
+                endif;
             }
         }
 
