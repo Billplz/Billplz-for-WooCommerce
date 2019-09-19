@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.2
-Stable tag: 3.21.9
+Stable tag: 3.22.1
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.22.1 =
+* FIXED: Order status callback not functioning when customer name has single quote.
 
 = 3.22.0 =
 * ADDED: Added support for all available payment methods. Custom integration should refer to upgrade notice for details.
