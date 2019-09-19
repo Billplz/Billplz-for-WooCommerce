@@ -17,10 +17,7 @@ Install this plugin to accept payment using Billplz.
 == Upgrade Notice ==
 
 = 3.22.0 =
-* Changed of parameter key from banks to payment_gateways
-* Changed of parameter key from name to code
-* Added new parameter key category for categorizing payment method type.
-* This changes is based on upgrade from [Get FPX Banks](https://billplz.com/api#get-fpx-banks) to [Get Payment Gateways](https://billplz.com/api#get-payment-gateways) for support on all payment method available.
+* Customizing the input fields for skip bill page feature will require minor adjustment due to changes in API from Get FPX Banks to Get Payment Gateways.
 
 == Screenshots ==
 * Billplz for WooCommerce installation
