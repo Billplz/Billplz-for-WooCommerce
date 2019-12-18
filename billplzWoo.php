@@ -6,14 +6,14 @@
  * Description: Billplz. Fair payment platform. | <a href="https://www.billplz.com/enterprise/signup" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.22.1
- * Requires PHP: 5.2.4
+ * Version: 3.23.0
+ * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 3.7.0
+ * WC tested up to: 3.8.1
  */
 
 /* Load Billplz Class */
@@ -113,11 +113,11 @@ function bfw_load()
          */
         public function __construct()
         {
-            //global $woocommerce;
-
             $this->id = 'billplz';
             $this->icon = apply_filters('bfw_icon', plugins_url('assets/billplz.gif', __FILE__));
             $this->method_title = __('Billplz', 'bfw');
+            $this->method_description = __('Have your customers pay with Billplz.', 'bfw');
+
             $this->debug = 'yes' === $this->get_option('debug', 'no');
 
             // Load the form fields.
@@ -135,20 +135,18 @@ function bfw_load()
             $this->title = $this->settings['title'];
             $this->description = $this->settings['description'];
 
+            $this->is_sandbox = $this->get_option('is_sandbox') == 'yes';
             $this->api_key = $this->settings['api_key'];
             $this->x_signature = $this->settings['x_signature'];
             $this->collection_id = $this->settings['collection_id'];
             $this->clearcart = $this->settings['clearcart'];
-            $this->notification = $this->settings['notification'];
             $this->custom_error = $this->settings['custom_error'];
 
             $this->reference_1_label = $this->settings['reference_1_label'];
             $this->reference_1 = $this->settings['reference_1'];
 
-            /* Enable Premium Features */
             $this->has_fields = $this->settings['has_fields'];
             if (isset($this->has_fields) && $this->has_fields === 'yes') {
-                $this->notification = '0';
                 add_filter('bfw_url', array($this, 'url'));
             }
 
@@ -232,37 +230,6 @@ function bfw_load()
         }
 
         /**
-         * Admin Panel Options
-         * - Options for bits like 'title' and availability on a country-by-country basis.
-         *
-         */
-        public function admin_options()
-        {
-            ?>
-            <h3><?php
-
-            _e('Billplz Payment Gateway', 'bfw');?></h3>
-            <p><?php
-
-            _e('Billplz Payment Gateway works by sending the user to Billplz for payment. ', 'bfw');?></p>
-            <p><?php
-
-            _e('To immediately reduce stock on add to cart, we strongly recommend you to use this plugin. ', 'bfw');?><a href="http://bit.ly/1UDOQKi" target="_blank">
-                    WooCommerce Cart Stock Reducer</a></p>
-            <p><?php
-
-            _e('You may do a bill requery in-case order is not updated. ', 'bfw');?><a href="options-general.php?page=bfw-requery-tool" target="_blank">
-                    BFW Tool</a></p>
-            <table class="form-table">
-                <?php
-
-            $this->generate_settings_html();?>
-            </table><!--/.form-table-->
-            <?php
-
-        }
-
-        /**
          * Gateway Settings Form Fields.
          *
          */
@@ -282,7 +249,7 @@ function bfw_load()
 
                 if (false === ($gateways = get_transient('billplz_get_payment_gateways'))) {
                     $connect = new BillplzWooCommerceWPConnect($this->api_key);
-                    $connect->detectMode();
+                    $connect->setStaging($this->is_sandbox);
 
                     $billplz = new BillplzWooCommerceAPI($connect);
                     list($rheader, $rbody) = $billplz->toArray($billplz->getPaymentGateways());
@@ -300,7 +267,7 @@ function bfw_load()
 
                 if (false === ($collection_gateways = get_transient('billplz_get_collection_gateways'))) {
                     $connect = new BillplzWooCommerceWPConnect($this->api_key);
-                    $connect->detectMode();
+                    $connect->setStaging($this->is_sandbox);
 
                     $billplz = new BillplzWooCommerceAPI($connect);
                     list($rheader, $rbody) = $billplz->toArray($billplz->getPaymentMethodIndex($this->collection_id));
@@ -358,7 +325,6 @@ function bfw_load()
          */
         public static function get_order_data($order)
         {
-            global $woocommerce;
             $data = array(
                 'first_name' => $order->get_billing_first_name(),
                 'last_name' => $order->get_billing_last_name(),
@@ -418,7 +384,6 @@ function bfw_load()
          */
         public function process_payment($order_id)
         {
-            global $woocommerce;
 
             if (!isset($_POST['billplz_bank']) && $this->has_fields === 'yes') {
                 wc_add_notice(__('Please choose your bank to proceed', 'bfw'), 'error');
@@ -434,32 +399,10 @@ function bfw_load()
 
             self::log('Connecting to Billplz API for order id #' . $order_id);
             $connect = new BillplzWooCommerceWPConnect($this->api_key);
-            $connect->detectMode();
+            $connect->setStaging($this->is_sandbox);
             $billplz = new BillplzWooCommerceAPI($connect);
 
-            $shouldCreateBill = true;
-
-            if (!empty($bill_id)) {
-                list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
-                if ($rbody['state'] !== 'hidden') {
-                    $shouldCreateBill = false;
-                }
-                if (isset($_POST['billplz_bank']) && $rbody['reference_1'] !== $_POST['billplz_bank'] && !empty($rbody['reference_1'])) {
-                    $shouldCreateBill = true;
-                }
-            }
-
-            if (!$shouldCreateBill) {
-                return array(
-                    'result' => 'success',
-                    'redirect' => apply_filters('bfw_url', $rbody['url']),
-                );
-            }
-
-            if ($this->clearcart === 'yes') {
-                /* WC()->cart->empty_cart(); */
-                $woocommerce->cart->empty_cart();
-            }
+            WC()->cart->empty_cart();
 
             $order = new WC_Order($order_id);
             $order = apply_filters('bfw_filter_order', $order, $rbody = array());
@@ -480,36 +423,36 @@ function bfw_load()
                 'mobile' => trim($order_data['phone']),
                 'name' => empty($order_data['name']) ? $order_data['email'] : $order_data['name'],
                 'amount' => $order_data['total'],
-                'callback_url' => home_url('/?wc-api=WC_Billplz_Gateway'),
-                'description' => mb_substr(apply_filters('bfw_description', $description), 0, 199),
+                'callback_url' => add_query_arg(array('wc-api' => 'WC_Billplz_Gateway', 'order' => $order_data['id']), home_url('/')),
+                'description' => mb_substr(apply_filters('bfw_description', $description), 0, 200),
             );
 
             $optional = array(
-                'redirect_url' => home_url('/?wc-api=WC_Billplz_Gateway'),
-                'reference_1_label' => mb_substr($this->reference_1_label, 0, 19),
-                'reference_1' => mb_substr($this->reference_1, 0, 119),
+                'redirect_url' => $parameter['callback_url'],
+                'reference_1_label' => mb_substr($this->reference_1_label, 0, 20),
+                'reference_1' => mb_substr($this->reference_1, 0, 120),
                 'reference_2_label' => 'Order ID',
                 'reference_2' => $order_data['id'],
             );
 
+            $parameter['name'] = preg_replace("/[^a-zA-Z0-9]+/", "", $parameter['name']);
+
             self::log('Creating bill for order number #' . $order_data['id']);
 
-            list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional, $this->notification));
+            list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional));
 
             if ($rheader !== 200) {
                 self::log('Error Creating bill for order number #' . $order_data['id'] . print_r($rbody, true));
-                wc_add_notice(__('ERROR: ', 'woothemes') . print_r($rbody, true), 'error');
+                wc_add_notice(__('ERROR: ', 'bfw') . print_r($rbody, true), 'error');
                 return;
             }
 
             self::log('Bill ID ' . $rbody['id'] . ' created for order number #' . $order_data['id']);
 
-            if (!add_post_meta($order_id, 'billplz_api_key', $this->api_key, true)) {
-                update_post_meta($order_id, 'billplz_api_key', $this->api_key);
+            if (!add_post_meta($order_id, $rbody['id'], 'due', true)) {
+                update_post_meta($order_id, $rbody['id'], 'due');
             }
-            if (!add_post_meta($order_id, 'billplz_paid', 'false', true)) {
-                update_post_meta($order_id, 'billplz_paid', 'false');
-            }
+
             if (!add_post_meta($order_id, '_transaction_id', $rbody['id'], true)) {
                 update_post_meta($order_id, '_transaction_id', $rbody['id']);
             }
@@ -529,7 +472,6 @@ function bfw_load()
         public function check_ipn_response()
         {
             @ob_clean();
-            //global $woocommerce;
 
             try {
                 $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature);
@@ -538,35 +480,35 @@ function bfw_load()
                 exit('Failed X Signature Validation');
             }
 
+            $order_id = sanitize_text_field($_GET['order']);
+
+            $post_meta = get_post_meta($order_id, $data['id'], true);
+
+            if (empty($post_meta)) {
+                status_header(404);
+                exit('Order not found');
+            }
+
             // Log return type
             self::log('Billplz response ' . print_r($data, true));
 
-            $connect = new BillplzWooCommerceWPConnect($this->api_key);
-            $connect->detectMode();
-            $billplz = new BillplzWooCommerceAPI($connect);
-            list($rheader, $rbody) = $billplz->toArray($billplz->getBill($data['id']));
-
-            $order_id = $rbody['reference_2'];
             $order = new WC_Order($order_id);
-            $order = apply_filters('bfw_filter_order', $order, $rbody);
-            if ($rbody['paid']) {
+            $order = apply_filters('bfw_filter_order', $order, array());
+            if ($data['paid']) {
                 $order_data = self::get_order_data($order);
-
-                $referer = "<br>Receipt URL: " . "<a href='" . urldecode($rbody['url']) . "' target=_blank>" . urldecode($rbody['url']) . "</a>";
+                $referer = "<br>Is Sandbox: " . ($this->is_sandbox ? 'Yes' : 'No');
+                $referer .= "<br>Bill ID: " . $data['id'];
                 $referer .= "<br>Order ID: " . $order_data['id'];
-                $referer .= "<br>Collection ID: " . $rbody['collection_id'];
                 $referer .= "<br>Type: " . $data['type'];
 
-                $bill_paid = get_post_meta($order_data['id'], 'billplz_paid', true);
-
-                if ($bill_paid === 'false') {
-                    update_post_meta($order_id, 'billplz_paid', 'true');
-                    $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $rbody['id'] . ' ' . $referer);
-                    $order->payment_complete($rbody['id']);
-                    self::log($data['type'] . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' updated in WooCommerce as Paid');
+                if ($post_meta === 'due') {
+                    update_post_meta($order_id, $data['id'], 'paid');
+                    $order->add_order_note('Payment Status: SUCCESSFUL ' . $referer);
+                    $order->payment_complete($data['id']);
+                    self::log($data['type'] . ', bills ' . $data['id'] . '. Order #' . $order_data['id'] . ' updated in WooCommerce as Paid');
                     do_action('bfw_on_payment_success_update', $order);
-                } elseif ($bill_paid === 'true') {
-                    self::log($data['type'] . ', bills ' . $rbody['id'] . '. Order #' . $order_data['id'] . ' not updated due to Duplicate');
+                } elseif ($post_meta === 'paid') {
+                    self::log($data['type'] . ', bills ' . $data['id'] . '. Order #' . $order_data['id'] . ' not updated due to Duplicate');
                 }
                 $redirectpath = $order->get_checkout_order_received_url();
             } else {
@@ -679,20 +621,21 @@ function bfw_delete_order($post_id)
         return;
     }
 
+    $settings = get_option('woocommerce_billplz_settings');
+    $api_key = $settings['api_key'];
     $bill_id = get_post_meta($post_id, '_transaction_id', true);
-    $api_key = get_post_meta($post_id, 'billplz_api_key', true);
-    $bill_paid = get_post_meta($post_id, 'billplz_paid', true);
+    $bill_paid = get_post_meta($post_id, $bill_id, true);
 
     if (empty($bill_id) || empty($api_key) || empty($bill_paid)) {
         return;
     }
 
-    if ($bill_paid === 'true') {
+    if ($bill_paid === 'paid') {
         return;
     }
 
     $connect = new BillplzWooCommerceWPConnect($api_key);
-    $connect->detectMode();
+    $connect->setStaging($settings['is_sandbox'] == 'yes');
     $billplz = new BillplzWooCommerceAPI($connect);
     list($rheader, $rbody) = $billplz->deleteBill($bill_id);
 

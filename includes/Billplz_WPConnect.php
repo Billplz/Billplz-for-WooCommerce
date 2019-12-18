@@ -16,7 +16,7 @@ class BillplzWooCommerceWPConnect
 
     const TIMEOUT = 10; //10 Seconds
     const PRODUCTION_URL = 'https://www.billplz.com/api/';
-    const STAGING_URL = 'https://billplz-staging.herokuapp.com/api/';
+    const STAGING_URL = 'https://www.billplz-sandbox.com/api/';
 
     public function __construct($api_key)
     {
@@ -27,13 +27,13 @@ class BillplzWooCommerceWPConnect
         );
     }
 
-    public function setMode($is_staging = false)
+    public function setStaging($is_staging = false)
     {
         $this->is_staging = $is_staging;
         if ($is_staging) {
-            $this->url = self::PRODUCTION_URL;
-        } else {
             $this->url = self::STAGING_URL;
+        } else {
+            $this->url = self::PRODUCTION_URL;
         }
     }
 

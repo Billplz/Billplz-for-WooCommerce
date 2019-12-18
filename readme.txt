@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 5.2
-Stable tag: 3.22.1
+Tested up to: 5.3
+Stable tag: 3.23.0
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -27,6 +27,14 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
+= 3.23.0 =
+* IMPROVED: Remove special character on name to avoid X Signature calculation failure.
+* IMPROVED: Cart session are removed by default.
+* IMPROVED: No requery will be made upon redirect and callback.
+* REMOVED: Requery all order status due to performance impact.
+* REMOVED: Bill notification feature is now always disabled.
+* REMOVED: Auto detect mode. Now merchant need to tick on Sandbox to use sandbox mode.
+
 = 3.22.1 =
 * FIXED: Order status callback not functioning when customer name has single quote.
 
@@ -45,15 +53,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.21.8 =
 * FIXED: Prevent X Signature Key from being exposed when PHP display errors is On
-
-= 3.21.7 =
-* FIXED: Undefined index when upgrading from old verison
-* NEW: Added more hooks
-* REMOVED: Billplz sign up referral link
-
-= 3.21.6 =
-* FIXED: Undefined index for type variable
-* IMPROVED: Prevent multiple bill from being created if OTHERS option is choosen
 
 == Installation ==
 
@@ -94,9 +93,7 @@ You can the X Signature Key at your Billplz Account Settings. [Get it here](http
 
 	Please make sure you have **Tick "Enable XSignature Payment Completion"** on Billplz Account Settings and make sure you have set your **X Signature Key**.
 
-2. If you want both Email & Phone Number to be captured on Bills:
-
-	Set Notification settings to **No Notification** or **Both**
+2. To immediately reduce stock on add to cart, we strongly recommend you to use [WooCommerce Cart Stock Reducer](http://bit.ly/1UDOQKi) plugin.
 
 == Links ==
-[Sign Up](http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/) for Billplz account to accept payment using Billplz now!
+[Sign Up](https://www.billplz.com/join/lz7pmrxa45tiihvqdydxqq/) for Billplz account to accept payment using Billplz now!

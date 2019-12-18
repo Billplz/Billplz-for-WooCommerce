@@ -3,111 +3,47 @@
 if (is_admin()) {
     new BfwRequery();
     add_action('wp_ajax_bfw_requery_single', 'bfw_requery_single');
-    add_action('wp_ajax_bfw_requery_all', 'bfw_requery_all');
 }
 
 function bfw_requery_single()
 {
-    global $wpdb;
-    $bill_id_array = explode(',', preg_replace('/\s+/', '', $_POST['bill_id']));
-    $order_id_array = explode(',', preg_replace('/\s+/', '', $_POST['order_id']));
-    $output = array();
+    $bill_id = $_POST['bill_id'];
+    $order_id = $_POST['order_id'];
 
-    foreach ($bill_id_array as $bill_id) {
-        if (!empty($bill_id)) {
-            $results = $wpdb->get_results("select post_id, meta_key from $wpdb->postmeta where meta_value = '$bill_id'", ARRAY_A);
-            if (empty($results)) {
-                $output[]= 'Order for Bill ID '.$bill_id.' not found';
-            } else {
-                $bill_order_id = $results[0]['post_id'];
-                $bill_order_api_key = get_post_meta($bill_order_id, 'billplz_api_key', true);
-                $bill_order_paid = get_post_meta($bill_order_id, 'billplz_paid', true);
+    $bill = get_post_meta($order_id, $bill_id, true);
 
-                $connect = new BillplzWooCommerceWPConnect($bill_order_api_key);
-                $connect->detectMode();
-                $billplz = new BillplzWooCommerceAPI($connect);
-                list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
-
-                if ($rbody['paid']) {
-                    update_post_meta($bill_order_id, 'billplz_paid', 'true');
-                    $order = new WC_Order($bill_order_id);
-                    $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $rbody['id']);
-                    $order->payment_complete($bill_id);
-                    $output[]= 'Successfully Updated status for Order ID #'.$bill_order_id;
-                } else {
-                    $output[]= 'Status for Bill ID '.$bill_id.' not updated due to unpaid status';
-                }
-            }
-        }
-    }
-
-    foreach ($order_id_array as $order_id) {
-        if (!empty($order_id)) {
-            $order_bill_id = get_post_meta($order_id, '_transaction_id', true);
-            $order_bill_api_key = get_post_meta($order_id, 'billplz_api_key', true);
-            $order_bill_paid = get_post_meta($order_id, 'billplz_paid', true);
-
-            if (empty($order_bill_id) || empty($order_bill_api_key) || empty($order_bill_paid)) {
-                $output[]= 'Order ID #'.$order_id.' not found';
-            } else {
-                $connect = new BillplzWooCommerceWPConnect($order_bill_api_key);
-                $connect->detectMode();
-                $billplz = new BillplzWooCommerceAPI($connect);
-                list($rheader, $rbody) = $billplz->toArray($billplz->getBill($order_bill_id));
-
-                if ($rbody['paid']) {
-                    update_post_meta($order_id, 'billplz_paid', 'true');
-                    $order = new WC_Order($order_id);
-                    $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $rbody['id']);
-                    $order->payment_complete($order_bill_id);
-                    $output[]= 'Successfully updated status for Order ID #'.$order_id;
-                } else {
-                    $output[]= 'Status for Order ID #'.$order_id.' not updated due to unpaid status';
-                }
-            }
-        }
-    }
-    echo implode("<br>", $output);
-
-    wp_die();
-}
-
-function bfw_requery_all()
-{
-    global $wpdb;
-
-    set_time_limit(1800);
-    ignore_user_abort(true);
-
-    $sql = "select postmeta.post_id from $wpdb->postmeta postmeta, $wpdb->posts posts where postmeta.meta_value = 'false' AND postmeta.meta_key = 'billplz_paid'  AND posts.post_status<>'trash' AND posts.id=postmeta.post_id";
-    $results = $wpdb->get_results($sql, ARRAY_A);
-    $output= array();
-
-    foreach ($results as $result) {
-        $order_id = $result['post_id'];
-        $bill_id = get_post_meta($order_id, '_transaction_id', true);
-        $bill_api_key = get_post_meta($order_id, 'billplz_api_key', true);
-        $bill_paid = get_post_meta($order_id, 'billplz_paid', true);
-
-        if (empty($bill_id) || empty($bill_api_key) || empty($bill_paid)) {
-            continue;
-        }
-
-        $connect = new BillplzWooCommerceWPConnect($bill_api_key);
-        $connect->detectMode();
+    if ($bill === 'due') {
+        $settings = get_option('woocommerce_billplz_settings');
+        $connect = new BillplzWooCommerceWPConnect($settings['api_key']);
+        $connect->setStaging($settings['is_sandbox'] == 'yes');
         $billplz = new BillplzWooCommerceAPI($connect);
         list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
-        if ($rbody['paid']) {
-            update_post_meta($order_id, 'billplz_paid', 'true');
-            $order = new WC_Order($order_id);
-            $order->add_order_note('Payment Status: SUCCESSFUL' . '<br>Bill ID: ' . $rbody['id']);
-            $order->payment_complete($bill_id);
-            $output[]= 'Successfully updated status for Order ID #'.$order_id;
-        } else {
-            $output[]= 'Status for Order ID #'.$order_id.' not updated due to unpaid status';
+
+        if ($rheader !== 200) {
+            echo 'Unable to access Billplz due to invalid API Key.';
+            wp_die();
         }
+
+        if ($rbody['paid']) {
+            $order_note = 'Payment Status: SUCCESSFUL';
+            $order_note .= '<br>Is Sandbox: ' . ($settings['is_sandbox'] == 'yes' ? 'Yes' : 'No');
+            $order_note .= '<br>Bill ID: ' . $rbody['id'];
+            $order_note .= '<br>Type: Requery';
+            $order = new WC_Order($order_id);
+            $order->add_order_note($order_note);
+            $order->payment_complete($bill_id);
+            update_post_meta($order_id, $bill_id, 'paid');
+            echo 'Successfully Updated status for Order ID #' . $order_id;
+        }
+
+    } elseif (empty($bill)) {
+        echo 'Order not found';
+    } elseif ($bill === 'paid') {
+        echo 'Order already paid';
+    } else {
+        echo 'Unknown error.';
     }
-    echo implode("<br>", $output);
+
     wp_die();
 }
 
@@ -123,9 +59,9 @@ class BfwRequery
      */
     public function __construct()
     {
-        add_action('admin_menu', array( $this, 'add_plugin_page' ));
-        add_action('admin_init', array( $this, 'page_init' ));
-        add_action('admin_enqueue_scripts', array( $this, 'enqueue_script' ));
+        add_action('admin_menu', array($this, 'add_plugin_page'));
+        add_action('admin_init', array($this, 'page_init'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_script'));
     }
 
     /**
@@ -139,7 +75,7 @@ class BfwRequery
             'BFW Tool',
             'manage_options',
             'bfw-requery-tool',
-            array( $this, 'create_admin_page' )
+            array($this, 'create_admin_page')
         );
     }
 
@@ -154,15 +90,14 @@ class BfwRequery
         <h1>Billplz Bill Requery Tool (Experimental)</h1>
         <form method="post" action="options.php">
         <?php
-        // This prints out all hidden setting fields
+// This prints out all hidden setting fields
         settings_fields('bfw_option_group');
         do_settings_sections('bfw-requery-tool');
-        submit_button('Requery Status', 'primary', 'requery-single', false);
-        submit_button('Requery ALL', 'delete', 'requery-all', true); ?>
+        submit_button('Requery Status', 'primary', 'requery-single', false);?>
         </form>
         </div>
         <?php
-    }
+}
 
     /**
      * Register and add settings
@@ -172,20 +107,20 @@ class BfwRequery
         register_setting(
             'bfw_option_group', // Option group
             'bfw_option_name', // Option name
-            array( $this, 'sanitize' ) // Sanitize
+            array($this, 'sanitize') // Sanitize
         );
 
         add_settings_section(
             'setting_bill_id', // ID
-            'Requery by Bill ID', // Title
-            array( $this, 'print_section_info' ), // Callback
+            'Requery by Bill ID and Order ID', // Title
+            array($this, 'print_section_info'), // Callback
             'bfw-requery-tool' // Page
         );
 
         add_settings_field(
             'bill_id', // ID
             'Bill ID', // Title
-            array( $this, 'bill_id_callback' ), // Callback
+            array($this, 'bill_id_callback'), // Callback
             'bfw-requery-tool', // Page
             'setting_bill_id' // Section
         );
@@ -193,7 +128,7 @@ class BfwRequery
         add_settings_field(
             'order_id',
             'Order ID',
-            array( $this, 'order_id_callback' ),
+            array($this, 'order_id_callback'),
             'bfw-requery-tool',
             'setting_bill_id'
         );
@@ -201,7 +136,7 @@ class BfwRequery
         add_settings_field(
             'status',
             'Status: ',
-            array( $this, 'status_callback' ),
+            array($this, 'status_callback'),
             'bfw-requery-tool',
             'setting_bill_id'
         );
@@ -231,7 +166,7 @@ class BfwRequery
      */
     public function print_section_info()
     {
-        print 'Enter your <b>Bill ID</b> and/or <b>Order ID</b> to requery.';
+        print 'Enter your <b>Bill ID</b> and <b>Order ID</b> to requery.';
     }
 
     /**
@@ -276,7 +211,7 @@ class BfwRequery
         wp_localize_script(
             'ajax-script',
             'ajax_object',
-            array( 'ajax_url' => admin_url('admin-ajax.php'))
+            array('ajax_url' => admin_url('admin-ajax.php'))
         );
     }
 }

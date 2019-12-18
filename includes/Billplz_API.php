@@ -22,7 +22,7 @@ class BillplzWooCommerceAPI
     {
         if ($response[0] === 401 && $this->connect->detect_mode) {
             $this->connect->detect_mode = false;
-            $this->connect->setMode(false);
+            $this->connect->setStaging(true);
             if (!empty($extra)) {
                 return $this->{$method_name}($parameter, $optional, $extra);
             } elseif (!empty($optional)) {

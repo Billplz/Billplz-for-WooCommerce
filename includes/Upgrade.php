@@ -1,9 +1,6 @@
 <?php
 
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-    exit;
-}
+defined('ABSPATH') || exit;
 
 /**
  * Since previous Billplz for WooCommerce version doesn't have some settings,
