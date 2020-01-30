@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.3
-Stable tag: 3.23.0
+Stable tag: 3.23.1
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -27,6 +27,9 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
+= 3.23.1 =
+* FIXED: Undefined index for clear cart key
+
 = 3.23.0 =
 * IMPROVED: Remove special character on name to avoid X Signature calculation failure.
 * IMPROVED: Cart session are removed by default.
@@ -50,9 +53,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.21.8.1 =
 * IMPROVED: Removed Boost e-wallet as a default title
-
-= 3.21.8 =
-* FIXED: Prevent X Signature Key from being exposed when PHP display errors is On
 
 == Installation ==
 
