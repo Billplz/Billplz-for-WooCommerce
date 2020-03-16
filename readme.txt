@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.3
-Stable tag: 3.23.1
+Stable tag: 3.23.2
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -26,6 +26,10 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.23.2 =
+* FIXED: Issue with new PayPal account not displaying on checkout page when Bypass Billplz Page setting is on.
+* NEW: Bump WooCommerce version support to 4.0.
 
 = 3.23.1 =
 * FIXED: Undefined index for clear cart key

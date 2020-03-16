@@ -6,14 +6,14 @@
  * Description: Billplz. Fair payment platform. | <a href="https://www.billplz.com/enterprise/signup" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.23.1
+ * Version: 3.23.2
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 3.9.1
+ * WC tested up to: 4.0
  */
 
 /* Load Billplz Class */
@@ -278,6 +278,9 @@ function bfw_load()
                     } else {
                         foreach ($rbody['payment_methods'] as $payment_method) {
                             if ($payment_method['active']) {
+                                if ($payment_method['code'] === 'isupaypal') {
+                                    $payment_method['code'] = 'paypal';
+                                }
                                 $collection_gateways[] = $payment_method['code'];
                             }
                         }
