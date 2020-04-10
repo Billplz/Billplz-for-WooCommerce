@@ -404,8 +404,6 @@ function bfw_load()
             $connect->setStaging($this->is_sandbox);
             $billplz = new BillplzWooCommerceAPI($connect);
 
-            WC()->cart->empty_cart();
-
             $order = new WC_Order($order_id);
             $order = apply_filters('bfw_filter_order', $order, $rbody = array());
             $order_data = self::get_order_data($order);
