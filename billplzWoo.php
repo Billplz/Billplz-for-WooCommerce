@@ -389,7 +389,6 @@ function bfw_load()
 
             if (!isset($_POST['billplz_bank']) && $this->has_fields === 'yes') {
                 wc_add_notice(__('Please choose your bank to proceed', 'bfw'), 'error');
-                return;
             }
 
             /* Redirect to Bill Payment Page if has been created */
@@ -446,7 +445,6 @@ function bfw_load()
             if ($rheader !== 200) {
                 self::log('Error Creating bill for order number #' . $order_data['id'] . print_r($rbody, true));
                 wc_add_notice(__('ERROR: ', 'bfw') . print_r($rbody, true), 'error');
-                return;
             }
 
             self::log('Bill ID ' . $rbody['id'] . ' created for order number #' . $order_data['id']);
