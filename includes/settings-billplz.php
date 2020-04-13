@@ -88,6 +88,12 @@ return array(
         'description' => __('Button label on checkout.', 'bfw'),
         'default' => 'Pay with Billplz',
     ),
+    'do_not_clear_cart' => array(
+        'title' => __('Do not clear Cart', 'bfw'),
+        'type' => 'checkbox',
+        'label' => __('Do not clear cart upon checkout', 'bfw'),
+        'default' => 'no',
+    ),
     'has_fields' => array(
         'title' => __('Skip Bill Page', 'bfw'),
         'type' => 'checkbox',
