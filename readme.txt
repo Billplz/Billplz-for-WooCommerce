@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 5.3
-Stable tag: 3.23.2
+Tested up to: 5.4
+Stable tag: 3.24.0
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -27,6 +27,10 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
+= 3.24.0 =
+* FIXED: Ensure space at name didn't automatically trimmed
+* NEW: Provide option not to clear cart
+
 = 3.23.2 =
 * FIXED: Issue with new PayPal account not displaying on checkout page when Bypass Billplz Page setting is on.
 * NEW: Bump WooCommerce version support to 4.0.
@@ -44,19 +48,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.22.1 =
 * FIXED: Order status callback not functioning when customer name has single quote.
-
-= 3.22.0 =
-* ADDED: Added support for all available payment methods. Custom integration should refer to upgrade notice for details.
-* IMPROVED: Using transient instead of normal wp option for storing payment method availability.
-
-= 3.21.9 =
-* IMPROVED: Add bfw_filter_order_data filter
-* IMPROVED: Auto disable plugin when using other than MYR Currency
-* IMPROVED: Webhook to have 403 forbidden status code if X Signature comparison failed
-* REMOVED: Support for WooCommerce 2.x
-
-= 3.21.8.1 =
-* IMPROVED: Removed Boost e-wallet as a default title
 
 == Installation ==
 

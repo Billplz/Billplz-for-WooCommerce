@@ -6,7 +6,7 @@
  * Description: Billplz. Fair payment platform. | <a href="https://www.billplz.com/enterprise/signup" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.23.2
+ * Version: 3.24.0
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
@@ -391,19 +391,22 @@ function bfw_load()
                 wc_add_notice(__('Please choose your bank to proceed', 'bfw'), 'error');
             }
 
-            /* Redirect to Bill Payment Page if has been created */
-            $bill_id = get_post_meta($order_id, '_transaction_id', true);
-
-            /* Check if the Bill is already deleted.
-             * Bill can be deleted via Billplz website too.
-             **/
-
             self::log('Connecting to Billplz API for order id #' . $order_id);
             $connect = new BillplzWooCommerceWPConnect($this->api_key);
             $connect->setStaging($this->is_sandbox);
             $billplz = new BillplzWooCommerceAPI($connect);
 
-            WC()->cart->empty_cart();
+            $bill_id = get_post_meta($order_id, '_transaction_id', true);
+            if (!empty($bill_id)) {
+                if (!empty(get_post_meta($order_id, $bill_id, true))){
+                    delete_post_meta($order_id, $bill_id);
+                    $billplz->deleteBill($bill_id);
+                }
+            }
+
+            if ($this->get_option('do_not_clear_cart') !== 'yes') {
+                WC()->cart->empty_cart();
+            }
 
             $order = new WC_Order($order_id);
             $order = apply_filters('bfw_filter_order', $order, $rbody = array());
@@ -436,7 +439,7 @@ function bfw_load()
                 'reference_2' => $order_data['id'],
             );
 
-            $parameter['name'] = preg_replace("/[^a-zA-Z0-9]+/", "", $parameter['name']);
+            $parameter['name'] = preg_replace("/[^a-zA-Z0-9\s]+/", "", $parameter['name']);
 
             self::log('Creating bill for order number #' . $order_data['id']);
 
@@ -445,7 +448,7 @@ function bfw_load()
             if ($rheader !== 200) {
                 self::log('Error Creating bill for order number #' . $order_data['id'] . print_r($rbody, true));
                 wc_add_notice(__('ERROR: ', 'bfw') . print_r($rbody, true), 'error');
-                
+              
                 return array(
                     'result' => 'failed',
                     'redirect' => null,
