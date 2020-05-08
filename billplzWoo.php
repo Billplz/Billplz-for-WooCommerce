@@ -13,7 +13,7 @@
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 4.0
+ * WC tested up to: 4.1
  */
 
 /* Load Billplz Class */
