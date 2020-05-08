@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.4
-Stable tag: 3.24.0
+Stable tag: 3.24.1
 Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -27,6 +27,9 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
+= 3.24.1 =
+* NEW: Add Senangpay for Skip Bill Page option.
+
 = 3.24.0 =
 * FIXED: Ensure space at name didn't automatically trimmed
 * NEW: Provide option not to clear cart
@@ -45,9 +48,6 @@ Install this plugin to accept payment using Billplz.
 * REMOVED: Requery all order status due to performance impact.
 * REMOVED: Bill notification feature is now always disabled.
 * REMOVED: Auto detect mode. Now merchant need to tick on Sandbox to use sandbox mode.
-
-= 3.22.1 =
-* FIXED: Order status callback not functioning when customer name has single quote.
 
 == Installation ==
 

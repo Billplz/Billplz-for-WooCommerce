@@ -46,6 +46,7 @@ class BillplzBankName
             'BP-2C2PU' => 'UnionPay',
             'BP-OCBC1' => 'Visa / Mastercard',
             'BP-BST01' => 'Boost',
+            'BP-SGP01' => 'Senangpay'
         );
         asort($bank_name);
         return $bank_name;
