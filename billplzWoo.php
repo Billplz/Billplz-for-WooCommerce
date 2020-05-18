@@ -3,10 +3,10 @@
 /**
  * Plugin Name: Billplz for WooCommerce
  * Plugin URI: https://wordpress.org/plugins/billplz-for-woocommerce/
- * Description: Billplz. Fair payment platform. | <a href="https://www.billplz.com/enterprise/signup" target="_blank">Sign up Now</a>.
+ * Description: Billplz. Fair payment platform. | <a href="https://www.billplz.com" target="_blank">Sign up Now</a>.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.24.1
+ * Version: 3.24.2
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
@@ -144,8 +144,9 @@ function bfw_load()
             $this->reference_1_label = $this->settings['reference_1_label'];
             $this->reference_1 = $this->settings['reference_1'];
 
-            $this->has_fields = $this->settings['has_fields'];
-            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+            $this->has_fields = $this->get_option('has_fields', false) === 'yes';
+
+            if ($this->has_fields) {
                 add_filter('bfw_url', array($this, 'url'));
             }
 
@@ -182,7 +183,7 @@ function bfw_load()
 
         public static function settings_value($settings)
         {
-            if (isset($settings['has_fields']) && $settings['has_fields'] === 'yes') {
+            if ($settings['has_fields']) {
                 $settings['reference_1_label'] = 'Bank Code';
                 if (isset($_POST['billplz_bank'])) {
                     $bank_name = BillplzBankName::get();
@@ -205,7 +206,7 @@ function bfw_load()
 
         public function url($url)
         {
-            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+            if ($this->has_fields) {
                 return $url . '?auto_submit=true';
             }
             return $url;
@@ -244,7 +245,7 @@ function bfw_load()
                 echo wpautop(wptexturize($description));
             }
 
-            if (isset($this->has_fields) && $this->has_fields === 'yes') {
+            if ($this->has_fields) {
 
                 if (false === ($gateways = get_transient('billplz_get_payment_gateways'))) {
                     $connect = new BillplzWooCommerceWPConnect($this->api_key);
@@ -387,7 +388,7 @@ function bfw_load()
         public function process_payment($order_id)
         {
 
-            if (!isset($_POST['billplz_bank']) && $this->has_fields === 'yes') {
+            if (!isset($_POST['billplz_bank']) && $this->has_fields) {
                 wc_add_notice(__('Please choose your bank to proceed', 'bfw'), 'error');
             }
 

@@ -2,8 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.4
-Stable tag: 3.24.1
-Donate link: http://billplz.com/join/lz7pmrxa45tiihvqdydxqq/
+Stable tag: 3.24.2
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -26,6 +25,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.24.2 =
+* IMPROVED: Ensure has_fields attribute key is using Boolean value.
 
 = 3.24.1 =
 * NEW: Add Senangpay for Skip Bill Page option.
