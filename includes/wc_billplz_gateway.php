@@ -15,7 +15,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   public static $log_enabled = false;
   public static $log = false;
 
-  public static $id = 'billplz';
+  public static $gateway_id = 'billplz';
 
   public function __construct()
   {
@@ -23,7 +23,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $this->enabled = 'no';
     }
 
-    $this->id = self::$id;
+    $this->id = self::$gateway_id;
     $this->method_title = __('Billplz', 'bfw');
     $this->method_description = __('Have your customers pay with Billplz.', 'bfw');
     $this->order_button_text =  __('Pay with Billplz', 'bfw');
@@ -76,7 +76,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       if (empty(self::$log)) {
           self::$log = new WC_Logger();
       }
-      self::$log->add(self::$id, $message);
+      self::$log->add(self::$gateway_id, $message);
     }
   }
 
@@ -97,25 +97,52 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function validate_merchant_account()
   {
-    global $woocommerce_billplz;
-
     if (empty($this->api_key))
     {
-      $warning = sprintf(__('<strong>Gateway Disabled</strong> You should set your API Key in Billplz. %sClick here to configure!%s', 'bfw'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>')
-      $woocommerce_billplz->add_admin_notice('api_key_missing_message', 'error', $warning);
+      add_action('admin_notices', array(
+        &$this, 
+        'api_key_missing_message')
+      );
     } 
 
     if (empty($this->collection_id))
     {
-      $warning = sprintf(__('<strong>Gateway Disabled</strong> You should set your Collection ID in Billplz. %sClick here to configure!%s', 'bfw'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>')
-      $woocommerce_billplz->add_admin_notice('collection_id_missing_message', 'error', $warning);
+      add_action('admin_notices', array(
+        &$this, 
+        'collection_id_missing_message')
+      );
     }
 
     if (empty($this->x_signature))
     {
-      $warning = sprintf(__('<strong>Gateway Disabled</strong> You should set your XSignature Key in Billplz. %sClick here to configure!%s', 'bfw'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>')
-      $woocommerce_billplz->add_admin_notice('x_signature_missing_message', 'error', $warning);
+      add_action('admin_notices', array(
+        &$this, 
+        'xsignature_key_missing_message')
+      );
     }
+  }
+
+  public function api_key_missing_message()
+  {
+    $this->key_missing_message('API Key');
+  }
+
+  public function collection_id_missing_message()
+  {
+    $this->key_missing_message('Collection ID');
+  }
+
+  public function xsignature_key_missing_message()
+  {
+    $this->key_missing_message('XSignature Key');
+  }
+
+  public function key_missing_message($message)
+  {
+    $message = '<div class="error">';
+    $message .= '<p>' . sprintf(__("<strong>Billplz Disabled</strong> You should set your $message in Billplz. %sClick here to configure!%s", 'bfw'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
+    $message .= '</div>';
+    echo $message;
   }
 
   private function fetch_billplz_payment_gateways()
@@ -199,7 +226,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   private function validate_and_assign_reference_1(){
     if (isset($_POST['billplz_bank'])){
       $this->reference_1_label = 'Bank Code';
-      $this->reference_1 = $_POST['billplz_bank']);
+      $this->reference_1 = $_POST['billplz_bank'];
     } else {
       wc_add_notice(__('Please choose the payment method to proceed', 'bfw'), 'error');
     }
@@ -226,7 +253,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     $description = sprintf(__('Order %s', 'woocommerce'), $order->get_order_number()) . " - " . implode(', ', $item_names);
-    return mb_substr(apply_filters('bfw_description', $description), 0, 200)
+    return mb_substr(apply_filters('bfw_description', $description), 0, 200);
   }
 
   public function process_payment($order_id)

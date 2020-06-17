@@ -89,7 +89,7 @@ class Woocommerce_Billplz {
 
   public function load_plugin_textdomain()
   {
-    load_plugin_textdomain('bfw', false, BFW_PLUGIN_DIR . '/languages/')
+    load_plugin_textdomain('bfw', false, BFW_PLUGIN_DIR . '/languages/');
   }
 
   public function add_admin_notice($slug, $class, $message)
