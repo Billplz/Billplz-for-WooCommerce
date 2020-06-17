@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 class BillplzBankName
 {
     public static function get()

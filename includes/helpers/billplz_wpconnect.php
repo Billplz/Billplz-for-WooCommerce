@@ -1,12 +1,14 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 class BillplzWooCommerceWPConnect
 {
     private $api_key;
     private $x_signature_key;
     private $collection_id;
 
-    private $process; //cURL or GuzzleHttp
+    private $process;
     public $is_staging;
     public $detect_mode;
     public $url;
@@ -18,9 +20,21 @@ class BillplzWooCommerceWPConnect
     const PRODUCTION_URL = 'https://www.billplz.com/api/';
     const STAGING_URL = 'https://www.billplz-sandbox.com/api/';
 
-    public function __construct($api_key)
+    private static $instance;
+
+    public static function get_instance() {
+      if (null === self::$instance) {
+        self::$instance = new self();
+      }
+      return self::$instance;
+    }
+
+    private function __clone() {}
+
+    public function set_api_key($api_key, $is_staging = false)
     {
         $this->api_key = $api_key;
+        $this->setStaging($is_staging);
 
         $this->header = array(
             'Authorization' => 'Basic ' . base64_encode($this->api_key . ':'),
@@ -550,12 +564,10 @@ class BillplzWooCommerceWPConnect
         return array($header, $body);
     }
 
-    public function closeConnection()
-    {
-    }
-
     public function toArray($json)
     {
         return array($json[0], \json_decode($json[1], true));
     }
 }
+
+$GLOBALS['bfw_connect'] = BillplzWooCommerceWPConnect::get_instance();

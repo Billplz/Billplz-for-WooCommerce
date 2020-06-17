@@ -1,15 +1,22 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 class BillplzWooCommerceAPI
 {
     private $connect;
+    private static $instance;
 
-    public function __construct($connect)
-    {
-        $this->connect = $connect;
+    public static function get_instance() {
+      if (null === self::$instance) {
+        self::$instance = new self();
+      }
+      return self::$instance;
     }
 
-    public function setConnect($connect)
+    private function __clone() {}
+
+    public function set_connect($connect)
     {
         $this->connect = $connect;
     }
@@ -366,3 +373,5 @@ class BillplzWooCommerceAPI
         return $this->connect->toArray($json);
     }
 }
+
+$GLOBALS['bfw_api'] = BillplzWooCommerceAPI::get_instance();

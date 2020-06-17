@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit;
+
 if (is_admin()) {
     new BfwRequery();
     add_action('wp_ajax_bfw_requery_single', 'bfw_requery_single');

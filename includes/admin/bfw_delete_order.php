@@ -1,0 +1,39 @@
+<?php
+
+defined('ABSPATH') || exit;
+
+function bfw_delete_order($post_id)
+{
+
+    if (defined('BFW_DISABLE_DELETE_ORDER') && BFW_DISABLE_DELETE_ORDER) {
+        return;
+    }
+
+    $post_type = get_post_type($post_id);
+    if ($post_type !== 'shop_order') {
+        return;
+    }
+
+    $settings = get_option('woocommerce_billplz_settings');
+    $api_key = $settings['api_key'];
+    $bill_id = get_post_meta($post_id, '_transaction_id', true);
+    $bill_paid = get_post_meta($post_id, $bill_id, true);
+
+    if (empty($bill_id) || empty($api_key) || empty($bill_paid)) {
+        return;
+    }
+
+    if ($bill_paid === 'paid') {
+        return;
+    }
+
+    $connect = new BillplzWooCommerceWPConnect($api_key);
+    $connect->setStaging($settings['is_sandbox'] == 'yes');
+    $billplz = new BillplzWooCommerceAPI($connect);
+    list($rheader, $rbody) = $billplz->deleteBill($bill_id);
+
+    if ($rheader !== 200) {
+        wp_die('Deleting this order has been prevented. ' . print_r($rbody, true));
+    }
+}
+add_action('before_delete_post', 'bfw_delete_order');
