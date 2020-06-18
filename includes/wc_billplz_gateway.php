@@ -24,9 +24,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->method_description = __('Have your customers pay with Billplz.', 'bfw');
     $this->order_button_text =  __('Pay with Billplz', 'bfw');
 
-    $bfw_icon = plugins_url('assets/billplz-logo-fpx.png', BFW_PLUGIN_FILE);
-    $this->icon = apply_filters('bfw_icon', $bfw_icon);
-
     if (is_admin()){
       $this->init_form_fields();
     }
@@ -54,6 +51,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $this->enabled = 'no';
     }
 
+    $this->load_icon();
     $this->woocommerce_add_action();
     $this->initialize_api_helper();
   }
@@ -79,6 +77,13 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       }
       self::$log->add(self::$gateway_id, $message);
     }
+  }
+
+  private function load_icon()
+  {
+    $logo = $this->get_option('display_logo', 'fpx');
+    $bfw_icon = plugins_url("assets/billplz-logo-$logo.png", BFW_PLUGIN_FILE);
+    $this->icon = apply_filters('bfw_icon', $bfw_icon);
   }
 
   private function woocommerce_add_action()

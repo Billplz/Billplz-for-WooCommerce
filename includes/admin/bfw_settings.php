@@ -24,6 +24,19 @@ function bfw_get_settings() {
       'default' => __('Pay with Billplz. ', 'bfw'),
       'desc_tip' => true,
     ),
+    'display_logo' => array(
+      'title' => __('Billplz Logo','bfw'),
+      'description' => sprintf(__('This controls which logo appeared on checkout page. <a target="_blank" href="%s">Fpx</a>. <a target="_blank" href="%s">Old</a>. <a target="_blank" href="%s">All</a>.', 'bfw' ), BFW_PLUGIN_URL.'assets/billplz-logo-fpx.png', BFW_PLUGIN_URL.'assets/billplz-logo-old.png', BFW_PLUGIN_URL.'assets/billplz-logo-all.png'),
+      'default' => 'fpx',
+      'class' => 'wc-enhanced-select',
+      'type' => 'select',
+      'desc_tip' => false,
+      'options' => array(
+        'fpx' => 'Fpx',
+        'old' => 'Old',
+        'all' => 'All'
+      ),
+    ),
     'api_credentials' => array(
       'title' => __('API Credentials', 'bfw'),
       'type' => 'title',
