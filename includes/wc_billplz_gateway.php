@@ -19,20 +19,23 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   public function __construct()
   {
-    if (!$this->is_valid_for_use()) {
-      $this->enabled = 'no';
-    }
-
     $this->id = self::$gateway_id;
     $this->method_title = __('Billplz', 'bfw');
     $this->method_description = __('Have your customers pay with Billplz.', 'bfw');
     $this->order_button_text =  __('Pay with Billplz', 'bfw');
 
-    $bfw_icon = plugins_url('assets/billplz-logo.png', BFW_PLUGIN_FILE);
+    $bfw_icon = plugins_url('assets/billplz-logo-fpx.png', BFW_PLUGIN_FILE);
     $this->icon = apply_filters('bfw_icon', $bfw_icon);
 
-    $this->init_form_fields();
+
+    if (is_admin()){
+      $this->init_form_fields();
+    }
+
     $this->init_settings();
+    if (!$this->is_valid_for_use()) {
+      $this->enabled = 'no';
+    }
 
     self::$log_enabled = 'yes' === $this->get_option('debug', 'no');
     $this->has_fields = 'yes' === $this->get_option('has_fields');
@@ -53,7 +56,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     $this->woocommerce_add_action();
     $this->initialize_api_helper();
-    $this->validate_merchant_account();
   }
 
   public function init_form_fields()
@@ -63,11 +65,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   public function is_valid_for_use()
   {
-    return in_array(
-      get_woocommerce_currency(),
-      apply_filters('bfw_supported_currencies', array('MYR')),
-      true
-    );
+    $currencies_presence = $this->validate_currencies_presence();
+    $keys_presence = $this->validate_keys_presence();
+
+    return $currencies_presence && $keys_presence;
   }
 
   public static function log($message)
@@ -91,35 +92,59 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function initialize_api_helper(){
     global $bfw_connect, $bfw_api;
-    $this->connect = $bfw_connect->set_api_key($this->api_key, $this->is_sandbox);
-    $this->billplz = $bfw_api->set_connect($this->connect);
+    $bfw_connect->set_api_key($this->api_key, $this->is_sandbox);
+    $this->connect = &$bfw_connect;
+    
+    $bfw_api->set_connect($this->connect);
+    $this->billplz = &$bfw_api;
   }
 
-  private function validate_merchant_account()
+  private function validate_currencies_presence()
   {
-    if (empty($this->api_key))
+    if (!in_array(get_woocommerce_currency(),
+      apply_filters('bfw_supported_currencies', array('MYR')),
+      true)){
+      $message = '<div class="error">';
+      $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> WooCommerce currency option is not supported by Billplz. %sClick here to configure!%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=general">', '</a>') . '</p>';
+      $message .= '</div>';  
+
+      echo $message;
+      return false;
+    }
+    return true;
+  }
+
+  private function validate_keys_presence()
+  {
+    $valid = true;
+    if (empty($this->get_option('api_key')))
     {
       add_action('admin_notices', array(
         &$this, 
         'api_key_missing_message')
       );
+      $valid = false;
     } 
 
-    if (empty($this->collection_id))
+    if (empty($this->get_option('collection_id')))
     {
       add_action('admin_notices', array(
         &$this, 
         'collection_id_missing_message')
       );
+      $valid = false;
     }
 
-    if (empty($this->x_signature))
+    if (empty($this->get_option('x_signature')))
     {
       add_action('admin_notices', array(
         &$this, 
         'xsignature_key_missing_message')
       );
+      $valid = false;
     }
+
+    return $valid;
   }
 
   public function api_key_missing_message()
@@ -137,11 +162,12 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->key_missing_message('XSignature Key');
   }
 
-  public function key_missing_message($message)
+  public function key_missing_message($error_type)
   {
     $message = '<div class="error">';
-    $message .= '<p>' . sprintf(__("<strong>Billplz Disabled</strong> You should set your $message in Billplz. %sClick here to configure!%s", 'bfw'), '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
+    $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> You should set your $error_type in Billplz. %sClick here to configure!%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
     $message .= '</div>';
+
     echo $message;
   }
 
@@ -155,13 +181,15 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $gateways = array();  
 
       if (isset($rbody['error']) || $rheader != 200) {
-        // log this error
+        self::log('Failed to fetch billplz payment gateways');
       } else {
         $gateways = $rbody;
       }
 
       set_transient('billplz_get_payment_gateways', $gateways, HOUR_IN_SECONDS * 1);
     }
+
+    return $gateways;
   }
 
   private function fetch_billplz_collection_payment_gateways(){
@@ -173,7 +201,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $collection_gateways = array();
 
       if (isset($rbody['error']) || $rheader != 200) {
-        // log this error
+        self::log('Failed to fetch billplz collection payment gateways');
       } else {
         foreach ($rbody['payment_methods'] as $payment_method) {
           if ($payment_method['active']) {
@@ -187,6 +215,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
       set_transient('billplz_get_collection_gateways', $collection_gateways, MINUTE_IN_SECONDS * 30);
     }
+
+    return $collection_gateways;
   }
 
   public function payment_fields()
@@ -197,30 +227,35 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     if ($this->has_fields) {
-      $this->fetch_billplz_payment_gateways();
-      $this->fetch_billplz_collection_payment_gateways();
+      $gateways = $this->fetch_billplz_payment_gateways();
+      $collection_gateways = $this->fetch_billplz_collection_payment_gateways();
 
       $bank_name = BillplzBankName::get();
 
       if (has_action('bfw_payment_fields')) {
         do_action('bfw_payment_fields', $gateways, $bank_name);
+      } elseif (has_action('bfw_payment_fields_with_collection')) {
+        do_action('bfw_payment_fields_with_collection', $gateways, $bank_name, $collection_gateways);
       } else {
-        include BFW_PLUGIN_DIR . 'templates/payment.php';
+        include BFW_PLUGIN_DIR . '/templates/payment.php';
       }
     }
   }
 
   private function get_order_data($order)
   {
+    $firstname = $order->get_customer_first_name();
+    $lastname = $order->get_customer_last_name();
+
     $order_data = array(
       'id' => $order->get_id(),
-      'name'  => $order->get_display_name(),
-      'email' => $order->get_email(),
+      'name'  => "$firstname $lastname",
+      'email' => $order->get_billing_email(),
       'phone' => $order->get_billing_phone(),
       'total' => (string) ($order->get_total() * 100)
     );
     
-    return apply_filters('bfw_filter_order_data', $data);
+    return apply_filters('bfw_filter_order_data', $order_data);
   }
 
   private function validate_and_assign_reference_1(){
@@ -232,7 +267,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
   }
 
-  private function delete_previously_assoc_bill($bill_id)
+  private function delete_previously_assoc_bill($order_id, $bill_id)
   {
     $billplz = $this->billplz;
 
@@ -265,7 +300,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $order = wc_get_order( $order_id );
     
     if (!empty($bill_id = $order->get_transaction_id())) {
-      $this->delete_previously_assoc_bill($bill_id);
+      $this->delete_previously_assoc_bill($order_id, $bill_id);
     }
 
     if (!$this->do_not_clear_cart) {
@@ -323,20 +358,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     );
   }
 
-  private function complete_payment_process($data)
+  private function complete_payment_process($order, $data)
   {
-    $order_id = sanitize_text_field($_GET['order']);
-    $post_meta = get_post_meta($order_id, $data['id'], true);
-
-    if (empty($post_meta)) {
-      status_header(404);
-      self::log('Order not found for Bill ID: ' . $data['id']);
-      exit('Order not found');
-    }
-
-    self::log('Billplz response ' . print_r($data, true));
-    $order = wc_get_order($order_id);
-
     $order_data = $this->get_order_data($order);
 
     $referer = "<br>Is Sandbox: " . ($this->is_sandbox ? 'Yes' : 'No');
@@ -344,42 +367,52 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $referer .= "<br>Order ID: " . $order_data['id'];
     $referer .= "<br>Type: " . $data['type'];
 
-    if ($post_meta === 'due') {
-      update_post_meta($order_id, $data['id'], 'paid');
-      $order->add_order_note('Payment Status: SUCCESSFUL ' . $referer);
-      $order->payment_complete($data['id']);
-      self::log('Order #' . $order_data['id'] . ' updated in WooCommerce as Paid for Bill ID: ' . $data['id']);
-      do_action('bfw_on_payment_success_update', $order);
-    }
-      
+    $order->add_order_note('Payment Status: SUCCESSFUL ' . $referer);
+    $order->payment_complete($data['id']);
+    self::log('Order #' . $order_data['id'] . ' updated in WooCommerce as Paid for Bill ID: ' . $data['id']);
+    do_action('bfw_on_payment_success_update', $order);
   }
 
   public function check_response()
   {
-      @ob_clean();
+    @ob_clean();
 
-      try {
-          $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature);
-      } catch (Exception $e) {
-          status_header(403);
-          self::log('Failed X Signature Validation. Information: '.print_r($_REQUEST, true));
-          exit('Failed X Signature Validation');
-      }
+    try {
+        $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature);
+    } catch (Exception $e) {
+        status_header(403);
+        self::log('Failed X Signature Validation. Information: '.print_r($_REQUEST, true));
+        exit('Failed X Signature Validation');
+    } finally {
+      self::log('Billplz response ' . print_r($data, true));
+    }
 
-      if (!$data['paid']){
-        if ($data['type'] === 'redirect') {
-          wp_redirect($order->get_cancel_order_url());
-        }
-        exit;
-      }
+    $order_id = sanitize_text_field($_GET['order']);
 
-      $this->complete_payment_process();
+    if (empty(get_post_meta($order_id, $data['id'], true))) {
+      status_header(404);
+      self::log('Order not found for Bill ID: ' . $data['id']);
+      exit('Order not found');
+    }
 
+    $order = wc_get_order($order_id);
+
+    if (!$data['paid']){
       if ($data['type'] === 'redirect') {
-        wp_redirect($order->get_checkout_order_received_url());
+        wp_redirect($order->get_cancel_order_url());
       }
-      
       exit;
+    }
+
+    if (update_post_meta($order_id, $data['id'], 'paid', 'due')){
+      $this->complete_payment_process($order, $data);
+    }
+
+    if ($data['type'] === 'redirect') {
+      wp_redirect($order->get_checkout_order_received_url());
+    }
+    
+    exit;
   }
 
   public function process_admin_options()
