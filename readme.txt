@@ -6,7 +6,7 @@ Stable tag: 3.24.1
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires PHP: 5.2.4
+Requires PHP: 7.0
 
 Accept payment by using Billplz.
 
@@ -14,9 +14,6 @@ Accept payment by using Billplz.
 Install this plugin to accept payment using Billplz.
 
 == Upgrade Notice ==
-
-= 3.22.0 =
-* Customizing the input fields for skip bill page feature will require minor adjustment due to changes in API from Get FPX Banks to Get Payment Gateways.
 
 == Screenshots ==
 * Billplz for WooCommerce installation
@@ -28,7 +25,13 @@ Install this plugin to accept payment using Billplz.
 
 = 3.25.0 =
 * NEW: Complete rebuild from scratch
-* REMOVED: Filter: bfw_plugin_settings_link, 
+* NEW: Features to check validity of API Key and Collection ID
+* NEW: New logo option during checkout
+* NEW: Admin notices will be given when using unsupported currency
+* IMPROVED: Race condition upon updating completed order is now handled
+* REMOVED: PHP version 5.6 or earlier is no longer supported
+* REMOVED: Filter: bfw_plugin_settings_link
+* REMOVED: Order notes for cancelled payment are no longer stored
 
 = 3.24.1 =
 * NEW: Add Senangpay for Skip Bill Page option.
@@ -43,14 +46,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.23.1 =
 * FIXED: Undefined index for clear cart key
-
-= 3.23.0 =
-* IMPROVED: Remove special character on name to avoid X Signature calculation failure.
-* IMPROVED: Cart session are removed by default.
-* IMPROVED: No requery will be made upon redirect and callback.
-* REMOVED: Requery all order status due to performance impact.
-* REMOVED: Bill notification feature is now always disabled.
-* REMOVED: Auto detect mode. Now merchant need to tick on Sandbox to use sandbox mode.
 
 == Installation ==
 
