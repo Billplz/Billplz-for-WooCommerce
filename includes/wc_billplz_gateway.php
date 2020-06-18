@@ -164,8 +164,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function check_keys_verification()
   {
-    $api_key_state = get_option('bfw_api_key_state');
-    $collection_id_state = get_option('bfw_collection_id_state');
+    $api_key_state = get_option('bfw_api_key_state', 'verified');
+    $collection_id_state = get_option('bfw_collection_id_state', 'verified');
 
     if ($api_key_state !== 'verified'){
       add_action('admin_notices', array(
