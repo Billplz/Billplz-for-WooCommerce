@@ -368,6 +368,15 @@ class BillplzWooCommerceAPI
         return $response;
     }
 
+    public function getWebhookRank()
+    {
+        $response = $this->connect->getWebhookRank();
+        if ($detect_mode = $this->detectMode(__FUNCTION__, $response)) {
+            return $detect_mode;
+        }
+        return $response;
+    }
+
     public function toArray($json)
     {
         return $this->connect->toArray($json);

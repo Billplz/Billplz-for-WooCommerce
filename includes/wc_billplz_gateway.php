@@ -64,9 +64,11 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   public function is_valid_for_use()
   {
     $currencies_presence = $this->validate_currencies_presence();
-    $keys_presence = $this->validate_keys_presence();
+    if ($keys_presence = $this->validate_keys_presence()){
+      $keys_verified = $this->check_keys_verification();
+    }
 
-    return $currencies_presence && $keys_presence;
+    return $currencies_presence && $keys_presence && $keys_verified;
   }
 
   public static function log($message)
@@ -109,14 +111,22 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     if (!in_array(get_woocommerce_currency(),
       apply_filters('bfw_supported_currencies', array('MYR')),
       true)){
-      $message = '<div class="error">';
-      $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> WooCommerce currency option is not supported by Billplz. %sClick here to configure!%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=general">', '</a>') . '</p>';
-      $message .= '</div>';  
 
-      echo $message;
+      add_action('admin_notices', array(
+        &$this, 'unsupported_currency_notice')
+      );
+
       return false;
     }
     return true;
+  }
+
+  public function unsupported_currency_notice(){
+    $message = '<div class="error">';
+    $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> WooCommerce currency option is not supported by Billplz. %sClick here to configure%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=general">', '</a>') . '</p>';
+    $message .= '</div>';  
+
+    echo $message;
   }
 
   private function validate_keys_presence()
@@ -152,6 +162,46 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     return $valid;
   }
 
+  private function check_keys_verification()
+  {
+    $api_key_state = get_option('bfw_api_key_state');
+    $collection_id_state = get_option('bfw_collection_id_state');
+
+    if ($api_key_state !== 'verified'){
+      add_action('admin_notices', array(
+        &$this, 'api_key_invalid_state_message')
+      );
+
+      return false;
+    } elseif ($collection_id_state !== 'verified') {
+      add_action('admin_notices', array(
+        &$this, 'collection_id_invalid_state_message')
+      );
+      return false;
+    }   
+
+    return true;
+  }
+
+  public function api_key_invalid_state_message()
+  {
+    $this->invalid_state_message('API Key');
+  }
+
+  public function collection_id_invalid_state_message()
+  {
+    $this->invalid_state_message('Collection ID');
+  }
+
+  public function invalid_state_message($error_type)
+  {
+    $message = '<div class="error">';
+    $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> $error_type is not valid. %sClick here to configure%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
+    $message .= '</div>';
+
+    echo $message;
+  }
+
   public function api_key_missing_message()
   {
     $this->key_missing_message('API Key');
@@ -170,7 +220,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   public function key_missing_message($error_type)
   {
     $message = '<div class="error">';
-    $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> You should set your $error_type in Billplz. %sClick here to configure!%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
+    $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> You should set your $error_type in Billplz. %sClick here to configure%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
     $message .= '</div>';
 
     echo $message;
@@ -178,7 +228,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function fetch_billplz_payment_gateways()
   {
-    if (false === ($gateways = get_transient('billplz_get_payment_gateways'))) {
+    if (false === ($gateways = get_transient('bfw_get_payment_gateways'))) {
       $billplz = $this->billplz;
 
       list($rheader, $rbody) = $billplz->toArray($billplz->getPaymentGateways());
@@ -191,14 +241,14 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         $gateways = $rbody;
       }
 
-      set_transient('billplz_get_payment_gateways', $gateways, HOUR_IN_SECONDS * 1);
+      set_transient('bfw_get_payment_gateways', $gateways, HOUR_IN_SECONDS * 1);
     }
 
     return $gateways;
   }
 
   private function fetch_billplz_collection_payment_gateways(){
-    if (false === ($collection_gateways = get_transient('billplz_get_collection_gateways'))) {
+    if (false === ($collection_gateways = get_transient('bfw_get_collection_gateways'))) {
       
       $billplz = $this->billplz;
       list($rheader, $rbody) = $billplz->toArray($billplz->getPaymentMethodIndex($this->collection_id));
@@ -218,7 +268,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         }
       }
 
-      set_transient('billplz_get_collection_gateways', $collection_gateways, MINUTE_IN_SECONDS * 30);
+      set_transient('bfw_get_collection_gateways', $collection_gateways, MINUTE_IN_SECONDS * 30);
     }
 
     return $collection_gateways;
@@ -422,14 +472,78 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   public function process_admin_options()
   {
-    // Reset payment gateway information
-    delete_transient('billplz_get_payment_gateways');
-    delete_transient('billplz_get_collection_gateways');
+    delete_transient('bfw_get_payment_gateways');
+    delete_transient('bfw_get_collection_gateways');
 
-    // Get a collection and check the details
-    // Set transient if incorrect
-    // Remove transient if correct
+    $this->verify_keys_authenticity();
+
     parent::process_admin_options();
+  }
+
+  private function verify_keys_authenticity()
+  {
+    $posted_data = $this->get_post_data();
+
+    if ($this->verify_api_key($posted_data)){
+      $this->verify_collection_id($posted_data);
+    }
+  }
+
+  private function verify_api_key($posted_data, $recursion = false){
+    if ($recursion){
+      $this->is_sandbox = !isset($posted_data['woocommerce_billplz_is_sandbox']);
+    } else {
+      $this->is_sandbox = isset($posted_data['woocommerce_billplz_is_sandbox']);
+    }
+
+    $this->api_key = $posted_data['woocommerce_billplz_api_key'];
+    $this->initialize_api_helper();
+
+    $status = $this->billplz->getWebhookRank()[0];
+
+    switch($status) {
+      case 200:
+        update_option('bfw_api_key_state', 'verified');
+        return true;
+      case 401:
+        if (!$recursion && $this->verify_api_key($posted_data, true)){
+          if ($this->is_sandbox){
+            $_POST['woocommerce_billplz_is_sandbox'] = '1';
+          } else {
+            unset($_POST['woocommerce_billplz_is_sandbox']);
+          }
+          return true;
+        } elseif ($recursion) {
+          update_option('bfw_api_key_state', 'invalid');
+        }
+        break;
+      default:
+        update_option('bfw_api_key_state', 'unknown');
+    }
+    return false;
+  }
+
+  private function verify_collection_id($posted_data){
+    $this->api_key = $posted_data['woocommerce_billplz_api_key'];
+    $this->initialize_api_helper();
+
+    $collection_id = $posted_data['woocommerce_billplz_collection_id'];
+    $status = $this->billplz->getCollection($collection_id)[0];
+
+    switch($status) {
+      case 200:
+        update_option('bfw_collection_id_state', 'verified');
+        return true;
+      case 404:
+        update_option('bfw_collection_id_state', 'invalid');
+        break;
+      case 401:
+        update_option('bfw_collection_id_state', 'unauthorized');
+        break;
+      default:
+        update_option('bfw_collection_id_state', 'unkown');
+    }
+    return false;
   }
 
   public function thankyou_page()
