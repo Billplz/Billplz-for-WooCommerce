@@ -27,15 +27,11 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $bfw_icon = plugins_url('assets/billplz-logo-fpx.png', BFW_PLUGIN_FILE);
     $this->icon = apply_filters('bfw_icon', $bfw_icon);
 
-
     if (is_admin()){
       $this->init_form_fields();
     }
 
     $this->init_settings();
-    if (!$this->is_valid_for_use()) {
-      $this->enabled = 'no';
-    }
 
     self::$log_enabled = 'yes' === $this->get_option('debug', 'no');
     $this->has_fields = 'yes' === $this->get_option('has_fields');
@@ -53,6 +49,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->reference_1_label = $this->settings['reference_1_label'];
     $this->reference_1 = $this->settings['reference_1'];
     $this->instructions = $this->settings['instructions'];
+
+    if (!$this->is_valid_for_use()) {
+      $this->enabled = 'no';
+    }
 
     $this->woocommerce_add_action();
     $this->initialize_api_helper();
@@ -117,7 +117,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   private function validate_keys_presence()
   {
     $valid = true;
-    if (empty($this->get_option('api_key')))
+    if (empty($this->api_key))
     {
       add_action('admin_notices', array(
         &$this, 
@@ -126,7 +126,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $valid = false;
     } 
 
-    if (empty($this->get_option('collection_id')))
+    if (empty($this->collection_id))
     {
       add_action('admin_notices', array(
         &$this, 
@@ -135,7 +135,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $valid = false;
     }
 
-    if (empty($this->get_option('x_signature')))
+    if (empty($this->x_signature))
     {
       add_action('admin_notices', array(
         &$this, 
