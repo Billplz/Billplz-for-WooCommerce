@@ -420,7 +420,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     update_post_meta($order_id, $rbody['id'], 'due');
     update_post_meta($order_id, '_transaction_id', $rbody['id']);
 
-    wp_schedule_single_event( time() + (15 * MINUTE_IN_SECONDS), 'bfw_bill_inquiry', array( $rbody['id'], $order_data['id'] ) );
+    wp_schedule_single_event( time() + (30 * MINUTE_IN_SECONDS), 'bfw_bill_inquiry', array( $rbody['id'], $order_data['id'] ) );
 
     if ($this->has_fields){
       $rbody['url'] .= '?auto_submit=true';

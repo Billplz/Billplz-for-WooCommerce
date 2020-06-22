@@ -1,7 +1,7 @@
 <?php
 
 
-function bfw_bill_inquiry($bill_id, $order_id, $attempts = 1)
+function bfw_bill_inquiry($bill_id, $order_id, $attempts = 0)
 {
   if (empty($bill_state = get_post_meta($order_id, $bill_id, true))) 
   {
@@ -20,11 +20,11 @@ function bfw_bill_inquiry($bill_id, $order_id, $attempts = 1)
     return;
   }
 
-  if ( false === ( get_transient( 'bfw_bill_inquiry' ) ) ) {
-    set_transient( 'bfw_bill_inquiry', $bill_id, 2 );
-  } else {
-    wp_schedule_single_event( time() + 3 , 'bfw_bill_inquiry', array( $rbody['id'], $order_id, $attempts) );
-  }
+  // if ( false === ( get_transient( 'bfw_bill_inquiry' ) ) ) {
+  //   set_transient( 'bfw_bill_inquiry', $bill_id, 2 );
+  // } else {
+  //   wp_schedule_single_event( time() + 3 , 'bfw_bill_inquiry', array( $rbody['id'], $order_id, $attempts) );
+  // }
 
   $is_sandbox = $settings['is_sandbox'] === 'yes';
 
@@ -41,10 +41,8 @@ function bfw_bill_inquiry($bill_id, $order_id, $attempts = 1)
   }
 
   if (!$rbody['paid']){
-    if ($attempts < 4) {
-      $time = time() + (15 * MINUTE_IN_SECONDS);
-    } elseif($attempts < 8) {
-      $time = time() + (24 * HOUR_IN_SECONDS);
+    if ($attempts < 1) {
+      $time = time() + DAY_IN_SECONDS;
     } else {
       return;
     }
