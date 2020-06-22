@@ -11,6 +11,8 @@ delete_option('billplz_fpx_banks');
 delete_option('billplz_fpx_banks_last');
 delete_option('bfw_api_key_state');
 delete_option('bfw_collection_id_state');
+delete_transient('bfw_3_21_7_fix');
+delete_transient('bfw_3_22_0_fix');
 
 /*
  * Only remove ALL product and page data if BFW_REMOVE_ALL_DATA constant is set to true in user's
