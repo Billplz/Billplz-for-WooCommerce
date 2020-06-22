@@ -1,8 +1,18 @@
 <?php
 
-
-function bfw_bill_inquiry($bill_id, $order_id, $attempts = 0)
+function bfw_meta_box_actions($actions)
 {
+  $actions['bfw_requery'] = __( 'Billplz: Requery Status', 'bfw' );
+  return $actions;
+}
+
+add_action( 'woocommerce_order_actions', 'bfw_meta_box_actions' );
+
+function bfw_process_meta_box_actions($order)
+{
+  $bill_id = $order->get_transaction_id();
+  $order_id = $order->get_id();
+
   if (empty($bill_state = get_post_meta($order_id, $bill_id, true))) 
   {
     return;
@@ -20,12 +30,6 @@ function bfw_bill_inquiry($bill_id, $order_id, $attempts = 0)
     return;
   }
 
-  // if ( false === ( get_transient( 'bfw_bill_inquiry' ) ) ) {
-  //   set_transient( 'bfw_bill_inquiry', $bill_id, 2 );
-  // } else {
-  //   wp_schedule_single_event( time() + 3 , 'bfw_bill_inquiry', array( $rbody['id'], $order_id, $attempts) );
-  // }
-
   $is_sandbox = $settings['is_sandbox'] === 'yes';
 
   global $bfw_connect, $bfw_api;
@@ -41,22 +45,14 @@ function bfw_bill_inquiry($bill_id, $order_id, $attempts = 0)
   }
 
   if (!$rbody['paid']){
-    if ($attempts < 1) {
-      $time = time() + DAY_IN_SECONDS;
-    } else {
-      return;
-    }
-
-    wp_schedule_single_event( $time , 'bfw_bill_inquiry', array( $bill_id, $order_id, ++$attempts) );
     return;
   }
-
-  $order = wc_get_order($order_id);
 
   if (update_post_meta($order_id, $bill_id, 'paid', 'due')){
     WC_Billplz_Gateway::complete_payment_process($order, ['id' => $bill_id, 'type' => 'requery'], $is_sandbox);
   }
+
 }
 
-  
-add_action('bfw_bill_inquiry', 'bfw_bill_inquiry', 10, 3);
+add_action( 'woocommerce_order_action_bfw_requery', 'bfw_process_meta_box_actions');
+

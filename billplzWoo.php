@@ -132,6 +132,8 @@ class Woocommerce_Billplz {
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_action_links.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_delete_order.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_settings.php';
+      include BFW_PLUGIN_DIR . '/includes/admin/bfw_requery_meta_box.php';
+      include BFW_PLUGIN_DIR . '/includes/admin/bfw_requery_button.php';
 
       //include BFW_PLUGIN_DIR . '/includes/upgrade.php';
     }
