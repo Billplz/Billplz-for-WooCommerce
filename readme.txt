@@ -28,6 +28,7 @@ Install this plugin to accept payment using Billplz.
 * NEW: Features to check validity of API Key and Collection ID
 * NEW: New logo option during checkout
 * NEW: Admin notices will be given when using unsupported currency
+* NEW: Automatic bill requery
 * IMPROVED: Race condition upon updating completed order is now handled
 * REMOVED: PHP version 5.6 or earlier is no longer supported
 * REMOVED: Filter: bfw_plugin_settings_link

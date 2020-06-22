@@ -141,6 +141,7 @@ class Woocommerce_Billplz {
     include BFW_PLUGIN_DIR . '/includes/helpers/billplz_bank_name.php';
 
     include BFW_PLUGIN_DIR . '/includes/wc_billplz_gateway.php';
+    include BFW_PLUGIN_DIR . '/includes/wc_bill_inquiry.php';
   }
 
   private function define( $name, $value ) {

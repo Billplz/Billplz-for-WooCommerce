@@ -346,6 +346,20 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     return mb_substr(apply_filters('bfw_description', $description), 0, 200);
   }
 
+  private function validate_bill_payment($order)
+  {
+    $billplz = $this->billplz;
+    if (!empty($bill_id = $order->get_transaction_id())) {
+      list($rheader, $rbody) = $billplz->toArray($billplz->getBill($bill_id));
+      if ($rheader === 200 && $rbody['paid'] && $rbody['reference_2'] == $order->get_id()){
+        self::complete_payment_process($order, ['id' => $bill_id, 'type' => 'requery'], $this->is_sandbox);
+        return true;
+      }  
+      $this->delete_previously_assoc_bill($order->get_id(), $bill_id);
+    }
+    return false;
+  }
+
   public function process_payment($order_id)
   {
     if ($this->has_fields){
@@ -353,12 +367,16 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     $order = wc_get_order( $order_id );
-    
-    if (!empty($bill_id = $order->get_transaction_id())) {
-      $this->delete_previously_assoc_bill($order_id, $bill_id);
-    }
 
-    if (!$this->do_not_clear_cart) {
+    if ($this->do_not_clear_cart) {
+      if ($this->validate_bill_payment($order))
+      {
+        return array(
+          'result' => 'success',
+          'redirect' => $order->get_checkout_order_received_url(),
+        );
+      }
+    } else {
       WC()->cart->empty_cart();
     }
 
@@ -385,11 +403,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     self::log('Creating bill for order number #' . $order_data['id']);
 
     $billplz = $this->billplz;
-
     list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional));
 
     if ($rheader !== 200) {
-      self::log('Error Creating bill for order number #' . $order_data['id'] . print_r($rbody, true));
+      self::log('Error creating bill for order number #' . $order_data['id'] . print_r($rbody, true));
       wc_add_notice(__('ERROR: ', 'bfw') . print_r($rbody, true), 'error');
       
      return array(
@@ -403,6 +420,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     update_post_meta($order_id, $rbody['id'], 'due');
     update_post_meta($order_id, '_transaction_id', $rbody['id']);
 
+    wp_schedule_single_event( time() + (15 * MINUTE_IN_SECONDS), 'bfw_bill_inquiry', array( $rbody['id'], $order_data['id'] ) );
+
     if ($this->has_fields){
       $rbody['url'] .= '?auto_submit=true';
     }
@@ -413,18 +432,16 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     );
   }
 
-  private function complete_payment_process($order, $data)
+  public static function complete_payment_process($order, $data, $is_sandbox)
   {
-    $order_data = $this->get_order_data($order);
-
-    $referer = "<br>Is Sandbox: " . ($this->is_sandbox ? 'Yes' : 'No');
+    $referer = "<br>Sandbox: " . ($is_sandbox ? 'Yes' : 'No');
     $referer .= "<br>Bill ID: " . $data['id'];
-    $referer .= "<br>Order ID: " . $order_data['id'];
+    $referer .= "<br>Order ID: " . $order->get_id();
     $referer .= "<br>Type: " . $data['type'];
 
     $order->add_order_note('Payment Status: SUCCESSFUL ' . $referer);
     $order->payment_complete($data['id']);
-    self::log('Order #' . $order_data['id'] . ' updated in WooCommerce as Paid for Bill ID: ' . $data['id']);
+    self::log('Order #' . $order->get_id() . ' updated in WooCommerce as Paid for Bill ID: ' . $data['id']);
     do_action('bfw_on_payment_success_update', $order);
   }
 
@@ -460,7 +477,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     if (update_post_meta($order_id, $data['id'], 'paid', 'due')){
-      $this->complete_payment_process($order, $data);
+      self::complete_payment_process($order, $data, $this->is_sandbox);
     }
 
     if ($data['type'] === 'redirect') {
