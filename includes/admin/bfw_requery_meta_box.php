@@ -2,7 +2,32 @@
 
 function bfw_meta_box_actions($actions)
 {
-  $actions['bfw_requery'] = __( 'Billplz: Requery Status', 'bfw' );
+  if (!isset($_GET['post'])){
+    return $actions;
+  }
+
+  $order_id = absint( wp_unslash( $_GET['post'] ) );
+  $order  = wc_get_order( $order_id );
+
+  if ( $order->has_status( array( 'pending', 'on-hold', 'cancelled' ) ) && $order->get_payment_method() === 'billplz') {
+
+    if (empty($bill_id = $order->get_transaction_id())){
+        return $actions;
+    }
+
+    if (empty($bill_state = get_post_meta($order->get_id(), $bill_id, true)))
+    {
+        return $actions;
+    }
+
+    if ($bill_state === 'paid') 
+    {
+      return $actions;
+    }
+
+    $actions['bfw_requery'] = __( 'Billplz: Requery Status', 'bfw' );
+  }
+
   return $actions;
 }
 
