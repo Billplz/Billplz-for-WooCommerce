@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.4
-Stable tag: 3.24.1
+Stable tag: 3.25.0
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -29,10 +29,12 @@ Install this plugin to accept payment using Billplz.
 * NEW: New logo option during checkout
 * NEW: Admin notices will be given when using unsupported currency
 * NEW: Automatic bill requery
+* NEW: Requery button to check for the latest status
 * IMPROVED: Race condition upon updating completed order is now handled
 * REMOVED: PHP version 5.6 or earlier is no longer supported
 * REMOVED: Filter: bfw_plugin_settings_link
 * REMOVED: Order notes for cancelled payment are no longer stored
+* REMOVED: Requery page is now removed
 
 = 3.24.1 =
 * NEW: Add Senangpay for Skip Bill Page option.
