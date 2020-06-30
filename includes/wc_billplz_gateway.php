@@ -297,10 +297,34 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
   }
 
+  private function get_customer_first_name($order) {
+    if ( $order->get_user_id() ) {
+      return get_user_meta( $order->get_user_id(), 'first_name', true );
+    }
+
+    if ( '' !== $order->get_billing_first_name( 'edit' ) ) {
+      return $order->get_billing_first_name( 'edit' );
+    } else {
+      return $order->get_shipping_first_name( 'edit' );
+    }
+  }
+  
+  private function get_customer_last_name($order) {
+    if ( $order->get_user_id() ) {
+      return get_user_meta( $order->get_user_id(), 'last_name', true );
+    }
+
+    if ( '' !== $order->get_billing_last_name( 'edit' ) ) {
+       return $order->get_billing_last_name( 'edit' );
+    } else {
+       return $order->get_shipping_last_name( 'edit' );
+    }
+	}
+
   private function get_order_data($order)
   {
-    $firstname = $order->get_customer_first_name();
-    $lastname = $order->get_customer_last_name();
+    $firstname = $this->get_customer_first_name($order);
+    $lastname = $this->get_customer_last_name($order);
 
     $order_data = array(
       'id' => $order->get_id(),
