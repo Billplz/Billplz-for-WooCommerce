@@ -6,7 +6,7 @@
  * Description: Billplz. Fair payment platform.
  * Author: Billplz Sdn. Bhd.
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.25.1
+ * Version: 3.25.2
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
@@ -131,13 +131,15 @@ class Woocommerce_Billplz {
     if (is_admin()) {
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_action_links.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_delete_order.php';
-      include BFW_PLUGIN_DIR . '/includes/admin/bfw_settings.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_requery_meta_box.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_requery_button.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_requery_button_in_order_page.php';
 
       //include BFW_PLUGIN_DIR . '/includes/upgrade.php';
     }
+
+    // ensure are able to be loaded regardless of admin status as it may loaded with or without admin flag
+    include BFW_PLUGIN_DIR . '/includes/admin/bfw_settings.php';
 
     include BFW_PLUGIN_DIR . '/includes/helpers/billplz_api.php';
     include BFW_PLUGIN_DIR . '/includes/helpers/billplz_wpconnect.php';

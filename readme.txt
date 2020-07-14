@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.4
-Stable tag: 3.25.1
+Stable tag: 3.25.2
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at [Billplz Account Settings](https://www.billplz.com/enterprise/setting)
 
 == Changelog ==
+
+= 3.25.2 =
+* IMPROVED: Fix issue with wp cron due to unavailability of method bfw_get_settings
 
 = 3.25.1 =
 * IMPROVED: Fix issue with WooCommerce 3.0
