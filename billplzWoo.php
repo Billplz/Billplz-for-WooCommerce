@@ -6,7 +6,7 @@
  * Description: Billplz. Fair payment platform.
  * Author: Billplz Sdn Bhd
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.25.2
+ * Version: 3.25.3
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3

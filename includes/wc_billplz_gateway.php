@@ -260,8 +260,13 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       } else {
         foreach ($rbody['payment_methods'] as $payment_method) {
           if ($payment_method['active']) {
-            if ($payment_method['code'] === 'isupaypal') {
-              $payment_method['code'] = 'paypal';
+            switch ($payment_method['code']){
+              case 'isupaypal':
+                $payment_method['code'] = 'paypal';
+                break;
+              case 'twoctwop':
+                $payment_method['code'] = '2c2p';
+                break;
             }
             $collection_gateways[] = $payment_method['code'];
           }
