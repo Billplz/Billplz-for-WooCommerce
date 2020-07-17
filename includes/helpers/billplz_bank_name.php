@@ -43,14 +43,14 @@ class BillplzBankName
             'TEST0023' => 'FPX TEST 23',
             'BP-FKR01' => 'Billplz Simulator',
             'BP-PPL01' => 'PayPal',
-            'BP-2C2P1' => 'e-pay',
+            // 'BP-2C2P1' => 'e-pay',
             'BP-2C2PC' => 'Visa / Mastercard',
-            'BP-2C2PU' => 'UnionPay',
+            // 'BP-2C2PU' => 'UnionPay',
             'BP-OCBC1' => 'Visa / Mastercard',
             'BP-BST01' => 'Boost',
             'BP-SGP01' => 'Senangpay'
         );
         asort($bank_name);
-        return $bank_name;
+        return apply_filters('billplz_bank_name', $bank_name);
     }
 }
