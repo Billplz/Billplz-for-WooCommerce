@@ -372,6 +372,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     $description = sprintf(__('Order %s', 'woocommerce'), $order->get_order_number()) . " - " . implode(', ', $item_names);
+    $description = apply_filters('bfw_description_with_order', $description, $order);
     return mb_substr(apply_filters('bfw_description', $description), 0, 200);
   }
 
