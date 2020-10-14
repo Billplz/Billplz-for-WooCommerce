@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.4
-Stable tag: 3.25.5
+Stable tag: 3.25.6
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.25.6 =
+* NEW: Support for Enable Extra Payment Completion Information
 
 = 3.25.5 =
 * NEW: Add bfw_description_with_order filters
@@ -53,14 +56,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.24.1 =
 * NEW: Add Senangpay for Skip Bill Page option.
-
-= 3.24.0 =
-* FIXED: Ensure space at name didn't automatically trimmed
-* NEW: Provide option not to clear cart
-
-= 3.23.2 =
-* FIXED: Issue with new PayPal account not displaying on checkout page when Bypass Billplz Page setting is on.
-* NEW: Bump WooCommerce version support to 4.0.
 
 == Installation ==
 
