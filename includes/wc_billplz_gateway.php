@@ -297,7 +297,24 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       } elseif (has_action('bfw_payment_fields_with_collection')) {
         do_action('bfw_payment_fields_with_collection', $gateways, $bank_name, $collection_gateways);
       } else {
-        include BFW_PLUGIN_DIR . '/templates/payment.php';
+        $gateway_option = array();
+
+        if (!empty($gateways)) {
+          foreach ($bank_name as $key => $value) {
+            foreach ($gateways['payment_gateways'] as $gateway) {
+              if ($gateway['code'] === $key && $gateway['active'] && in_array($gateway['category'], $collection_gateways)) {
+                $gateway_option[$gateway['code']] = $bank_name[$gateway['code']] ? strtoupper($bank_name[$gateway['code']]) : $gateway['code'];
+              }
+            }
+          }
+        }
+
+        woocommerce_form_field('billplz_bank', array(
+          'type'        => 'select',
+          'required'    => true,
+          'label'       => __('Choose Payment Method', 'bfw'),
+          'options'       => $gateway_option
+        ));
       }
     }
   }
@@ -324,7 +341,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     } else {
        return $order->get_shipping_last_name( 'edit' );
     }
-	}
+  }
 
   private function get_order_data($order)
   {
