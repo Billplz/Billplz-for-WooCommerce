@@ -99,7 +99,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     add_action('woocommerce_receipt_billplz', array(&$this, 'receipt_page'));
     add_action('woocommerce_update_options_payment_gateways_billplz', array(&$this, 'process_admin_options'));
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
-    add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'add_2c2p_wallet'));
   }
 
   private function initialize_api_helper(){
