@@ -47,6 +47,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->reference_1 = $this->settings['reference_1'];
     $this->instructions = $this->settings['instructions'];
 
+    $this->twoctwop_boost = 'yes' === $this->get_option('2c2p_boost');
+    $this->twoctwop_tng = 'yes' === $this->get_option('2c2p_tng');
+    $this->twoctwop_grabpay = 'yes' === $this->get_option('2c2p_grabpay');
+
     if (!$this->is_valid_for_use()) {
       $this->enabled = 'no';
     }
@@ -95,6 +99,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     add_action('woocommerce_receipt_billplz', array(&$this, 'receipt_page'));
     add_action('woocommerce_update_options_payment_gateways_billplz', array(&$this, 'process_admin_options'));
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
+    add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'add_2c2p_wallet'));
   }
 
   private function initialize_api_helper(){
@@ -289,8 +294,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     if ($this->has_fields) {
       $gateways = $this->fetch_billplz_payment_gateways();
       $collection_gateways = $this->fetch_billplz_collection_payment_gateways();
-
-      $bank_name = BillplzBankName::get();
+      $bank_name = $this->add_custom_gateways(BillplzBankName::get());
 
       if (has_action('bfw_payment_fields')) {
         do_action('bfw_payment_fields', $gateways, $bank_name);
@@ -532,6 +536,20 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
     
     exit;
+  }
+
+  public function add_custom_gateways($bank_name){
+    if ($this->twoctwop_boost){
+      $bank_name['BP-2C2PBST'] = 'Boost';
+    }
+    if ($this->twoctwop_tng){
+      $bank_name['BP-2C2PTNG'] = 'TNG';
+    }
+    if ($this->twoctwop_grabpay){
+      $bank_name['BP-2C2PGRB'] = 'Grab';
+    }
+    asort($bank_name);
+    return apply_filters('billplz_bank_name', $bank_name);
   }
 
   public function process_admin_options()

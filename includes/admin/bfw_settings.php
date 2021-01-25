@@ -135,5 +135,28 @@ function bfw_get_settings() {
         'description' => __('Bill Reference 1 Value.', 'bfw'),
         'desc_tip' => true,
     ),
+    '2c2p_wallet' => array(
+      'title' => __('2C2P Wallet', 'bfw'),
+      'type' => 'title',
+      'description' => 'This option to control the availability of specific 2c2p wallet for Skip Bill Page.',
+    ),
+    '2c2p_boost' => array(
+      'title' => __('2C2P Boost', 'bfw'),
+      'type' => 'checkbox',
+      'label' => __('Enable', 'bfw'),
+      'default' => 'no',
+    ),
+    '2c2p_tng' => array(
+      'title' => __('2C2P TnG', 'bfw'),
+      'type' => 'checkbox',
+      'label' => __('Enable', 'bfw'),
+      'default' => 'no',
+    ),
+    '2c2p_grabpay' => array(
+      'title' => __('2C2P GrabPay', 'bfw'),
+      'type' => 'checkbox',
+      'label' => __('Enable', 'bfw'),
+      'default' => 'no',
+    ),
   );
 }
