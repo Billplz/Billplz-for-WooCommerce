@@ -66,7 +66,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['headers'] = $this->header;
         $wp_remote_data['method'] = 'GET';
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -81,7 +81,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -116,7 +116,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -157,7 +157,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -172,7 +172,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -187,7 +187,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -202,7 +202,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -220,7 +220,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -235,7 +235,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -257,7 +257,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -273,7 +273,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -363,7 +363,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -385,7 +385,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -400,7 +400,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -416,7 +416,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'DELETE';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -431,7 +431,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -446,7 +446,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -461,7 +461,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -486,7 +486,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'PUT';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -508,7 +508,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -523,7 +523,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -539,7 +539,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'POST';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -554,7 +554,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
@@ -569,7 +569,7 @@ class BillplzWooCommerceWPConnect
         $wp_remote_data['method'] = 'GET';
 
         $response = \wp_remote_post($url, $wp_remote_data);
-        $header = $response['response']['code'];
+        $header = wp_remote_retrieve_response_code($response);
         $body = \wp_remote_retrieve_body($response);
 
         return array($header, $body);
