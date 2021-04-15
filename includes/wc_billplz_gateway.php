@@ -246,8 +246,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       }
 
       foreach($gateways['payment_gateways'] as $key => $value){
-        $code = $value['code'];
-        if (in_array($code, array('BP-2C2PGRB', 'BP-2C2PBST', 'BP-2C2PTNG'))){
+        if (in_array($value['code'], array('BP-2C2PGRB', 'BP-2C2PBST', 'BP-2C2PTNG'))){
           $gateways['payment_gateways'][$key]['category'] = 'twoctwopwallet';
         }
       }
