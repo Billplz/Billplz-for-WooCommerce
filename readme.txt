@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 5.6
-Stable tag: 3.26.0
+Tested up to: 5.7
+Stable tag: 3.26.1
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.26.1 =
+* IMPROVED: Fix issue with 2c2p-wallet not appearing when 2c2p-card deactivated
 
 = 3.26.0 =
 * NEW: Added option to activate 2c2p wallet
@@ -59,9 +62,6 @@ Install this plugin to accept payment using Billplz.
 * REMOVED: Filter: bfw_plugin_settings_link
 * REMOVED: Order notes for cancelled payment are no longer stored
 * REMOVED: Requery page is now removed
-
-= 3.24.1 =
-* NEW: Add Senangpay for Skip Bill Page option.
 
 == Installation ==
 
@@ -105,4 +105,4 @@ You can the X Signature Key at your Billplz Account Settings.
 2. To immediately reduce stock on add to cart, we strongly recommend you to use [WooCommerce Cart Stock Reducer](http://bit.ly/1UDOQKi) plugin.
 
 == Links ==
-[Sign Up](https://www.billplz.com/join/lz7pmrxa45tiihvqdydxqq/) for Billplz account to accept payment using Billplz now!
+[Sign Up](https://www.billplz.com) for Billplz account to accept payment using Billplz now!
