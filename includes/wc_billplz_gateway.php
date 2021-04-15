@@ -245,6 +245,13 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         $gateways = $rbody;
       }
 
+      foreach($gateways['payment_gateways'] as $key => $value){
+        $code = $value['code'];
+        if (in_array($code, array('BP-2C2PGRB', 'BP-2C2PBST', 'BP-2C2PTNG'))){
+          $gateways['payment_gateways'][$key]['category'] = 'twoctwopwallet';
+        }
+      }
+
       set_transient('bfw_get_payment_gateways', $gateways, HOUR_IN_SECONDS * 1);
     }
 
