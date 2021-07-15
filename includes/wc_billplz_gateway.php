@@ -42,7 +42,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->api_key = $this->settings['api_key'];
     $this->x_signature = $this->settings['x_signature'];
     $this->collection_id = $this->settings['collection_id'];
-    $this->custom_error = $this->settings['custom_error'];
     $this->reference_1_label = $this->settings['reference_1_label'];
     $this->reference_1 = $this->settings['reference_1'];
     $this->instructions = $this->settings['instructions'];
@@ -527,7 +526,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     if (!$data['paid']){
       if ($data['type'] === 'redirect') {
-        wp_redirect($order->get_cancel_order_url());
+        wp_redirect(esc_url_raw($order->get_cancel_order_url_raw()));
       }
       exit;
     }

@@ -85,13 +85,6 @@ function bfw_get_settings() {
       'default' => '',
       'desc_tip' => true,
     ),
-    'custom_error' => array(
-      'title' => __('Error Message', 'bfw'),
-      'type' => 'text',
-      'placeholder' => 'Example : You have cancelled the payment. Please make a payment!',
-      'description' => __('Error message that will appear when customer cancel the payment.', 'bfw'),
-      'default' => 'You have cancelled the payment. Please make a payment!',
-    ),
     'do_not_clear_cart' => array(
         'title' => __('Do not clear Cart', 'bfw'),
         'type' => 'checkbox',
