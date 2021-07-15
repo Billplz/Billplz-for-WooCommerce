@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 5.7
-Stable tag: 3.26.1
+Tested up to: 5.8
+Stable tag: 3.26.2
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.26.2 =
+* IMPROVED: Fix issue where no error message are displayed when payment cancelled 
 
 = 3.26.1 =
 * IMPROVED: Fix issue with 2c2p-wallet not appearing when 2c2p-card deactivated
@@ -49,19 +52,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.25.1 =
 * IMPROVED: Fix issue with WooCommerce 3.0
-
-= 3.25.0 =
-* NEW: Complete rebuild from scratch
-* NEW: Features to check validity of API Key and Collection ID
-* NEW: New logo option during checkout
-* NEW: Admin notices will be given when using unsupported currency
-* NEW: Automatic bill requery
-* NEW: Requery button to check for the latest status
-* IMPROVED: Race condition upon updating completed order is now handled
-* REMOVED: PHP version 5.6 or earlier is no longer supported
-* REMOVED: Filter: bfw_plugin_settings_link
-* REMOVED: Order notes for cancelled payment are no longer stored
-* REMOVED: Requery page is now removed
 
 == Installation ==
 
