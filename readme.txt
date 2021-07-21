@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 5.8
-Stable tag: 3.26.2
+Tested up to: 5.9
+Stable tag: 3.26.3
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.26.3 =
+* IMPROVED: Bank list is now synched with Billplz API docs. 
 
 = 3.26.2 =
 * IMPROVED: Fix issue where no error message are displayed when payment cancelled 
@@ -49,9 +52,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.25.2 =
 * IMPROVED: Fix issue with wp cron due to unavailability of method bfw_get_settings
-
-= 3.25.1 =
-* IMPROVED: Fix issue with WooCommerce 3.0
 
 == Installation ==
 
