@@ -37,7 +37,7 @@ function bfw_update_bill($bill_id, $state, $post_id = '0') {
    // starting 18 august 2021
    // shall be removed in later version
    // possibility of using previously metadata type
-   if(!$update_state && $post_id !== '0' && !empty(bfw_get_bill_state($bill_id))) {
+   if($update_state < 1 && $post_id !== '0' && empty(bfw_get_bill_state($bill_id))) {
       bfw_add_bill($post_id, $bill_id, $state);
       delete_post_meta($post_id, $bill_id);
    }
