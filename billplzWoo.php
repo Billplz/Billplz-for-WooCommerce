@@ -149,14 +149,16 @@ class Woocommerce_Billplz {
       return false;
     }
 
+    // database model must load first to be used by others
+    include BFW_PLUGIN_DIR . '/database/model.php';
+    include BFW_PLUGIN_DIR . '/database/upgrade.php';
+
     if (is_admin()) {
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_action_links.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_delete_order.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_requery_meta_box.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_requery_button.php';
       include BFW_PLUGIN_DIR . '/includes/admin/bfw_requery_button_in_order_page.php';
-
-      //include BFW_PLUGIN_DIR . '/includes/upgrade.php';
     }
 
     // ensure are able to be loaded regardless of admin status as it may loaded with or without admin flag

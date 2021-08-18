@@ -8,7 +8,7 @@ function bfw_requery_button( $actions, $order ) {
         return $actions;
     }
 
-    if (empty($bill_state = get_post_meta($order->get_id(), $bill_id, true)))
+    if (empty($bill_state = bfw_get_bill_state_legacy($order->get_id(), $bill_id)))
     {
         return $actions;
     }
@@ -68,7 +68,9 @@ function bfw_requery_status()
       wp_die( 'Error getting bill id: ' . $bill_id , __('Requery Bill', 'bfw'));
     }
 
-    if ($rbody['paid'] && update_post_meta($order->get_id(), $bill_id, 'paid', 'due')){
+    if ($rbody['paid']){
+      bfw_update_bill($bill_id, 'paid', $order->get_id());
+      
       WC_Billplz_Gateway::complete_payment_process($order, ['id' => $bill_id, 'type' => 'requery'], $is_sandbox); 
     }
   }

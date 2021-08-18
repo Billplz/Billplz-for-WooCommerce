@@ -8,7 +8,7 @@ function bfw_order_item_add_action_buttons( $order )
         return;
     }
 
-    if (empty($bill_state = get_post_meta($order->get_id(), $bill_id, true)))
+    if (empty($bill_state = bfw_get_bill_state_legacy($order->get_id(), $bill_id)))
     {
         return;
     }
@@ -40,7 +40,7 @@ function bfw_process_requery_action_button($order_id, $post, $update){
         return;
       }
 
-      if (empty($bill_state = get_post_meta($order->get_id(), $bill_id, true)))
+      if (empty($bill_state = bfw_get_bill_state_legacy($order->get_id(), $bill_id)))
       {
         return;
       }
@@ -75,9 +75,8 @@ function bfw_process_requery_action_button($order_id, $post, $update){
         return;
       }
 
-      if (update_post_meta($order_id, $bill_id, 'paid', 'due')){
-        WC_Billplz_Gateway::complete_payment_process($order, ['id' => $bill_id, 'type' => 'requery'], $is_sandbox);
-      }
+      bfw_update_bill($bill_id, 'paid', $order_id);
+      WC_Billplz_Gateway::complete_payment_process($order, ['id' => $bill_id, 'type' => 'requery'], $is_sandbox);
     }
   }
 }

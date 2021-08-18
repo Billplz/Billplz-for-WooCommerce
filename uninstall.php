@@ -20,6 +20,9 @@ delete_transient('bfw_3_22_0_fix');
  * and to ensure only the site owner can perform this action.
  */
 if ( defined( 'BFW_REMOVE_ALL_DATA' ) && true === BFW_REMOVE_ALL_DATA ) {
+  delete_option("bfw_db_version");
 
+  global $wpdb;
+  $table_name = $wpdb->prefix . 'bfw'
+  $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 }
-

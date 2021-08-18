@@ -16,7 +16,7 @@ function bfw_delete_order($post_id)
   $settings = get_option('woocommerce_billplz_settings');
   $api_key = $settings['api_key'];
   $bill_id = get_post_meta($post_id, '_transaction_id', true);
-  $bill_paid = get_post_meta($post_id, $bill_id, true);
+  $bill_paid = bfw_get_bill_state_legacy($post_id, $bill_id);
 
   if (empty($bill_id) || empty($api_key) || empty($bill_paid)) {
       return;
@@ -38,5 +38,7 @@ function bfw_delete_order($post_id)
   if ($rheader !== 200) {
     wp_die('Deleting this order has been prevented. ' . print_r($rbody, true));
   }
+
+  bfw_delete_bill($bill_id);
 }
 add_action('before_delete_post', 'bfw_delete_order');

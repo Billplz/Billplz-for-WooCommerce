@@ -15,7 +15,7 @@ function bfw_meta_box_actions($actions)
         return $actions;
     }
 
-    if (empty($bill_state = get_post_meta($order->get_id(), $bill_id, true)))
+    if (empty($bill_state = bfw_get_bill_state_legacy($order->get_id(), $bill_id)))
     {
         return $actions;
     }
@@ -38,7 +38,7 @@ function bfw_process_meta_box_actions($order)
   $bill_id = $order->get_transaction_id();
   $order_id = $order->get_id();
 
-  if (empty($bill_state = get_post_meta($order_id, $bill_id, true))) 
+  if (empty($bill_state = bfw_get_bill_state_legacy($order_id, $bill_id))) 
   {
     return;
   }
@@ -73,10 +73,8 @@ function bfw_process_meta_box_actions($order)
     return;
   }
 
-  if (update_post_meta($order_id, $bill_id, 'paid', 'due')){
-    WC_Billplz_Gateway::complete_payment_process($order, ['id' => $bill_id, 'type' => 'requery'], $is_sandbox);
-  }
-
+  bfw_update_bill($bill_id, 'paid', $order_id);
+  WC_Billplz_Gateway::complete_payment_process($order, ['id' => $bill_id, 'type' => 'requery'], $is_sandbox);
 }
 
 add_action( 'woocommerce_order_action_bfw_requery', 'bfw_process_meta_box_actions');

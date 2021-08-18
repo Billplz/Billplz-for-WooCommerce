@@ -380,8 +380,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     $billplz = $this->billplz;
 
-    if (!empty(get_post_meta($order_id, $bill_id, true))){
-      delete_post_meta($order_id, $bill_id);
+    if (!empty(bfw_get_bill_state_legacy($order_id, $bill_id))){
+      bfw_delete_bill($bill_id);
       $billplz->deleteBill($bill_id);
     }
   }
@@ -472,7 +472,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     self::log('Bill ID ' . $rbody['id'] . ' created for order number #' . $order_data['id']);
 
-    update_post_meta($order_id, $rbody['id'], 'due');
+    bfw_add_bill($order_id, $rbody['id'], 'due');
     update_post_meta($order_id, '_transaction_id', $rbody['id']);
 
     wp_schedule_single_event( time() + (30 * MINUTE_IN_SECONDS), 'bfw_bill_inquiry', array( $rbody['id'], $order_data['id'] ) );
@@ -516,7 +516,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     $order_id = sanitize_text_field($_GET['order']);
 
-    if (empty(get_post_meta($order_id, $data['id'], true))) {
+    if (empty(bfw_get_bill_state_legacy($order_id, $data['id']))) {
       status_header(404);
       self::log('Order not found for Bill ID: ' . $data['id']);
       exit('Order not found');
@@ -531,9 +531,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       exit;
     }
 
-    if (update_post_meta($order_id, $data['id'], 'paid', 'due')){
-      self::complete_payment_process($order, $data, $this->is_sandbox);
-    }
+    bfw_update_bill($data['id'], 'paid', $order_id);
+    
+    self::complete_payment_process($order, $data, $this->is_sandbox);
 
     if ($data['type'] === 'redirect') {
       wp_redirect($order->get_checkout_order_received_url());
