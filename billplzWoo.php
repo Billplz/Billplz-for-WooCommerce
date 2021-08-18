@@ -13,7 +13,7 @@
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 5.5
+ * WC tested up to: 5.6
  */
 
 defined('ABSPATH') || exit;
