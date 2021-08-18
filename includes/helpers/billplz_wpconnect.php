@@ -51,13 +51,6 @@ class BillplzWooCommerceWPConnect
         }
     }
 
-    public function detectMode()
-    {
-        $this->url = self::PRODUCTION_URL;
-        $this->detect_mode = true;
-        return $this;
-    }
-
     public function getWebhookRank()
     {
         $url = $this->url . 'v4/webhook_rank';
@@ -372,10 +365,6 @@ class BillplzWooCommerceWPConnect
     public function createBill($parameter, $optional = array())
     {
         $url = $this->url . 'v3/bills';
-
-        //if (sizeof($parameter) !== sizeof($optional) && !empty($optional)){
-        //    throw new \Exception('Optional parameter size is not match with Required parameter');
-        //}
 
         $data = array_merge($parameter, $optional);
 

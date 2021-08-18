@@ -32,16 +32,16 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     self::$log_enabled = 'yes' === $this->get_option('debug', 'no');
     $this->has_fields = 'yes' === $this->get_option('has_fields');
-    $this->is_sandbox = 'yes' === $this->get_option('is_sandbox');
     $this->do_not_clear_cart = 'yes' === $this->get_option('do_not_clear_cart');
     
     $this->settings = apply_filters('bfw_settings_value', $this->settings);
     
     $this->title = $this->settings['title'];
     $this->description = $this->settings['description'];
-    $this->api_key = $this->settings['api_key'];
-    $this->x_signature = $this->settings['x_signature'];
-    $this->collection_id = $this->settings['collection_id'];
+    $this->is_sandbox = 'yes' === $this->get_option('is_sandbox');
+    $this->api_key = $this->get_option('api_key');
+    $this->x_signature = $this->get_option('x_signature');
+    $this->collection_id = $this->get_option('collection_id');
     $this->reference_1_label = $this->settings['reference_1_label'];
     $this->reference_1 = $this->settings['reference_1'];
     $this->instructions = $this->settings['instructions'];
@@ -582,7 +582,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $this->is_sandbox = isset($posted_data['woocommerce_billplz_is_sandbox']);
     }
 
-    $this->api_key = $posted_data['woocommerce_billplz_api_key'];
+    if (isset($posted_data['woocommerce_billplz_api_key'])){
+      $this->api_key = $posted_data['woocommerce_billplz_api_key'];
+    }
+    
     $this->initialize_api_helper();
 
     $status = $this->billplz->getWebhookRank()[0];
@@ -610,11 +613,17 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   }
 
   private function verify_collection_id($posted_data){
-    $this->api_key = $posted_data['woocommerce_billplz_api_key'];
+    if (isset($posted_data['woocommerce_billplz_api_key'])){
+      $this->api_key = $posted_data['woocommerce_billplz_api_key'];
+    }
+
     $this->initialize_api_helper();
 
-    $collection_id = $posted_data['woocommerce_billplz_collection_id'];
-    $status = $this->billplz->getCollection($collection_id)[0];
+    if (isset($posted_data['woocommerce_billplz_collection_id'])){
+      $this->collection_id = $posted_data['woocommerce_billplz_collection_id'];
+    }
+
+    $status = $this->billplz->getCollection($this->collection_id)[0];
 
     switch($status) {
       case 200:

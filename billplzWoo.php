@@ -6,7 +6,7 @@
  * Description: Billplz. Fair payment platform.
  * Author: Billplz Sdn Bhd
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.26.3
+ * Version: 3.27.0
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
@@ -38,6 +38,7 @@ class Woocommerce_Billplz {
     add_action('admin_init', array(&$this, 'check_environment'));
     add_action('admin_notices', array(&$this, 'admin_notices'), 15);
     add_action('plugins_loaded', array(&$this, 'init'));
+    add_filter('option_woocommerce_billplz_settings', array(&$this, 'patch_keys_constant'), 10, 2);
   }
 
   private function define_constants() {
@@ -85,6 +86,26 @@ class Woocommerce_Billplz {
     $this->load_plugin_textdomain();
 
     $this->includes();
+  }
+
+  public function patch_keys_constant($value, $option_name){
+    if ($option_name != 'woocommerce_billplz_settings'){
+      return $value;
+    }
+
+    if (empty($value['api_key']) && defined('BFW_API_KEY')) {
+      $value['api_key'] = BFW_API_KEY;
+    }
+
+    if (empty($value['collection_id']) && defined('BFW_COLLECTION_ID')) {
+      $value['collection_id'] = BFW_COLLECTION_ID;
+    }
+
+    if (empty($value['x_signature']) && defined('BFW_X_SIGNATURE')) {
+      $value['x_signature'] = BFW_X_SIGNATURE;
+    }
+
+    return $value;
   }
 
   public function load_plugin_textdomain()
