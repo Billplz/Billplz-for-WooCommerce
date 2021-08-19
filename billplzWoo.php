@@ -93,15 +93,15 @@ class Woocommerce_Billplz {
       return $value;
     }
 
-    if (empty($value['api_key']) && defined('BFW_API_KEY')) {
+    if (defined('BFW_API_KEY')) {
       $value['api_key'] = BFW_API_KEY;
     }
 
-    if (empty($value['collection_id']) && defined('BFW_COLLECTION_ID')) {
+    if (defined('BFW_COLLECTION_ID')) {
       $value['collection_id'] = BFW_COLLECTION_ID;
     }
 
-    if (empty($value['x_signature']) && defined('BFW_X_SIGNATURE')) {
+    if (defined('BFW_X_SIGNATURE')) {
       $value['x_signature'] = BFW_X_SIGNATURE;
     }
 
