@@ -443,12 +443,24 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       'mobile' => trim($order_data['phone']),
       'name' => empty($order_data['name']) ? 'No Name' : $order_data['name'],
       'amount' => $order_data['total'],
-      'callback_url' => add_query_arg(array('order' => $order_data['id']), WC()->api_request_url(get_class($this))),
+      'callback_url' => add_query_arg(
+        array(
+          'order' => $order_data['id'],
+          'message_type' => 'bill_callback'
+        ),
+           WC()->api_request_url(get_class($this))
+        ),
       'description' => $this->get_order_description($order)
     );
 
     $optional = array(
-      'redirect_url' => $parameter['callback_url'],
+      'redirect_url' => add_query_arg(
+        array(
+          'order' => $order_data['id'],
+          'message_type' => 'bill_redirect'
+        ),
+           WC()->api_request_url(get_class($this))
+        ),
       'reference_1_label' => mb_substr($this->reference_1_label, 0, 20),
       'reference_1' => mb_substr($this->reference_1, 0, 120),
       'reference_2_label' => 'Order ID',
@@ -504,8 +516,18 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     @ob_clean();
 
+    if (isset($_GET['message_type'])){
+      $type = sanitize_text_field($_GET['message_type']);
+    } else if (isset($_GET['billplz']['x_signature'])) {
+      // starting 18 august 2021
+      // shall be removed in later version
+      $type = 'bill_redirect';
+    } else {
+      $type = 'bill_callback';
+    }
+
     try {
-        $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature);
+        $data = BillplzWooCommerceWPConnect::getXSignature($this->x_signature, $type);
     } catch (Exception $e) {
         status_header(403);
         self::log('Failed X Signature Validation. Information: '.print_r($_REQUEST, true));
@@ -525,7 +547,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $order = wc_get_order($order_id);
 
     if (!$data['paid']){
-      if ($data['type'] === 'redirect') {
+      if ($data['type'] === 'bill_redirect') {
         wp_redirect(esc_url_raw($order->get_cancel_order_url_raw()));
       }
       exit;
@@ -535,7 +557,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     
     self::complete_payment_process($order, $data, $this->is_sandbox);
 
-    if ($data['type'] === 'redirect') {
+    if ($data['type'] === 'bill_redirect') {
       wp_redirect($order->get_checkout_order_received_url());
     }
     

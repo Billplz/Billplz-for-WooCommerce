@@ -27,6 +27,7 @@ Install this plugin to accept payment using Billplz.
 * NEW: Added ability to hard code API Key, X Signature Key and Collection ID
 * NEW: Mobile phone number regular expression pattern to ensure non mobile phone number are removed
 * NEW: Avoid cluttering the post meta key by using new table
+* NEW: Changed how X Signature Hash is constructed
 
 = 3.26.3 =
 * IMPROVED: Bank list is now synched with Billplz API docs. 

@@ -272,37 +272,42 @@ class BillplzWooCommerceWPConnect
         return array($header, $body);
     }
 
-    public static function buildSourceString($data, $prefix = '')
+    public static function deep_map_pairs($data = array())
     {
-        uksort($data, function ($a, $b) {
-            $a_len = strlen($a);
-            $b_len = strlen($b);
-            $result = strncasecmp($a, $b, min($a_len, $b_len));
-            if ($result === 0) {
-                $result = $b_len - $a_len;
-            }
-            return $result;
-        });
-        $processed = [];
-        foreach ($data as $key => $value) {
-            if ($key === 'x_signature') {
-                continue;
-            }
-     
-            if (is_array($value)) {
-                $processed[] = self::buildSourceString($value, $key);
-            } else {
-                $processed[] = $prefix . $key . stripslashes($value);
-            }
+        $a = array();
+ 
+        foreach ($data as $k => $v){
+            if ($k == 'x_signature'){
+            continue;
         }
-        return implode('|', $processed);
+        if (is_array($v) && array_keys($v) !== range(0, count($v) - 1)) {
+            $b = array();
+            $dmp = self::deep_map_pairs($v);
+            $flatted_dmp = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($dmp));
+            foreach ($flatted_dmp as $p){
+                $b[] = $k.$p;
+            }
+            $a[] = $b;
+        } else if (is_array($v)){
+            $b = array();
+            foreach ($v as $c){
+                $b[] = self::deep_map_pairs(array($k => $c));
+            }
+            $a[] = $b;
+        } else {
+            $a[] = $k.$v;
+        }
+      }
+     
+      return $a;
     }
 
-    public static function getXSignature($x_signature_key)
+
+    public static function getXSignature($x_signature_key, $type = '')
     {
         $data = array();
 
-        if (isset($_GET['billplz']['x_signature'])) {
+        if ($type == 'bill_redirect') {
             $keys = array('id', 'paid_at', 'paid', 'transaction_id', 'transaction_status', 'x_signature');
 
             foreach ($keys as $key){
@@ -310,22 +315,43 @@ class BillplzWooCommerceWPConnect
                     $data['billplz'][$key] = $_GET['billplz'][$key];
                 }
             } 
-            $type = 'redirect';
-        } elseif (isset($_POST['x_signature'])) {
+        } elseif ($type == 'bill_callback') {
             $keys = array('amount', 'collection_id', 'due_at', 'email', 'id', 'mobile', 'name', 'paid_amount', 'transaction_id', 'transaction_status', 'paid_at', 'paid', 'state', 'url', 'x_signature');
             foreach ($keys as $key){
                 if (isset($_POST[$key])){
                     $data[$key] = $_POST[$key];
                 }
             }
-            $type = 'callback';
+        } elseif ($type == 'payout_callback') {
+            $keys = array('id','mass_payment_instruction_collection_id','bank_code','bank_account_number','identity_number','name','description','email','status','notification','recipient_notification','reference_id','total','paid_at', 'x_signature');
         } else {
             throw new \Exception('X Signature on Payment Completion not activated.');
         }
 
-        $signing = self::buildSourceString($data);
+        if ($type != 'bill_redirect') {
+            foreach ($keys as $key){
+                if (isset($_POST[$key])){
+                    $data[$key] = $_POST[$key];
+                }
+            }
+        }
 
-        if ($type == 'redirect'){
+        $deep_map_pairs = self::deep_map_pairs($data);
+        $flatted_new = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($deep_map_pairs));
+
+        $array_flatted = [];
+        foreach ($flatted_new as $p){
+          $array_flatted[] = $p;
+        }
+
+        $compacted_af = array_filter($array_flatted, function($var){
+           return ($var !== NULL && $var !== FALSE && $var !== "");
+        });
+
+        sort($compacted_af, SORT_REGULAR | SORT_FLAG_CASE);
+        $signing = implode('|', $compacted_af);
+
+        if ($type == 'bill_redirect'){
             $data = $data['billplz'];
         }
 
@@ -336,7 +362,7 @@ class BillplzWooCommerceWPConnect
 
         $signed = hash_hmac('sha256', $signing, $x_signature_key);
 
-        if ($data['x_signature'] === $signed) {
+        if (hash_equals($signed, $data['x_signature'])) {
             $data['type'] = $type;
             return $data;
         }
