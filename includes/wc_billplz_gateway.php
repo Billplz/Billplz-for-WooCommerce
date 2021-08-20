@@ -546,8 +546,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     $order = wc_get_order($order_id);
 
-    if (!$data['paid']){
-      if ($data['type'] === 'bill_redirect') {
+    if (!$data['paid'] && $data['type'] === 'bill_redirect'){
+      if (isset($data['transaction_status']) && $data['transaction_status'] == 'pending'){
+        wp_redirect($order->get_view_order_url());
+      } else {
         wp_redirect(esc_url_raw($order->get_cancel_order_url_raw()));
       }
       exit;

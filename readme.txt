@@ -28,6 +28,7 @@ Install this plugin to accept payment using Billplz.
 * NEW: Mobile phone number regular expression pattern to ensure non mobile phone number are removed
 * NEW: Avoid cluttering the post meta key by using new table
 * NEW: Changed how X Signature Hash is constructed
+* NEW: Support for FPX B2B1 for pending transaction state
 
 = 3.26.3 =
 * IMPROVED: Bank list is now synched with Billplz API docs. 
