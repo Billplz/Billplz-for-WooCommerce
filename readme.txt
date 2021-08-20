@@ -67,9 +67,17 @@ Install this plugin to accept payment using Billplz.
 
 **Step 3:**
 
-- Navigate to **WooCommerce >> Settings >> Checkout >> Billplz**
+- Navigate to **WooCommerce** >> **Settings** >> **Checkout** >> **Billplz**
 - Insert your **API Secret Key**, **Collection ID** and **X Signature Key**
 - Save changes
+
+**Hiding API Key, Collection ID and X Signature Key**
+
+The API Key, Collection and X Signature Key can be hidden from WordPress Dashboard by setting it on wp-config.php
+
+* API Key: `define('BFW_API_KEY', '<your-api-key-here>');`
+* X Signature: `define('BFW_X_SIGNATURE', '<your-x-signature-here>');`
+* Collection ID: `define('BFW_COLLECTION_ID', '<your-collection-id-here>');`
 
 == Frequently Asked Questions ==
 
