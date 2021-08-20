@@ -75,9 +75,9 @@ Install this plugin to accept payment using Billplz.
 
 The API Key, Collection and X Signature Key can be hidden from WordPress Dashboard by setting it on wp-config.php
 
-* API Key: `define('BFW_API_KEY', '<your-api-key-here>');`
-* X Signature: `define('BFW_X_SIGNATURE', '<your-x-signature-here>');`
-* Collection ID: `define('BFW_COLLECTION_ID', '<your-collection-id-here>');`
+- API Key: `define('BFW_API_KEY', '<your-api-key-here>');`
+- X Signature: `define('BFW_X_SIGNATURE', '<your-x-signature-here>');`
+- Collection ID: `define('BFW_COLLECTION_ID', '<your-collection-id-here>');`
 
 == Frequently Asked Questions ==
 
