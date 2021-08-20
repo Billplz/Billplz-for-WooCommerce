@@ -552,10 +552,11 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       }
       exit;
     }
-
-    bfw_update_bill($data['id'], 'paid', $order_id);
     
-    self::complete_payment_process($order, $data, $this->is_sandbox);
+    if (bfw_get_bill_state($data['id']) == 'due') {
+      bfw_update_bill($data['id'], 'paid', $order_id);
+      self::complete_payment_process($order, $data, $this->is_sandbox);
+    }
 
     if ($data['type'] === 'bill_redirect') {
       wp_redirect($order->get_checkout_order_received_url());
