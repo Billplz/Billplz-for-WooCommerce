@@ -23,6 +23,6 @@ if ( defined( 'BFW_REMOVE_ALL_DATA' ) && true === BFW_REMOVE_ALL_DATA ) {
   delete_option("bfw_db_version");
 
   global $wpdb;
-  $table_name = $wpdb->prefix . 'bfw'
+  $table_name = $wpdb->prefix . 'bfw';
   $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 }
