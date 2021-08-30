@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.9
-Stable tag: 3.27.0
+Stable tag: 3.27.1
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.27.1 =
+* FIXED: Order status not updated when order are created from version prior to 3.27.0.
 
 = 3.27.0 =
 * NEW: Added ability to hard code API Key, X Signature Key and Collection ID
