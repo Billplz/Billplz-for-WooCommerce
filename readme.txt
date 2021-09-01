@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 5.9
-Stable tag: 3.27.1
+Stable tag: 3.27.2
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.27.2 =
+* FIXED: Issue with unpaid bill result to processing for order in callback
 
 = 3.27.1 =
 * FIXED: Order status not updated when order are created from version prior to 3.27.0.
@@ -53,9 +56,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.25.5 =
 * NEW: Add bfw_description_with_order filters
-
-= 3.25.4 =
-* IMPROVED: Do not show e-pay and unionpay for 2c2p payment by default
 
 == Installation ==
 

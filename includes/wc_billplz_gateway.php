@@ -555,7 +555,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       exit;
     }
     
-    if (bfw_get_bill_state_legacy($order_id, $data['id']) == 'due') {
+    if (bfw_get_bill_state_legacy($order_id, $data['id']) == 'due' && $data['paid']) {
       bfw_update_bill($data['id'], 'paid', $order_id);
       self::complete_payment_process($order, $data, $this->is_sandbox);
     }
