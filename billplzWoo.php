@@ -6,13 +6,13 @@
  * Description: Billplz. Fair payment platform.
  * Author: Billplz Sdn Bhd
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.27.2
+ * Version: 3.27.3
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
- * WC requires at least: 3.0
+ * WC requires at least: 5.0
  * WC tested up to: 5.6
  */
 
@@ -42,7 +42,7 @@ class Woocommerce_Billplz {
   }
 
   private function define_constants() {
-    $this->define( 'BFW_MIN_WOOCOMMERCE_VER', '3.0' );
+    $this->define( 'BFW_MIN_WOOCOMMERCE_VER', '5.0' );
     $this->define( 'BFW_MIN_PHP_VER',  '7.0' );
     $this->define( 'BFW_PLUGIN_FILE',  __FILE__ );
     $this->define( 'BFW_PLUGIN_URL', plugin_dir_url(BFW_PLUGIN_FILE));
