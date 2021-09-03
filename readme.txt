@@ -5,7 +5,7 @@ Tested up to: 5.9
 Stable tag: 3.27.2
 Requires at least: 4.6
 License: GPL-3.0-or-later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.0
 
 Accept payment by using Billplz.
