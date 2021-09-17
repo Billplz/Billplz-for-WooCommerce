@@ -96,6 +96,12 @@ class BfwRequery327 {
       if (!$rbody['paid'] && $order = wc_get_order($post_id)){
          if ($order->has_status( 'processing' )){
 
+            delete_post_meta( $post_id, '_date_paid' );
+            delete_post_meta( (int) $post_id, '_paid_date' );
+
+            // refresh $order object after post_meta deletion
+            $order = wc_get_order($post_id);
+
             $referer = "<br>Sandbox: " . ($is_sandbox ? 'Yes' : 'No');
             $referer .= "<br>Bill ID: " . $rbody['id'];
             $referer .= "<br>Order ID: " . $order->get_id();
