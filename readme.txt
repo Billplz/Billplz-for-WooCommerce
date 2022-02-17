@@ -23,9 +23,6 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
-= 3.27.3 =
-* NEW: Added tool to reassess false order status
-
 = 3.27.2 =
 * FIXED: Issue with unpaid bill result to processing for order in callback
 
@@ -56,6 +53,9 @@ Install this plugin to accept payment using Billplz.
 
 = 3.25.6 =
 * NEW: Support for Enable Extra Payment Completion Information
+
+= 3.25.5 =
+* NEW: Add bfw_description_with_order filters
 
 == Installation ==
 
