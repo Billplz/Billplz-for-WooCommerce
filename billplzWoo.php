@@ -170,8 +170,6 @@ class Woocommerce_Billplz {
 
     include BFW_PLUGIN_DIR . '/includes/wc_billplz_gateway.php';
     include BFW_PLUGIN_DIR . '/includes/wc_bill_inquiry.php';
-
-    include BFW_PLUGIN_DIR . '/includes/bfw_requery_327.php';      
   }
 
   private function define( $name, $value ) {
