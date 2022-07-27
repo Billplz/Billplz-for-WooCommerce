@@ -201,5 +201,12 @@ function bfw_get_settings() {
     'default' => 'no',
   );
 
+  $settings['2c2p_shopeepay'] = array(
+    'title' => __('2C2P Shopee Pay', 'bfw'),
+    'type' => 'checkbox',
+    'label' => __('Enable', 'bfw'),
+    'default' => 'no',
+  );
+
   return $settings;
 }

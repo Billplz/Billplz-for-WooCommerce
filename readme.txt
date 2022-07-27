@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 5.9
-Stable tag: 3.27.2
+Tested up to: 6.0
+Stable tag: 3.27.3
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.27.3 =
+* NEW: Added 2c2p Shopee Pay
 
 = 3.27.2 =
 * FIXED: Issue with unpaid bill result to processing for order in callback
@@ -53,9 +56,6 @@ Install this plugin to accept payment using Billplz.
 
 = 3.25.6 =
 * NEW: Support for Enable Extra Payment Completion Information
-
-= 3.25.5 =
-* NEW: Add bfw_description_with_order filters
 
 == Installation ==
 

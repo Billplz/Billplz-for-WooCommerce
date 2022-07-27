@@ -49,6 +49,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->twoctwop_boost = 'yes' === $this->get_option('2c2p_boost');
     $this->twoctwop_tng = 'yes' === $this->get_option('2c2p_tng');
     $this->twoctwop_grabpay = 'yes' === $this->get_option('2c2p_grabpay');
+    $this->twoctwop_shopeepay = 'yes' === $this->get_option('2c2p_shopeepay');
 
     if (!$this->is_valid_for_use()) {
       $this->enabled = 'no';
@@ -245,7 +246,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       }
 
       foreach($gateways['payment_gateways'] as $key => $value){
-        if (in_array($value['code'], array('BP-2C2PGRB', 'BP-2C2PBST', 'BP-2C2PTNG'))){
+        if (in_array($value['code'], array('BP-2C2PGRB', 'BP-2C2PBST', 'BP-2C2PTNG', 'BP-2C2PSHPE'))){
           $gateways['payment_gateways'][$key]['category'] = 'twoctwopwallet';
         }
       }
@@ -576,6 +577,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
     if ($this->twoctwop_grabpay){
       $bank_name['BP-2C2PGRB'] = 'Grab';
+    }
+    if ($this->twoctwop_shopeepay){
+      $bank_name['BP-2C2PSHPE'] = 'Shopee Pay';
     }
     asort($bank_name);
     return apply_filters('billplz_bank_name', $bank_name);
