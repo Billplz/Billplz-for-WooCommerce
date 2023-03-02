@@ -51,6 +51,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->twoctwop_grabpay = 'yes' === $this->get_option('2c2p_grabpay');
     $this->twoctwop_shopeepay = 'yes' === $this->get_option('2c2p_shopeepay');
 
+    $this->is_advanced_checkout = 'yes' === $this->get_option('is_advanced_checkout');
+
     if (!$this->is_valid_for_use()) {
       $this->enabled = 'no';
     }
@@ -94,9 +96,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function woocommerce_add_action()
   {
+    add_action( 'before_woocommerce_pay_form', array( &$this, 'before_woocommerce_pay_form' ), 10, 3 );
+
     add_action('woocommerce_thankyou_billplz', array(&$this, 'thankyou_page'));
     add_action('woocommerce_email_before_order_table', array(&$this, 'email_instructions'), 10, 3);
-    add_action('woocommerce_receipt_billplz', array(&$this, 'receipt_page'));
     add_action('woocommerce_update_options_payment_gateways_billplz', array(&$this, 'process_admin_options'));
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
   }
@@ -493,11 +496,35 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     if ($this->has_fields){
       $rbody['url'] .= '?auto_submit=true';
     }
-    
+
+    if ( $this->is_advanced_checkout && !is_checkout_pay_page() ) {
+        set_transient( 'bfw_bill_url_' . $order->get_id(), $rbody['url'], DAY_IN_SECONDS );
+
+        return array(
+          'result' => 'success',
+          'redirect' => add_query_arg( 'payment_method', $this->id, $order->get_checkout_payment_url() ),
+        );
+    }
+
     return array(
       'result' => 'success',
       'redirect' => $rbody['url'],
     );
+  }
+
+  // Automatically redirect customer to Billplz payment page when accessing Checkout - Pay for Order page with payment_method=billplz parameter
+  public function before_woocommerce_pay_form( $order, $order_button_text, $available_gateways )
+  {
+    $selected_method = isset( $_GET['payment_method'] ) ? wp_unslash( $_GET['payment_method'] ) : null;
+
+    if ( $selected_method == $this->id ) {
+        $bill_url = get_transient( 'bfw_bill_url_' . $order->get_id() );
+
+        if ( $bill_url ) {
+            wp_redirect( $bill_url );
+            exit;
+        }
+    }
   }
 
   public static function complete_payment_process($order, $data, $is_sandbox)

@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 6.0
-Stable tag: 3.27.3
+Stable tag: 3.27.4
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.27.4 =
+* NEW: Added compatibility for advanced checkout plugin; eg: WooCommerce Fast Cart
 
 = 3.27.3 =
 * NEW: Added 2c2p Shopee Pay
