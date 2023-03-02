@@ -137,6 +137,14 @@ function bfw_get_settings() {
     'label' => __('Bypass Billplz Bill Page', 'bfw'),
     'default' => 'no',
   );
+
+  $settings['is_advanced_checkout'] = array(
+    'title' => __('Advanced Checkout', 'bfw'),
+    'type' => 'checkbox',
+    'label' => __('Tick this checkbox if you are using any advanced checkout plugin', 'bfw'),
+    'default' => 'no',
+    'description' => __('If checked, plugin will redirect customer to Checkout - Pay for Order page to avoid redirect issue with advanced checkout plugin installed on your site. eg: WooCommerce Fast Cart', 'bfw'),
+  );
   
   $settings['debugging'] = array(
     'title' => __('Debugging', 'bfw'),
