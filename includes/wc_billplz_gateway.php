@@ -162,36 +162,36 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     $valid = true;
 
-    if ($this->is_sandbox) {
-        if (empty($this->sandbox_api_key)) {
-          add_action('admin_notices', array(&$this, 'sandbox_api_key_missing_message'));
-          $valid = false;
-        } 
+    if (empty($this->live_api_key)) {
+      add_action('admin_notices', array(&$this, 'live_api_key_missing_message'));
+      $valid = false;
+    } 
 
-        if (empty($this->sandbox_collection_id)) {
-          add_action('admin_notices', array(&$this, 'sandbox_collection_id_missing_message'));
-          $valid = false;
-        }
+    if (empty($this->live_collection_id)) {
+      add_action('admin_notices', array(&$this, 'live_collection_id_missing_message'));
+      $valid = false;
+    }
 
-        if (empty($this->sandbox_x_signature)) {
-          add_action('admin_notices', array(&$this, 'sandbox_xsignature_key_missing_message'));
-          $valid = false;
-        }
-    } else {
-        if (empty($this->live_api_key)) {
-          add_action('admin_notices', array(&$this, 'live_api_key_missing_message'));
-          $valid = false;
-        } 
+    if (empty($this->live_x_signature)) {
+      add_action('admin_notices', array(&$this, 'live_xsignature_key_missing_message'));
+      $valid = false;
+    }
 
-        if (empty($this->live_collection_id)) {
-          add_action('admin_notices', array(&$this, 'live_collection_id_missing_message'));
-          $valid = false;
-        }
+    if ( $this->is_sandbox ) {
+      if (empty($this->sandbox_api_key)) {
+        add_action('admin_notices', array(&$this, 'sandbox_api_key_missing_message'));
+        $valid = false;
+      }
 
-        if (empty($this->live_x_signature)) {
-          add_action('admin_notices', array(&$this, 'live_xsignature_key_missing_message'));
-          $valid = false;
-        }
+      if (empty($this->sandbox_collection_id)) {
+        add_action('admin_notices', array(&$this, 'sandbox_collection_id_missing_message'));
+        $valid = false;
+      }
+
+      if (empty($this->sandbox_x_signature)) {
+        add_action('admin_notices', array(&$this, 'sandbox_xsignature_key_missing_message'));
+        $valid = false;
+      }
     }
 
     return $valid;
@@ -199,28 +199,28 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function check_keys_verification()
   {
-    if ($this->is_sandbox) {
-        $sandbox_api_key_state = get_option('bfw_sandbox_api_key_state', 'verified');
-        $sandbox_collection_id_state = get_option('bfw_sandbox_collection_id_state', 'verified');
+    $live_api_key_state = get_option('bfw_api_key_state', 'verified');
+    $live_collection_id_state = get_option('bfw_collection_id_state', 'verified');
 
-        if ($sandbox_api_key_state !== 'verified') {
-          add_action('admin_notices', array(&$this, 'sandbox_api_key_invalid_state_message'));
-          return false;
-        } elseif ($sandbox_collection_id_state !== 'verified') {
-          add_action('admin_notices', array(&$this, 'sandbox_collection_id_invalid_state_message'));
-          return false;
-        }
-    } else {
-        $live_api_key_state = get_option('bfw_api_key_state', 'verified');
-        $live_collection_id_state = get_option('bfw_collection_id_state', 'verified');
+    if ($live_api_key_state !== 'verified') {
+      add_action('admin_notices', array(&$this, 'live_api_key_invalid_state_message'));
+      return false;
+    } elseif ($live_collection_id_state !== 'verified') {
+      add_action('admin_notices', array(&$this, 'live_collection_id_invalid_state_message'));
+      return false;
+    }
 
-        if ($live_api_key_state !== 'verified') {
-          add_action('admin_notices', array(&$this, 'live_api_key_invalid_state_message'));
-          return false;
-        } elseif ($live_collection_id_state !== 'verified') {
-          add_action('admin_notices', array(&$this, 'live_collection_id_invalid_state_message'));
-          return false;
-        }
+    if ( $this->is_sandbox ) {
+      $sandbox_api_key_state = get_option('bfw_sandbox_api_key_state', 'verified');
+      $sandbox_collection_id_state = get_option('bfw_sandbox_collection_id_state', 'verified');
+
+      if ($sandbox_api_key_state !== 'verified') {
+        add_action('admin_notices', array(&$this, 'sandbox_api_key_invalid_state_message'));
+        return false;
+      } elseif ($sandbox_collection_id_state !== 'verified') {
+        add_action('admin_notices', array(&$this, 'sandbox_collection_id_invalid_state_message'));
+        return false;
+      }
     }
 
     return true;
@@ -267,7 +267,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   public function live_collection_id_missing_message()
   {
-    $this->key_missing_message('Live_Collection ID');
+    $this->key_missing_message('Live Collection ID');
   }
 
   public function sandbox_collection_id_missing_message()
