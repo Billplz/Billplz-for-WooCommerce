@@ -4,7 +4,7 @@ Accept payment using Billplz.
 Compatible up to:
 - PHP 8.1
 - Wordpress 6.1.1
-- Woocommerce 7.2.3
+- Woocommerce 7.5.0
 
 # Installation
 
@@ -38,9 +38,15 @@ There 2 ways to Install this plugin:
 
 The API Key, Collection and X Signature Key can be hidden from WordPress Dashboard by setting it on wp-config.php
 
-* API Key: `define('BFW_API_KEY', '<your-api-key-here>');`
-* X Signature: `define('BFW_X_SIGNATURE', '<your-x-signature-here>');`
-* Collection ID: `define('BFW_COLLECTION_ID', '<your-collection-id-here>');`
+**Live API Credentials**
+* API Key: `define('BFW_API_KEY', '<your-live-api-key-here>');`
+* X Signature: `define('BFW_X_SIGNATURE', '<your-live-x-signature-here>');`
+* Collection ID: `define('BFW_COLLECTION_ID', '<your-live-collection-id-here>');`
+
+**Sandbox API Credentials**
+* API Key: `define('BFW_SANDBOX_API_KEY', '<your-sandbox-api-key-here>');`
+* X Signature: `define('BFW_SANDBOX_X_SIGNATURE', '<your-sandbox-x-signature-here>');`
+* Collection ID: `define('BFW_SANDBOX_COLLECTION_ID', '<your-sandbox-collection-id-here>');`
 
 # Other
 

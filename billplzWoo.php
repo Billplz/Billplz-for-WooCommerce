@@ -6,14 +6,14 @@
  * Description: Billplz. Fair payment platform.
  * Author: Billplz Sdn Bhd
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.27.4
+ * Version: 3.27.5
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 6.7
+ * WC tested up to: 7.5.0
  */
 
 defined('ABSPATH') || exit;
@@ -39,6 +39,7 @@ class Woocommerce_Billplz {
     add_action('admin_notices', array(&$this, 'admin_notices'), 15);
     add_action('plugins_loaded', array(&$this, 'init'));
     add_filter('option_woocommerce_billplz_settings', array(&$this, 'patch_keys_constant'), 10, 2);
+    add_filter('option_woocommerce_billplz_settings', array(&$this, 'set_sandbox_api_credentials'), 10, 2);
   }
 
   private function define_constants() {
@@ -48,6 +49,7 @@ class Woocommerce_Billplz {
     $this->define( 'BFW_PLUGIN_URL', plugin_dir_url(BFW_PLUGIN_FILE));
     $this->define( 'BFW_PLUGIN_DIR',  dirname(BFW_PLUGIN_FILE) );
     $this->define( 'BFW_BASENAME',  plugin_basename(BFW_PLUGIN_FILE) );
+    $this->define( 'BFW_PLUGIN_VER',  '3.27.5' );
   }
 
   public function check_environment() {
@@ -103,6 +105,31 @@ class Woocommerce_Billplz {
 
     if (defined('BFW_X_SIGNATURE')) {
       $value['x_signature'] = BFW_X_SIGNATURE;
+    }
+
+    return $value;
+  }
+
+  public function set_sandbox_api_credentials($value)
+  {
+    if ( is_admin() || $value['is_sandbox'] != 'yes' ) {
+      return $value;
+    }
+
+    $user = wp_get_current_user();
+
+    // Set default value for "Enable Sandbox for Specific Role" to "All"
+    if ( !$value['enable_sandbox_role'] ) {
+      $value['enable_sandbox_role'] = 'all';
+    }
+
+    // If the sandbox is enabled and the user's role matches, use the sandbox API credentials
+    if ( in_array( $value['enable_sandbox_role'], array( 'all', '' ) ) || ( is_user_logged_in() && in_array( $value['enable_sandbox_role'], $user->roles ) ) ) {
+      $value['api_key']       = $value['sandbox_api_key'];
+      $value['collection_id'] = $value['sandbox_collection_id'];
+      $value['x_signature']   = $value['sandbox_x_signature'];
+    } else {
+      $value['is_sandbox'] = 'no';
     }
 
     return $value;

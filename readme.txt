@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 6.0
-Stable tag: 3.27.4
+Tested up to: 6.1.1
+Stable tag: 3.27.5
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,10 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.27.5 =
+* NEW: Added separate Live and Sandbox API credentials to the plugin settings
+* NEW: Enabled sandbox environment for specific role, allowing for testing without interrupting the customer journey during product purchasing on your e-commerce platform
 
 = 3.27.4 =
 * NEW: Added compatibility for advanced checkout plugin; eg: WooCommerce Fast Cart
@@ -82,12 +86,17 @@ Install this plugin to accept payment using Billplz.
 
 The API Key, Collection and X Signature Key can be hidden from WordPress Dashboard by setting it on wp-config.php
 
+#### Live API Credentials
 - API Key: `define('BFW_API_KEY', '<your-api-key-here>');`
 - X Signature: `define('BFW_X_SIGNATURE', '<your-x-signature-here>');`
 - Collection ID: `define('BFW_COLLECTION_ID', '<your-collection-id-here>');`
 
-== Frequently Asked Questions ==
+#### Sandbox API Credentials
+- API Key: `define('BFW_SANDBOX_API_KEY', '<your-sandbox-api-key-here>');`
+- X Signature: `define('BFW_SANDBOX_X_SIGNATURE', '<your-sandbox-x-signature-here>');`
+- Collection ID: `define('BFW_SANDBOX_COLLECTION_ID', '<your-sandbox-collection-id-here>');`
 
+== Frequently Asked Questions ==
 
 = Where can I get API Secret Key? =
 
