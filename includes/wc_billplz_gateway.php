@@ -392,43 +392,18 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
   }
 
-  private function get_customer_first_name($order) {
-    if ( $order->get_user_id() ) {
-      return get_user_meta( $order->get_user_id(), 'first_name', true );
-    }
-
-    if ( '' !== $order->get_billing_first_name( 'edit' ) ) {
-      return $order->get_billing_first_name( 'edit' );
-    } else {
-      return $order->get_shipping_first_name( 'edit' );
-    }
-  }
-  
-  private function get_customer_last_name($order) {
-    if ( $order->get_user_id() ) {
-      return get_user_meta( $order->get_user_id(), 'last_name', true );
-    }
-
-    if ( '' !== $order->get_billing_last_name( 'edit' ) ) {
-       return $order->get_billing_last_name( 'edit' );
-    } else {
-       return $order->get_shipping_last_name( 'edit' );
-    }
-  }
-
   private function get_order_data($order)
   {
-    $firstname = $this->get_customer_first_name($order);
-    $lastname = $this->get_customer_last_name($order);
+    $customer_full_name = $order->get_formatted_billing_full_name() ?: $order->get_formatted_shipping_full_name();
 
     $order_data = array(
       'id' => $order->get_id(),
-      'name'  => "$firstname $lastname",
+      'name'  => $customer_full_name,
       'email' => $order->get_billing_email(),
       'phone' => $order->get_billing_phone(),
       'total' => (string) ($order->get_total() * 100)
     );
-    
+
     return apply_filters('bfw_filter_order_data', $order_data);
   }
 

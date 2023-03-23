@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 6.1.1
-Stable tag: 3.27.5
+Stable tag: 3.27.6
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.27.6 =
+* FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
 
 = 3.27.5 =
 * NEW: Added separate Live and Sandbox API credentials to the plugin settings
