@@ -428,6 +428,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function get_order_description($order)
   {
+    $item_names = array();
+
     if (sizeof($order->get_items()) > 0) {
       foreach ($order->get_items() as $item) {
         if ($item['qty']) {
