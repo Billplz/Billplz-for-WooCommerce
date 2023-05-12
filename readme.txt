@@ -2,7 +2,7 @@
 Contributors: wanzulnet
 Tags: billplz
 Tested up to: 6.2
-Stable tag: 3.27.6
+Stable tag: 3.28.0
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -23,12 +23,11 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
-= 3.27.6 =
-* FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
-
-= 3.27.5 =
+= 3.28.0 =
 * NEW: Added separate Live and Sandbox API credentials to the plugin settings
 * NEW: Enabled sandbox environment for specific role, allowing for testing without interrupting the customer journey during product purchasing on your e-commerce platform
+* FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
+* FIXED: Issue with WooCommerce admin notices when saving the plugin settings
 
 = 3.27.4 =
 * NEW: Added compatibility for advanced checkout plugin; eg: WooCommerce Fast Cart
