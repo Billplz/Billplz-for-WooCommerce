@@ -6,11 +6,15 @@ jQuery(document).ready(function($) {
         if (this.checked) {
             tr.each(function() {
                 $(this).fadeIn(200);
-            })
+            });
         } else {
+            setTimeout(function() {
+                $('#woocommerce_billplz_is_sandbox_admin').prop('checked', false);
+            }, 200);
+
             tr.each(function() {
                 $(this).fadeOut(200);
-            })
+            });
         }
     });
 

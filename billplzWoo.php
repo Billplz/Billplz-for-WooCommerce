@@ -39,7 +39,7 @@ class Woocommerce_Billplz {
     add_action('admin_notices', array(&$this, 'admin_notices'), 15);
     add_action('plugins_loaded', array(&$this, 'init'));
     add_filter('option_woocommerce_billplz_settings', array(&$this, 'patch_keys_constant'), 10, 2);
-    add_filter('option_woocommerce_billplz_settings', array(&$this, 'set_sandbox_api_credentials'), 10, 2);
+    add_filter('option_woocommerce_billplz_settings', array(&$this, 'set_api_credentials'), 10, 2);
   }
 
   private function define_constants() {
@@ -107,29 +107,32 @@ class Woocommerce_Billplz {
       $value['x_signature'] = BFW_X_SIGNATURE;
     }
 
+    if (defined('BFW_SANDBOX_API_KEY')) {
+      $value['sandbox_api_key'] = BFW_SANDBOX_API_KEY;
+    }
+
+    if (defined('BFW_SANDBOX_COLLECTION_ID')) {
+      $value['sandbox_collection_id'] = BFW_SANDBOX_COLLECTION_ID;
+    }
+
+    if (defined('BFW_SANDBOX_X_SIGNATURE')) {
+      $value['sandbox_x_signature'] = BFW_SANDBOX_X_SIGNATURE;
+    }
+
     return $value;
   }
 
-  public function set_sandbox_api_credentials($value)
+  public function set_api_credentials($value)
   {
-    if ( is_admin() || $value['is_sandbox'] != 'yes' ) {
-      return $value;
+    // If it is not in WP admin page, check for is_sandbox by checking the user's role
+    if (!is_admin() && $value['is_sandbox'] === 'yes' && $value['is_sandbox_admin'] === 'yes') {
+      $value['is_sandbox'] = current_user_can('administrator') ? 'yes' : 'no';
     }
 
-    $user = wp_get_current_user();
-
-    // Set default value for "Enable Sandbox for Specific Role" to "All"
-    if ( !$value['enable_sandbox_role'] ) {
-      $value['enable_sandbox_role'] = 'all';
-    }
-
-    // If the sandbox is enabled and the user's role matches, use the sandbox API credentials
-    if ( in_array( $value['enable_sandbox_role'], array( 'all', '' ) ) || ( is_user_logged_in() && in_array( $value['enable_sandbox_role'], $user->roles ) ) ) {
+    if ($value['is_sandbox']) {
       $value['api_key']       = $value['sandbox_api_key'];
       $value['collection_id'] = $value['sandbox_collection_id'];
       $value['x_signature']   = $value['sandbox_x_signature'];
-    } else {
-      $value['is_sandbox'] = 'no';
     }
 
     return $value;
@@ -196,6 +199,7 @@ class Woocommerce_Billplz {
     include BFW_PLUGIN_DIR . '/includes/helpers/billplz_bank_name.php';
 
     include BFW_PLUGIN_DIR . '/includes/wc_billplz_gateway.php';
+    include BFW_PLUGIN_DIR . '/includes/wc_billplz_settings.php';
     include BFW_PLUGIN_DIR . '/includes/wc_bill_inquiry.php';
   }
 

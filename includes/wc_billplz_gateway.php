@@ -38,20 +38,30 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     
     $this->title = $this->settings['title'];
     $this->description = $this->settings['description'];
+
     $this->is_sandbox = 'yes' === $this->get_option('is_sandbox');
 
-    $this->live_api_key = $this->get_option('api_key');
-    $this->live_x_signature = $this->get_option('x_signature');
-    $this->live_collection_id = $this->get_option('collection_id');
+    if ( $this->is_sandbox ) {
+        $this->is_sandbox_admin = 'yes' === $this->get_option( 'is_sandbox_admin' );
+    } else {
+        $this->is_sandbox_admin = false;
+    }
 
-    $this->sandbox_api_key = $this->get_option('sandbox_api_key');
-    $this->sandbox_x_signature = $this->get_option('sandbox_x_signature');
-    $this->sandbox_collection_id = $this->get_option('sandbox_collection_id');
+    // If it is not in WP admin page, check for is_sandbox by checking the user's role
+    if (!is_admin() && $this->is_sandbox && $this->is_sandbox_admin) {
+      $this->is_sandbox = current_user_can('administrator') ? true : false;
+    }
 
     // Set API credentials based on selected environment
-    $this->api_key = $this->is_sandbox ? $this->sandbox_api_key : $this->live_api_key;
-    $this->x_signature = $this->is_sandbox ? $this->sandbox_x_signature : $this->live_x_signature;
-    $this->collection_id = $this->is_sandbox ? $this->sandbox_collection_id : $this->live_collection_id;
+    if ($this->is_sandbox) {
+      $this->api_key = $this->get_option('live_api_key');
+      $this->x_signature = $this->get_option('live_x_signature');
+      $this->collection_id = $this->get_option('live_collection_id');
+    } else {
+      $this->api_key = $this->get_option('sandbox_api_key');
+      $this->x_signature = $this->get_option('sandbox_x_signature');
+      $this->collection_id = $this->get_option('sandbox_collection_id');
+    }
 
     $this->reference_1_label = $this->settings['reference_1_label'];
     $this->reference_1 = $this->settings['reference_1'];
@@ -64,7 +74,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     $this->is_advanced_checkout = 'yes' === $this->get_option('is_advanced_checkout');
 
-    if (!$this->is_valid_for_use()) {
+    $this->bfw_settings = new WC_Billplz_Settings();
+
+    if (!$this->bfw_settings->is_valid_for_use()) {
       $this->enabled = 'no';
     }
 
@@ -85,16 +97,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     if ( $hook_suffix == 'woocommerce_page_wc-settings' && $section == $this->id ) {
       wp_enqueue_script( 'bfw-settings', BFW_PLUGIN_URL . 'includes/js/settings.js', array( 'jquery' ), BFW_PLUGIN_VER, true );
     }
-  }
-
-  public function is_valid_for_use()
-  {
-    $currencies_presence = $this->validate_currencies_presence();
-    if ($keys_presence = $this->validate_keys_presence()){
-      $keys_verified = $this->check_keys_verification();
-    }
-
-    return $currencies_presence && $keys_presence && $keys_verified;
   }
 
   public static function log($message)
@@ -126,172 +128,18 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
   }
 
-  private function initialize_api_helper(){
+  private function initialize_api_helper($sandbox = null){
     global $bfw_connect, $bfw_api;
-    $bfw_connect->set_api_key($this->api_key, $this->is_sandbox);
+
+    if ($sandbox === null) {
+      $sandbox = $this->is_sandbox;
+    }
+
+    $bfw_connect->set_api_key($this->api_key, $sandbox);
     $this->connect = &$bfw_connect;
     
     $bfw_api->set_connect($this->connect);
     $this->billplz = &$bfw_api;
-  }
-
-  private function validate_currencies_presence()
-  {
-    if (!in_array(get_woocommerce_currency(),
-      apply_filters('bfw_supported_currencies', array('MYR')),
-      true)){
-
-      add_action('admin_notices', array(
-        &$this, 'unsupported_currency_notice')
-      );
-
-      return false;
-    }
-    return true;
-  }
-
-  public function unsupported_currency_notice(){
-    $message = '<div class="error">';
-    $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> WooCommerce currency option is not supported by Billplz. %sClick here to configure%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=general">', '</a>') . '</p>';
-    $message .= '</div>';  
-
-    echo $message;
-  }
-
-  private function validate_keys_presence()
-  {
-    $valid = true;
-
-    if (empty($this->live_api_key)) {
-      add_action('admin_notices', array(&$this, 'live_api_key_missing_message'));
-      $valid = false;
-    } 
-
-    if (empty($this->live_collection_id)) {
-      add_action('admin_notices', array(&$this, 'live_collection_id_missing_message'));
-      $valid = false;
-    }
-
-    if (empty($this->live_x_signature)) {
-      add_action('admin_notices', array(&$this, 'live_xsignature_key_missing_message'));
-      $valid = false;
-    }
-
-    if ( $this->is_sandbox ) {
-      if (empty($this->sandbox_api_key)) {
-        add_action('admin_notices', array(&$this, 'sandbox_api_key_missing_message'));
-        $valid = false;
-      }
-
-      if (empty($this->sandbox_collection_id)) {
-        add_action('admin_notices', array(&$this, 'sandbox_collection_id_missing_message'));
-        $valid = false;
-      }
-
-      if (empty($this->sandbox_x_signature)) {
-        add_action('admin_notices', array(&$this, 'sandbox_xsignature_key_missing_message'));
-        $valid = false;
-      }
-    }
-
-    return $valid;
-  }
-
-  private function check_keys_verification()
-  {
-    $live_api_key_state = get_option('bfw_api_key_state', 'verified');
-    $live_collection_id_state = get_option('bfw_collection_id_state', 'verified');
-
-    if ($live_api_key_state !== 'verified') {
-      add_action('admin_notices', array(&$this, 'live_api_key_invalid_state_message'));
-      return false;
-    } elseif ($live_collection_id_state !== 'verified') {
-      add_action('admin_notices', array(&$this, 'live_collection_id_invalid_state_message'));
-      return false;
-    }
-
-    if ( $this->is_sandbox ) {
-      $sandbox_api_key_state = get_option('bfw_sandbox_api_key_state', 'verified');
-      $sandbox_collection_id_state = get_option('bfw_sandbox_collection_id_state', 'verified');
-
-      if ($sandbox_api_key_state !== 'verified') {
-        add_action('admin_notices', array(&$this, 'sandbox_api_key_invalid_state_message'));
-        return false;
-      } elseif ($sandbox_collection_id_state !== 'verified') {
-        add_action('admin_notices', array(&$this, 'sandbox_collection_id_invalid_state_message'));
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  public function live_api_key_invalid_state_message()
-  {
-    $this->invalid_state_message('Live API Key');
-  }
-
-  public function sandbox_api_key_invalid_state_message()
-  {
-    $this->invalid_state_message('Sandbox API Key');
-  }
-
-  public function live_collection_id_invalid_state_message()
-  {
-    $this->invalid_state_message('Live Collection ID');
-  }
-
-  public function sandbox_collection_id_invalid_state_message()
-  {
-    $this->invalid_state_message('Sandbox Collection ID');
-  }
-
-  public function invalid_state_message($error_type)
-  {
-    $message = '<div class="error">';
-    $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> $error_type is not valid. %sClick here to configure%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
-    $message .= '</div>';
-
-    echo $message;
-  }
-
-  public function live_api_key_missing_message()
-  {
-    $this->key_missing_message('Live API Key');
-  }
-
-  public function sandbox_api_key_missing_message()
-  {
-    $this->key_missing_message('Sandbox API Key');
-  }
-
-  public function live_collection_id_missing_message()
-  {
-    $this->key_missing_message('Live Collection ID');
-  }
-
-  public function sandbox_collection_id_missing_message()
-  {
-    $this->key_missing_message('Sandbox Collection ID');
-  }
-
-  public function live_xsignature_key_missing_message()
-  {
-    $this->key_missing_message('Live XSignature Key');
-  }
-
-  public function sandbox_xsignature_key_missing_message()
-  {
-    $this->key_missing_message('Sandbox XSignature Key');
-  }
-
-  public function key_missing_message($error_type)
-  {
-    $message = '<div class="error">';
-    $message .= '<p>' . sprintf("<strong>Billplz Disabled</strong> You should set your $error_type in Billplz. %sClick here to configure%s", '<a href="' . get_admin_url() . 'admin.php?page=wc-settings&tab=checkout&section=billplz">', '</a>') . '</p>';
-    $message .= '</div>';
-
-    echo $message;
   }
 
   private function fetch_billplz_payment_gateways()
@@ -678,9 +526,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     $this->api_key = sanitize_text_field( $posted_data['woocommerce_billplz_api_key'] );
-    $this->is_sandbox = false;
 
-    $this->initialize_api_helper();
+    $this->initialize_api_helper(false);
 
     $status = $this->billplz->getWebhookRank()[0];
 
@@ -714,9 +561,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     $this->api_key = sanitize_text_field( $posted_data['woocommerce_billplz_sandbox_api_key'] );
-    $this->is_sandbox = true;
 
-    $this->initialize_api_helper();
+    $this->initialize_api_helper(true);
 
     $status = $this->billplz->getWebhookRank()[0];
 
@@ -725,7 +571,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         update_option('bfw_sandbox_api_key_state', 'verified');
         return true;
       case 401:
-        if (!$recursion && $this->verify_api_key($posted_data, true)){
+        if (!$recursion && $this->verify_sandbox_api_key($posted_data, true)){
           if ($this->is_sandbox){
             $_POST['woocommerce_billplz_is_sandbox'] = '1';
           } else {
@@ -752,9 +598,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $this->collection_id = $posted_data['woocommerce_billplz_collection_id'];
     }
 
-    $this->is_sandbox = false;
-
-    $this->initialize_api_helper();
+    $this->initialize_api_helper(false);
 
     $status = $this->billplz->getCollection($this->collection_id)[0];
 
@@ -784,9 +628,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $this->collection_id = $posted_data['woocommerce_billplz_sandbox_collection_id'];
     }
 
-    $this->is_sandbox = true;
-
-    $this->initialize_api_helper();
+    $this->initialize_api_helper(true);
 
     $status = $this->billplz->getCollection($this->collection_id)[0];
 

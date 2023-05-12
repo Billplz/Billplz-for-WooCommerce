@@ -116,26 +116,12 @@ function bfw_get_settings() {
     'description' => sprintf(__('Billplz sandbox can be used to test payments. Sign up for a <a href="%s" target="_blank">sandbox account</a>.', 'bfw'), 'https://www.billplz-sandbox.com/'),
   );
 
-  $roles = array( 'all' => __( 'All Roles', 'bfw' ) );
-
-  if ( !function_exists( 'get_editable_roles' ) ) {
-    require_once( ABSPATH . 'wp-admin/includes/user.php' );
-  }
-
-  $editable_roles = array_reverse( get_editable_roles() );
-
-  foreach ( $editable_roles as $role => $details ) {
-    $roles[ $role ] = translate_user_role( $details['name'] );
-  }
-
-  $settings['enable_sandbox_role'] = array(
-    'title' => __('Enable Sandbox for Specific Role','bfw'),
-    'description' => __('Select which user role will use Billplz sandbox. Eg: Administrator', 'bfw'),
-    'default' => 'all',
-    'class' => 'wc-enhanced-select',
-    'type' => 'select',
-    'desc_tip' => false,
-    'options' => $roles,
+  $settings['is_sandbox_admin'] = array(
+    'title' => __('Enable Sandbox for Admin Only', 'bfw'),
+    'type' => 'checkbox',
+    'label' => __('Enable Billplz sandbox for admin only', 'bfw'),
+    'default' => 'no',
+    'description' => __("When enabled, sandbox credentials will be used for creating a bill in Billplz during checkout if the user's role is administrator. Otherwise, live API credentials will be used.", 'bfw'),
   );
 
   if (defined('BFW_SANDBOX_API_KEY')){
