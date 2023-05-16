@@ -124,15 +124,19 @@ class Woocommerce_Billplz {
 
   public function set_api_credentials($value)
   {
-    // If it is not in WP admin page, check for is_sandbox by checking the user's role
-    if (!is_admin() && $value['is_sandbox'] === 'yes' && $value['is_sandbox_admin'] === 'yes') {
-      $value['is_sandbox'] = current_user_can('administrator') ? 'yes' : 'no';
-    }
+    // If it is outside of WP admin page, we will update the API credentials in plugin settings data accordingly
+    if (!is_admin()) {
+      // If is_sandbox_admin is check, then we will set is_sandbox value based on user's role
+      if ('yes' === $value['is_sandbox'] && 'yes' === $value['is_sandbox_admin']) {
+        $value['is_sandbox'] = current_user_can('administrator') ? 'yes' : 'no';
+      }
 
-    if ($value['is_sandbox']) {
-      $value['api_key']       = $value['sandbox_api_key'];
-      $value['collection_id'] = $value['sandbox_collection_id'];
-      $value['x_signature']   = $value['sandbox_x_signature'];
+      // Use sandbox API credentials if is_sandbox is checked
+      if ('yes' === $value['is_sandbox']) {
+        $value['api_key']       = $value['sandbox_api_key'];
+        $value['collection_id'] = $value['sandbox_collection_id'];
+        $value['x_signature']   = $value['sandbox_x_signature'];
+      }
     }
 
     return $value;

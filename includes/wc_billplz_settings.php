@@ -13,15 +13,14 @@ class WC_Billplz_Settings extends WC_Settings_API {
         $this->live_x_signature      = $this->get_option( 'x_signature' );
         $this->live_collection_id    = $this->get_option( 'collection_id' );
 
-        $this->sandbox_api_key       = $this->get_option( 'api_key' );
-        $this->sandbox_x_signature   = $this->get_option( 'x_signature' );
-        $this->sandbox_collection_id = $this->get_option( 'collection_id' );
+        $this->sandbox_api_key       = $this->get_option( 'sandbox_api_key' );
+        $this->sandbox_x_signature   = $this->get_option( 'sandbox_x_signature' );
+        $this->sandbox_collection_id = $this->get_option( 'sandbox_collection_id' );
 
         $this->is_sandbox            = 'yes' === $this->get_option( 'is_sandbox' );
+        $this->is_sandbox_admin      = 'yes' === $this->get_option( 'is_sandbox_admin' );
 
-        if ( $this->is_sandbox ) {
-            $this->is_sandbox_admin = 'yes' === $this->get_option( 'is_sandbox_admin' );
-        } else {
+        if ( !$this->is_sandbox ) {
             $this->is_sandbox_admin = false;
         }
 
@@ -50,8 +49,8 @@ class WC_Billplz_Settings extends WC_Settings_API {
             'live_api_key_invalid_state'          => $this->invalid_state_message( __( 'Live API Key', 'bfw' ) ),
             'live_collection_id_invalid_state'    => $this->invalid_state_message( __( 'Live Collection ID', 'bfw' ) ),
 
-            'sandboxapi_key_invalid_state'        => $this->invalid_state_message( __( 'Sandbox API Key', 'bfw' ) ),
-            'sandboxcollection_id_invalid_state'  => $this->invalid_state_message( __( 'Sandbox Collection ID', 'bfw' ) ),
+            'sandbox_api_key_invalid_state'        => $this->invalid_state_message( __( 'Sandbox API Key', 'bfw' ) ),
+            'sandbox_collection_id_invalid_state'  => $this->invalid_state_message( __( 'Sandbox Collection ID', 'bfw' ) ),
         );
 
     }

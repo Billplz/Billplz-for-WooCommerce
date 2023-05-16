@@ -40,10 +40,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->description = $this->settings['description'];
 
     $this->is_sandbox = 'yes' === $this->get_option('is_sandbox');
+    $this->is_sandbox_admin = 'yes' === $this->get_option( 'is_sandbox_admin' );
 
-    if ( $this->is_sandbox ) {
-        $this->is_sandbox_admin = 'yes' === $this->get_option( 'is_sandbox_admin' );
-    } else {
+    if ( !$this->is_sandbox ) {
         $this->is_sandbox_admin = false;
     }
 
@@ -53,10 +52,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     // Set API credentials based on selected environment
-    if ($this->is_sandbox) {
-      $this->api_key = $this->get_option('live_api_key');
-      $this->x_signature = $this->get_option('live_x_signature');
-      $this->collection_id = $this->get_option('live_collection_id');
+    if (!$this->is_sandbox) {
+      $this->api_key = $this->get_option('api_key');
+      $this->x_signature = $this->get_option('x_signature');
+      $this->collection_id = $this->get_option('collection_id');
     } else {
       $this->api_key = $this->get_option('sandbox_api_key');
       $this->x_signature = $this->get_option('sandbox_x_signature');
@@ -536,12 +535,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         update_option('bfw_api_key_state', 'verified');
         return true;
       case 401:
-        if (!$recursion && $this->verify_api_key($posted_data, true)){
-          if ($this->is_sandbox){
-            $_POST['woocommerce_billplz_is_sandbox'] = '1';
-          } else {
-            unset($_POST['woocommerce_billplz_is_sandbox']);
-          }
+        if (!$recursion && $this->verify_api_key($posted_data, true)) {
+          unset($_POST['woocommerce_billplz_is_sandbox']);
           return true;
         } elseif ($recursion) {
           update_option('bfw_api_key_state', 'invalid');
@@ -571,12 +566,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         update_option('bfw_sandbox_api_key_state', 'verified');
         return true;
       case 401:
-        if (!$recursion && $this->verify_sandbox_api_key($posted_data, true)){
-          if ($this->is_sandbox){
-            $_POST['woocommerce_billplz_is_sandbox'] = '1';
-          } else {
-            unset($_POST['woocommerce_billplz_is_sandbox']);
-          }
+        if (!$recursion && $this->verify_sandbox_api_key($posted_data, true)) {
+          $_POST['woocommerce_billplz_is_sandbox'] = '1';
           return true;
         } elseif ($recursion) {
           update_option('bfw_sandbox_api_key_state', 'invalid');
