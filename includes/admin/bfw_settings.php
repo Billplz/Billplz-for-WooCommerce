@@ -286,3 +286,19 @@ function bfw_get_settings() {
 
   return $settings;
 }
+
+
+function bfw_get_settings_defaults() {
+    $settings = bfw_get_settings();
+    $defaults = array();
+
+    foreach ($settings as $key => $value) {
+        if (isset($value['default'])) {
+            $defaults[$key] = $value['default'];
+        } else {
+            $defaults[$key] = null;
+        }
+    }
+
+    return $defaults;
+}

@@ -124,6 +124,9 @@ class Woocommerce_Billplz {
 
   public function set_api_credentials($value)
   {
+    $defaults = bfw_get_settings_defaults();
+    $value = wp_parse_args($value, $defaults);
+
     // If it is outside of WP admin page, we will update the API credentials in plugin settings data accordingly
     if (!is_admin()) {
       // If is_sandbox_admin is check, then we will set is_sandbox value based on user's role
