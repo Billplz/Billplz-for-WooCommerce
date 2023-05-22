@@ -518,7 +518,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->verify_sandbox_collection_id($posted_data);
   }
 
-  private function verify_api_key($posted_data, $recursion = false)
+  private function verify_api_key($posted_data)
   {
     if ( !isset( $posted_data['woocommerce_billplz_api_key'] ) ) {
       return false;
@@ -535,21 +535,17 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         update_option('bfw_api_key_state', 'verified');
         return true;
       case 401:
-        if (!$recursion && $this->verify_api_key($posted_data, true)) {
-          unset($_POST['woocommerce_billplz_is_sandbox']);
-          return true;
-        } elseif ($recursion) {
-          update_option('bfw_api_key_state', 'invalid');
-        }
+        update_option('bfw_api_key_state', 'invalid');
         break;
       default:
         update_option('bfw_api_key_state', 'unknown');
+        break;
     }
 
     return false;
   }
 
-  private function verify_sandbox_api_key($posted_data, $recursion = false)
+  private function verify_sandbox_api_key($posted_data)
   {
     if ( !isset( $posted_data['woocommerce_billplz_sandbox_api_key'] ) ) {
       return false;
@@ -566,15 +562,11 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         update_option('bfw_sandbox_api_key_state', 'verified');
         return true;
       case 401:
-        if (!$recursion && $this->verify_sandbox_api_key($posted_data, true)) {
-          $_POST['woocommerce_billplz_is_sandbox'] = '1';
-          return true;
-        } elseif ($recursion) {
-          update_option('bfw_sandbox_api_key_state', 'invalid');
-        }
+        update_option('bfw_sandbox_api_key_state', 'invalid');
         break;
       default:
         update_option('bfw_sandbox_api_key_state', 'unknown');
+        break;
     }
 
     return false;
