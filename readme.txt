@@ -25,9 +25,9 @@ Install this plugin to accept payment using Billplz.
 
 = 3.28.0 =
 * NEW: Added separate Live and Sandbox API credentials to the plugin settings
-* NEW: Enabled sandbox environment for specific role, allowing for testing without interrupting the customer journey during product purchasing on your e-commerce platform
+* NEW: Enable sandbox environment for admin only, allowing for testing without interrupting the customer journey during product purchasing on your WooCommerce store
 * FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
-* FIXED: Issue with WooCommerce admin notices when saving the plugin settings
+* FIXED: Duplicate admin notices when saving the plugin settings
 
 = 3.27.4 =
 * NEW: Added compatibility for advanced checkout plugin; eg: WooCommerce Fast Cart
