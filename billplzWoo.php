@@ -234,13 +234,6 @@ class Woocommerce_Billplz {
       return sprintf($message, BFW_MIN_PHP_VER, phpversion());
     }
 
-    if (!function_exists('curl_init')) {
-      if ($during_activation) {
-        return __('The plugin could not be activated. cURL is not installed. Please contact your web host to install cURL.', 'bfw');
-      }
-      return __('The plugin has been deactivated. cURL is not installed. Please contact your web host to install cURL.', 'bfw');
-    }
-
     if (!class_exists('WC_Payment_Gateway')) {
       if ($during_activation) {
         return __('The plugin could not be activated. Billplz for WooCommerce depends on the last version of <a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce</a> to work.', 'bfw');
