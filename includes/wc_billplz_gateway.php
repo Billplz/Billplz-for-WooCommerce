@@ -94,7 +94,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $section = isset( $_GET['section'] ) ? wp_unslash( $_GET['section'] ) : null;
 
     if ( $hook_suffix == 'woocommerce_page_wc-settings' && $section == $this->id ) {
-      wp_enqueue_script( 'bfw-settings', BFW_PLUGIN_URL . 'includes/js/settings.js', array( 'jquery' ), BFW_PLUGIN_VER, true );
+      wp_enqueue_script('bfw-admin-settings', BFW_PLUGIN_URL . 'assets/js/admin-settings.js', array('jquery'), BFW_PLUGIN_VER, true);
     }
   }
 
@@ -111,7 +111,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   private function load_icon()
   {
     $logo = $this->get_option('display_logo', 'fpx');
-    $bfw_icon = plugins_url("assets/billplz-logo-$logo.png", BFW_PLUGIN_FILE);
+    $bfw_icon = plugins_url("assets/images/billplz-logo-$logo.png", BFW_PLUGIN_FILE);
     $this->icon = apply_filters('bfw_icon', $bfw_icon);
   }
 
