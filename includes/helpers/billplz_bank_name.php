@@ -16,6 +16,7 @@ class BillplzBankName
             'BIMB0340' => 'Bank Islam Internet Banking',
             'BKRM0602' => 'i-Rakyat',
             'BMMB0341' => 'i-Muamalat',
+
             'BSN0601' => 'myBSN',
             'CIT0219' => 'Citibank Online',
             'HLB0224' => 'HLB Connect',
@@ -44,8 +45,10 @@ class BillplzBankName
             // 'BP-2C2PU' => 'UnionPay',
             'BP-OCBC1' => 'Visa / Mastercard',
             'BP-BST01' => 'Boost',
-            'BP-SGP01' => 'Visa / Mastercard'
+            'BP-SGP01' => 'Visa / Mastercard',
+            'BP-PAYDE' => 'Visa / Mastercard',
         );
+
         return $bank_name;
     }
 }
