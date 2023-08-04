@@ -590,6 +590,38 @@ class BillplzWooCommerceWPConnect
         return array($header, $body);
     }
 
+    public function getPaymentOrder($id, array $parameter)
+    {
+        $url = $this->url . 'v5/payment_orders/' . $id;
+
+        $wp_remote_data['sslverify'] = false;
+        $wp_remote_data['headers'] = $this->header;
+        $wp_remote_data['body'] = $parameter;
+        $wp_remote_data['method'] = 'GET';
+
+        $response = \wp_remote_post($url, $wp_remote_data);
+        $header = wp_remote_retrieve_response_code($response);
+        $body = \wp_remote_retrieve_body($response);
+
+        return array($header, $body);
+    }
+
+    public function createPaymentOrder($parameter)
+    {
+        $url = $this->url . 'v5/payment_orders';
+
+        $wp_remote_data['sslverify'] = false;
+        $wp_remote_data['headers'] = $this->header;
+        $wp_remote_data['body'] = http_build_query($parameter);
+        $wp_remote_data['method'] = 'POST';
+
+        $response = \wp_remote_post($url, $wp_remote_data);
+        $header = wp_remote_retrieve_response_code($response);
+        $body = \wp_remote_retrieve_body($response);
+
+        return array($header, $body);
+    }
+
     public function toArray($json)
     {
         return array($json[0], \json_decode($json[1], true));

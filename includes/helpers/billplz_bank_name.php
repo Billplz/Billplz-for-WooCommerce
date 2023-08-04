@@ -51,4 +51,30 @@ class BillplzBankName
 
         return $bank_name;
     }
+
+    public static function getSwift()
+    {
+        return array(
+            'PHBMMYKL' => 'Affin Bank Berhad',
+            'BPMBMYKL' => 'AGROBANK / BANK PERTANIAN MALAYSIA BERHAD',
+            'MFBBMYKL' => 'Alliance Bank Malaysia Berhad',
+            'RJHIMYKL' => 'AL RAJHI BANKING &amp; INVESTMENT CORPORATION (MALAYSIA) BERHAD',
+            'ARBKMYKL' => 'AmBank (M) Berhad',
+            'BIMBMYKL' => 'Bank Islam Malaysia Berhad',
+            'BKRMMYKL' => 'Bank Kerjasama Rakyat Malaysia Berhad',
+            'BMMBMYKL' => 'Bank Muamalat (Malaysia) Berhad',
+            'BSNAMYK1' => 'Bank Simpanan Nasional Berhad',
+            'CIBBMYKL' => 'CIMB Bank Berhad',
+            'CITIMYKL' => 'Citibank Berhad',
+            'HLBBMYKL' => 'Hong Leong Bank Berhad',
+            'HBMBMYKL' => 'HSBC Bank Malaysia Berhad',
+            'KFHOMYKL' => 'Kuwait Finance House',
+            'MBBEMYKL' => 'Maybank / Malayan Banking Berhad',
+            'OCBCMYKL' => 'OCBC Bank (Malaysia) Berhad',
+            'PBBEMYKL' => 'Public Bank Berhad',
+            'RHBBMYKL' => 'RHB Bank Berhad',
+            'SCBLMYKX' => 'Standard Chartered Bank (Malaysia) Berhad',
+            'UOVBMYKL' => 'United Overseas Bank (Malaysia) Berhad',
+        );
+    }
 }

@@ -24,8 +24,7 @@ Install this plugin to accept payment using Billplz.
 == Changelog ==
 
 = 3.28.0 =
-* NEW: Added separate Live and Sandbox API credentials to the plugin settings
-* NEW: Enable sandbox environment for admin only, allowing for testing without interrupting the customer journey during product purchasing on your WooCommerce store
+* NEW: Support order refunds via Billplz payment order
 * FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
 * FIXED: Duplicate admin notices when saving the plugin settings
 
@@ -88,15 +87,11 @@ Install this plugin to accept payment using Billplz.
 
 The API Key, Collection and X Signature Key can be hidden from WordPress Dashboard by setting it on wp-config.php
 
-#### Live API Credentials
+#### API Credentials
 - API Key: `define('BFW_API_KEY', '<your-api-key-here>');`
 - X Signature: `define('BFW_X_SIGNATURE', '<your-x-signature-here>');`
 - Collection ID: `define('BFW_COLLECTION_ID', '<your-collection-id-here>');`
-
-#### Sandbox API Credentials
-- API Key: `define('BFW_SANDBOX_API_KEY', '<your-sandbox-api-key-here>');`
-- X Signature: `define('BFW_SANDBOX_X_SIGNATURE', '<your-sandbox-x-signature-here>');`
-- Collection ID: `define('BFW_SANDBOX_COLLECTION_ID', '<your-sandbox-collection-id-here>');`
+- Payment Order Collection ID: `define('BFW_PAYMENT_ORDER_COLLECTION_ID', '<your-payment-order-collection-id-here>');`
 
 == Frequently Asked Questions ==
 

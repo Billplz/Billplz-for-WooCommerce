@@ -13,7 +13,7 @@
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 7.7.0
+ * WC tested up to: 7.9.0
  */
 
 defined('ABSPATH') || exit;
@@ -39,7 +39,6 @@ class Woocommerce_Billplz {
     add_action('admin_notices', array(&$this, 'admin_notices'), 15);
     add_action('plugins_loaded', array(&$this, 'init'));
     add_filter('option_woocommerce_billplz_settings', array(&$this, 'patch_keys_constant'), 10, 2);
-    add_filter('option_woocommerce_billplz_settings', array(&$this, 'set_api_credentials'), 10, 2);
   }
 
   private function define_constants() {
@@ -103,43 +102,12 @@ class Woocommerce_Billplz {
       $value['collection_id'] = BFW_COLLECTION_ID;
     }
 
+    if (defined('BFW_PAYMENT_ORDER_COLLECTION_ID')) {
+      $value['payment_order_collection_id'] = BFW_PAYMENT_ORDER_COLLECTION_ID;
+    }
+
     if (defined('BFW_X_SIGNATURE')) {
       $value['x_signature'] = BFW_X_SIGNATURE;
-    }
-
-    if (defined('BFW_SANDBOX_API_KEY')) {
-      $value['sandbox_api_key'] = BFW_SANDBOX_API_KEY;
-    }
-
-    if (defined('BFW_SANDBOX_COLLECTION_ID')) {
-      $value['sandbox_collection_id'] = BFW_SANDBOX_COLLECTION_ID;
-    }
-
-    if (defined('BFW_SANDBOX_X_SIGNATURE')) {
-      $value['sandbox_x_signature'] = BFW_SANDBOX_X_SIGNATURE;
-    }
-
-    return $value;
-  }
-
-  public function set_api_credentials($value)
-  {
-    $defaults = bfw_get_settings_defaults();
-    $value = wp_parse_args($value, $defaults);
-
-    // If it is outside of WP admin page, we will update the API credentials in plugin settings data accordingly
-    if (!is_admin()) {
-      // If is_sandbox_admin is check, then we will set is_sandbox value based on user's role
-      if ('yes' === $value['is_sandbox'] && 'yes' === $value['is_sandbox_admin']) {
-        $value['is_sandbox'] = current_user_can('administrator') ? 'yes' : 'no';
-      }
-
-      // Use sandbox API credentials if is_sandbox is checked
-      if ('yes' === $value['is_sandbox']) {
-        $value['api_key']       = $value['sandbox_api_key'];
-        $value['collection_id'] = $value['sandbox_collection_id'];
-        $value['x_signature']   = $value['sandbox_x_signature'];
-      }
     }
 
     return $value;
@@ -206,8 +174,9 @@ class Woocommerce_Billplz {
     include BFW_PLUGIN_DIR . '/includes/helpers/billplz_bank_name.php';
 
     include BFW_PLUGIN_DIR . '/includes/wc_billplz_gateway.php';
-    include BFW_PLUGIN_DIR . '/includes/wc_billplz_settings.php';
     include BFW_PLUGIN_DIR . '/includes/wc_bill_inquiry.php';
+
+    include BFW_PLUGIN_DIR . '/includes/bfw_order_refund.php';
   }
 
   private function define( $name, $value ) {

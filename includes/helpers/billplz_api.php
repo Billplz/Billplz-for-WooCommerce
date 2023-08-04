@@ -231,6 +231,18 @@ class BillplzWooCommerceAPI
         return $response;
     }
 
+    public function getPaymentOrder($id, array $parameter)
+    {
+        $response = $this->connect->getPaymentOrder($id, $parameter);
+        return $response;
+    }
+
+    public function createPaymentOrder($parameter)
+    {
+        $response = $this->connect->createPaymentOrder($parameter);
+        return $response;
+    }
+
     public function toArray($json)
     {
         return $this->connect->toArray($json);

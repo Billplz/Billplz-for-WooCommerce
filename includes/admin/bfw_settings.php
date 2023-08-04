@@ -3,6 +3,8 @@
 defined('ABSPATH') || exit;
 
 function bfw_get_settings() {
+  $saved_settings = get_option('woocommerce_billplz_settings');
+
   $settings = array();
 
   $settings['enabled'] = array(
@@ -11,7 +13,7 @@ function bfw_get_settings() {
     'label' => __('Enable Billplz', 'bfw'),
     'default' => 'no',
   );
-  
+
   $settings['title'] = array(
     'title' => __('Title', 'bfw'),
     'type' => 'text',
@@ -41,69 +43,9 @@ function bfw_get_settings() {
       'all' => 'All'
     ),
   );
-  
-  $settings['live_api_credentials'] = array(
-    'title' => __('Live API Credentials', 'bfw'),
-    'type' => 'title',
-    'description' => '',
-  );
 
-  if (defined('BFW_API_KEY')){
-    $settings['api_key_information'] = array(
-      'title' => __('Live API Secret Key', 'bfw'),
-      'type' => 'title',
-      'description' => 'API Secret Key is not configurable.'
-    );
-  } else {
-    $settings['api_key'] = array(
-      'title' => __('Live API Secret Key', 'bfw'),
-      'type' => 'text',
-      'placeholder' => 'Example : ed586547-00b7-459a-a02e-7e876a744590',
-      'description' => __('Billplz API Secret Key. Can be obtained from Billplz Account Setttings.', 'bfw'),
-      'default' => '',
-      'desc_tip' => true,
-      'disabled' => defined('BFW_API_KEY'),
-    );
-  }
-  
-  if (defined('BFW_X_SIGNATURE')){
-    $settings['x_signature_information'] = array(
-      'title' => __('Live X Signature Key', 'bfw'),
-      'type' => 'title',
-      'description' => 'X Signature Key is not configurable.'
-    );
-  } else {
-    $settings['x_signature'] = array(
-      'title' => __('Live X Signature Key', 'bfw'),
-      'type' => 'text',
-      'placeholder' => 'Example : S-0Sq67GFD9Y5iXmi5iXMKsA',
-      'description' => __('Billplz X Signature Key. Can be obtained from Billplz Account Setttings.', 'bfw'),
-      'default' => '',
-      'desc_tip' => true,
-      'disabled' => defined('BFW_X_SIGNATURE'),
-    );
-  }
-
-  if (defined('BFW_COLLECTION_ID')){
-    $settings['collection_id_information'] = array(
-      'title' => __('Live Collection ID', 'bfw'),
-      'type' => 'title',
-      'description' => 'Collection ID is not configurable.'
-    );
-  } else {
-    $settings['collection_id'] = array(
-      'title' => __('Live Collection ID', 'bfw'),
-      'type' => 'text',
-      'placeholder' => 'Example : ugo_7dit',
-      'description' => __('Billplz Collection ID. Can be obtained from Billplz Billing pages.', 'bfw'),
-      'default' => '',
-      'desc_tip' => true,
-      'disabled' => defined('BFW_COLLECTION_ID'),
-    );
-  }
-  
-  $settings['sandbox_api_credentials'] = array(
-    'title' => __('Sandbox API Credentials', 'bfw'),
+  $settings['api_credentials'] = array(
+    'title' => __('API Credentials', 'bfw'),
     'type' => 'title',
     'description' => '',
   );
@@ -116,65 +58,86 @@ function bfw_get_settings() {
     'description' => sprintf(__('Billplz sandbox can be used to test payments. Sign up for a <a href="%s" target="_blank">sandbox account</a>.', 'bfw'), 'https://www.billplz-sandbox.com/'),
   );
 
-  $settings['is_sandbox_admin'] = array(
-    'title' => __('Enable Sandbox for Admin Only', 'bfw'),
-    'type' => 'checkbox',
-    'label' => __('Enable Billplz sandbox for admin only', 'bfw'),
-    'default' => 'no',
-    'description' => __("When enabled, sandbox credentials will be used for creating a bill in Billplz during checkout if the user's role is administrator. Otherwise, live API credentials will be used.", 'bfw'),
-  );
-
-  if (defined('BFW_SANDBOX_API_KEY')){
-    $settings['sandbox_api_key_information'] = array(
-      'title' => __('Sandbox API Secret Key', 'bfw'),
+  if (defined('BFW_API_KEY')){
+    $settings['api_key_information'] = array(
+      'title' => __('API Secret Key', 'bfw'),
       'type' => 'title',
       'description' => 'API Secret Key is not configurable.'
     );
   } else {
-    $settings['sandbox_api_key'] = array(
-      'title' => __('Sandbox API Secret Key', 'bfw'),
+    $settings['api_key'] = array(
+      'title' => __('API Secret Key', 'bfw'),
       'type' => 'text',
       'placeholder' => 'Example : ed586547-00b7-459a-a02e-7e876a744590',
       'description' => __('Billplz API Secret Key. Can be obtained from Billplz Account Setttings.', 'bfw'),
       'default' => '',
       'desc_tip' => true,
-      'disabled' => defined('BFW_SANDBOX_API_KEY'),
+      'disabled' => defined('BFW_API_KEY'),
     );
   }
-  
-  if (defined('BFW_SANDBOX_X_SIGNATURE')){
-    $settings['sandbox_x_signature_information'] = array(
-      'title' => __('Sandbox X Signature Key', 'bfw'),
+
+  if (defined('BFW_X_SIGNATURE')){
+    $settings['x_signature_information'] = array(
+      'title' => __('X Signature Key', 'bfw'),
       'type' => 'title',
       'description' => 'X Signature Key is not configurable.'
     );
   } else {
-    $settings['sandbox_x_signature'] = array(
-      'title' => __('Sandbox X Signature Key', 'bfw'),
+    $settings['x_signature'] = array(
+      'title' => __('X Signature Key', 'bfw'),
       'type' => 'text',
       'placeholder' => 'Example : S-0Sq67GFD9Y5iXmi5iXMKsA',
       'description' => __('Billplz X Signature Key. Can be obtained from Billplz Account Setttings.', 'bfw'),
       'default' => '',
       'desc_tip' => true,
-      'disabled' => defined('BFW_SANDBOX_X_SIGNATURE'),
+      'disabled' => defined('BFW_X_SIGNATURE'),
     );
   }
 
-  if (defined('BFW_SANDBOX_COLLECTION_ID')){
-    $settings['sandbox_collection_id_information'] = array(
-      'title' => __('Sandbox Collection ID', 'bfw'),
+  if (defined('BFW_COLLECTION_ID')){
+    $settings['collection_id_information'] = array(
+      'title' => __('Collection ID', 'bfw'),
       'type' => 'title',
       'description' => 'Collection ID is not configurable.'
     );
   } else {
-    $settings['sandbox_collection_id'] = array(
-      'title' => __('Sandbox Collection ID', 'bfw'),
+    $settings['collection_id'] = array(
+      'title' => __('Collection ID', 'bfw'),
       'type' => 'text',
       'placeholder' => 'Example : ugo_7dit',
-      'description' => __('Billplz Collection ID. Can be obtained from Billplz Billing pages.', 'bfw'),
+      'description' => __('Billplz Collection ID. Can be obtained from Billplz Billing page.', 'bfw'),
       'default' => '',
       'desc_tip' => true,
-      'disabled' => defined('BFW_SANDBOX_COLLECTION_ID'),
+      'disabled' => defined('BFW_COLLECTION_ID'),
+    );
+  }
+
+  $settings['refund'] = array(
+    'title' => __('Refund', 'bfw'),
+    'type' => 'title',
+    'description' => __('To enable refund order via Billplz feature, enter your payment order credentials.', 'bfw'),
+  );
+
+  if (defined('BFW_PAYMENT_ORDER_COLLECTION_ID')){
+    $settings['payment_order_collection_id_information'] = array(
+      'title' => __('Payment Order Collection ID', 'bfw'),
+      'type' => 'title',
+      'description' => 'Payment Order Collection ID is not configurable.'
+    );
+  } elseif ( isset( $saved_settings['payment_order_collection_id'] ) && !empty( $saved_settings['payment_order_collection_id'] ) ) {
+    $settings['payment_order_collection_id_information'] = array(
+      'title' => __('Payment Order Collection ID', 'bfw'),
+      'type' => 'billplz_payment_order_collection_id',
+    );
+  } else {
+    $settings['payment_order_collection_id'] = array(
+      'title' => __('Payment Order Collection ID', 'bfw'),
+      'type' => 'text',
+      'placeholder' => 'Example : abcd1234-1234-ab12-de34-abcdef123456',
+      'description' => __('Billplz Payment Order Collection ID. Can be obtained from Billplz Payment Order page.', 'bfw'),
+      'default' => '',
+      'desc_tip' => true,
+      'disabled' => defined('BFW_PAYMENT_ORDER_COLLECTION_ID'),
     );
   }
 
@@ -198,7 +161,7 @@ function bfw_get_settings() {
     'label' => __('Do not clear cart upon checkout', 'bfw'),
     'default' => 'no',
   );
-  
+
   $settings['has_fields'] = array(
     'title' => __('Skip Bill Page', 'bfw'),
     'type' => 'checkbox',
@@ -213,13 +176,13 @@ function bfw_get_settings() {
     'default' => 'no',
     'description' => __('If checked, plugin will redirect customer to Checkout - Pay for Order page to avoid redirect issue with advanced checkout plugin installed on your site. eg: WooCommerce Fast Cart', 'bfw'),
   );
-  
+
   $settings['debugging'] = array(
     'title' => __('Debugging', 'bfw'),
     'type' => 'title',
     'description' => '',
   );
-  
+
   $settings['debug'] = array(
     'title' => __('Debug Log', 'bfw'),
     'type' => 'checkbox',
@@ -227,7 +190,7 @@ function bfw_get_settings() {
     'default' => 'no',
     'description' => sprintf(__('Log Billplz events, such as IPN requests, inside <code>%s</code>', 'bfw'), wc_get_log_file_path('billplz')),
   );
-  
+
   $settings['bill_option'] = array(
     'title' => __('Bill Option', 'bfw'),
     'type' => 'title',
@@ -262,7 +225,7 @@ function bfw_get_settings() {
     'label' => __('Enable', 'bfw'),
     'default' => 'no',
   );
-  
+
   $settings['2c2p_tng'] = array(
     'title' => __('2C2P TnG', 'bfw'),
     'type' => 'checkbox',
