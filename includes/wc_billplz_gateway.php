@@ -759,7 +759,18 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     $payment_order_collection_id = sanitize_text_field( $posted_data['woocommerce_billplz_payment_order_collection_id'] );
 
-    list( $rheader, $rbody ) = $this->billplz->getCollection( $payment_order_collection_id );
+    $parameter = array(
+      'epoch' => time(),
+    );
+
+    $checksum_data = array(
+      $payment_order_collection_id,
+      $parameter['epoch'],
+    );
+
+    $parameter['checksum'] = hash_hmac( 'sha512', implode( '', $checksum_data ), $this->x_signature );
+
+    list( $rheader, $rbody ) = $this->billplz->getPaymentOrderCollection( $payment_order_collection_id, $parameter );
 
     switch ( $rheader ) {
       case 200:

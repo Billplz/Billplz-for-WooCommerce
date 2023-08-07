@@ -231,6 +231,12 @@ class BillplzWooCommerceAPI
         return $response;
     }
 
+    public function getPaymentOrderCollection($id, array $parameter)
+    {
+        $response = $this->connect->getPaymentOrderCollection($id, $parameter);
+        return $response;
+    }
+
     public function getPaymentOrder($id, array $parameter)
     {
         $response = $this->connect->getPaymentOrder($id, $parameter);
