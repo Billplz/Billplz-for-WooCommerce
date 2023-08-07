@@ -35,12 +35,12 @@ jQuery(document).ready(function($) {
 
     var bfw_order_metaboxes = {
         init: function() {
+            $('#bfw-order-refund-metabox').insertAfter('#woocommerce-order-items');
+
             $('#bfw-order-refund-metabox')
                 .hide()
                 .on('change keyup', '#refund-amount', this.refunds.amount_changed)
                 .on('click', 'button.do-bfw-order-refund', this.refunds.submit);
-
-            $('#bfw-order-refund-metabox .bfw-metabox-field-container').on('')
         },
         refunds: {
             amount_changed: function() {

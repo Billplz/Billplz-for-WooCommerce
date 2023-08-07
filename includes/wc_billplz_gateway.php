@@ -236,7 +236,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
 
     add_action('add_meta_boxes', array(&$this, 'register_metaboxes'));
-    add_filter('get_user_option_meta-box-order_shop_order', array(&$this, 'metaboxes_order'));
     add_action('woocommerce_after_order_refund_item_name', array(&$this, 'show_refund_info'));
   }
 
@@ -806,7 +805,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $order = wc_get_order($post);
 
       if ($order->is_paid() && $order->get_payment_method() === $this->id) {
-        add_meta_box('bfw-order-refund-metabox', __('Billplz Refund', 'bfw'), array(&$this, 'refund_metabox'), 'shop_order', 'normal', 'default');
+        add_meta_box('bfw-order-refund-metabox', __('Billplz Refund', 'bfw'), array(&$this, 'refund_metabox'), 'shop_order', 'normal', 'core');
       }
     }
   }
@@ -822,29 +821,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         include BFW_PLUGIN_DIR . '/includes/views/html-order-refund-metabox.php';
       }
     }
-  }
-
-  public function metaboxes_order( $order ) {
-
-    $normal_metaboxes = explode( ',', $order['normal'] );
-
-    foreach ( $normal_metaboxes as $normal_metabox ) {
-      // Remove Billplz refund metabox first, so that we can register it at specific position
-      // which is after WooCommerce order items metabox.
-      if ( $normal_metabox !== 'billplz-refund-metabox' ) {
-        $new_normal_metaboxes[] = $normal_metabox;
-      }
-
-      // Register Billplz refund metabox after WooCommerce order items metabox
-      if ( $normal_metabox === 'woocommerce-order-items' ) {
-        $new_normal_metaboxes[] = 'billplz-refund-metabox';
-      }
-    }
-
-    $order['normal'] = $new_normal_metaboxes;
-
-    return $order;
-
   }
 
   public static function create_refund()
