@@ -75,3 +75,9 @@
     border-bottom-left-radius: 0;
     padding-left: 7px;
 }
+
+/* Required asterisk */
+span.bfw-required {
+    color: #f00;
+    padding-left: 3px;
+}

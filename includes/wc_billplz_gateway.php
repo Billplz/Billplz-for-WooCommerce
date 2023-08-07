@@ -10,6 +10,9 @@ function bfw_add_gateway($methods)
 
 add_filter('woocommerce_payment_gateways', 'bfw_add_gateway');
 
+// Action hooks that needs to register outside of the payment gateway class
+add_action( 'wp_ajax_bfw_create_refund', array( 'WC_Billplz_Gateway', 'create_refund' ) );
+
 class WC_Billplz_Gateway extends WC_Payment_Gateway
 {
   public static $log_enabled = false;
@@ -40,8 +43,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     
     $this->settings = apply_filters('bfw_settings_value', $this->settings);
     
-    $this->title = $this->settings['title'];
-    $this->description = $this->settings['description'];
+    $this->title = $this->get_option('title');
+    $this->description = $this->get_option('description');
 
     $this->is_sandbox = 'yes' === $this->get_option('is_sandbox');
 
@@ -50,9 +53,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->collection_id = $this->get_option('collection_id');
     $this->payment_order_collection_id = $this->get_option('payment_order_collection_id');
 
-    $this->reference_1_label = $this->settings['reference_1_label'];
-    $this->reference_1 = $this->settings['reference_1'];
-    $this->instructions = $this->settings['instructions'];
+    $this->reference_1_label = $this->get_option('reference_1_label');
+    $this->reference_1 = $this->get_option('reference_1');
+    $this->instructions = $this->get_option('instructions');
 
     $this->twoctwop_boost = 'yes' === $this->get_option('2c2p_boost');
     $this->twoctwop_tng = 'yes' === $this->get_option('2c2p_tng');
@@ -233,7 +236,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
 
     add_action('add_meta_boxes', array(&$this, 'register_metaboxes'));
-    add_action('wp_ajax_bfw_create_refund', array(&$this, 'create_refund'));
+    add_filter('get_user_option_meta-box-order_shop_order', array(&$this, 'metaboxes_order'));
     add_action('woocommerce_after_order_refund_item_name', array(&$this, 'show_refund_info'));
   }
 
@@ -298,7 +301,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   }
 
   private function key_missing_message( $error_type ) {
-    return sprintf( __( '<strong>Billplz Disabled</strong>: You should set your %1$s in Billplz. <a href="%2$s">Click here to configure</a>', 'bfw' ), $error_type, admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . self::$gateway_id ) );
+    return sprintf( __( '<strong>Billplz Disabled</strong>: You should set your %1$s in the plugin settings. <a href="%2$s">Click here to configure</a>', 'bfw' ), $error_type, admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . self::$gateway_id ) );
   }
 
   private function invalid_state_message( $error_type ) {
@@ -821,7 +824,30 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
   }
 
-  public function create_refund()
+  public function metaboxes_order( $order ) {
+
+    $normal_metaboxes = explode( ',', $order['normal'] );
+
+    foreach ( $normal_metaboxes as $normal_metabox ) {
+      // Remove Billplz refund metabox first, so that we can register it at specific position
+      // which is after WooCommerce order items metabox.
+      if ( $normal_metabox !== 'billplz-refund-metabox' ) {
+        $new_normal_metaboxes[] = $normal_metabox;
+      }
+
+      // Register Billplz refund metabox after WooCommerce order items metabox
+      if ( $normal_metabox === 'woocommerce-order-items' ) {
+        $new_normal_metaboxes[] = 'billplz-refund-metabox';
+      }
+    }
+
+    $order['normal'] = $new_normal_metaboxes;
+
+    return $order;
+
+  }
+
+  public static function create_refund()
   {
     ob_start();
 
@@ -887,9 +913,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         'description'         => $refund_description,
       );
 
-      $refund_data_expires = 15 * HOUR_IN_SECONDS;
-
-      set_transient( "bfw_order_{$order_id}_refund_data", $refund_data, $refund_data_expires );
+      // Refund data will be deleted after 24 hours
+      set_transient( "bfw_order_{$order_id}_refund_data", $refund_data, DAY_IN_SECONDS );
 
       // Refer WC_AJAX::refund_line_items /////////////////////////////////////////////////////////
 

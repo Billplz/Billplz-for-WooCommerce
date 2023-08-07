@@ -118,9 +118,10 @@ jQuery(document).ready(function($) {
                 };
 
                 $.ajax({
-                    url:     bfw_admin_order_metaboxes.ajax_url,
-                    data:    data,
-                    type:    'POST',
+                    url:      bfw_admin_order_metaboxes.ajax_url,
+                    data:     data,
+                    type:     'POST',
+                    dataType: 'json',
                     success: function(response) {
                         if (response.success === true) {
                             window.alert(bfw_admin_order_metaboxes.refund_success_message);
