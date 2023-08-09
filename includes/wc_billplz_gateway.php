@@ -1151,8 +1151,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       case 'enquiring':
       case 'executing':
       case 'reviewing':
-        // Check the payment order status after five (5) minutes
-        wp_schedule_single_event( time() + ( 5 * MINUTE_IN_SECONDS ), 'bfw_check_refund_payment_order', array( $order_id, $refund_id ) );
+        // Check the payment order status after 1 minute
+        wp_schedule_single_event( time() + MINUTE_IN_SECONDS, 'bfw_check_refund_payment_order', array( $order_id, $refund_id ) );
         break;
 
       case 'refunded':
