@@ -71,9 +71,9 @@ function bfw_update_refund_payment_order( $refund_id, array $payment_order_data 
         return false;
     }
 
-    $order->update_meta_data( 'bfw_order_refund_payment_order', $payment_order_data );
+    $refund->update_meta_data( 'bfw_order_refund_payment_order', $payment_order_data );
 
-    return $order->save();
+    return $refund->save();
 
 }
 
