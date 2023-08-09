@@ -92,6 +92,20 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       return;
     }
 
+    $defaults  = array(
+      'title'       => '',
+      'disabled'      => false,
+      'class'       => '',
+      'css'         => '',
+      'placeholder'     => '',
+      'type'        => 'text',
+      'desc_tip'      => false,
+      'description'     => '',
+      'custom_attributes' => array(),
+    );
+
+    $data = wp_parse_args( $data, $defaults );
+
     // Get the first part of the string before the '-' character
     $payment_order_collection_id_array = explode( '-', $this->payment_order_collection_id );
 

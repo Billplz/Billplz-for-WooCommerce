@@ -122,7 +122,7 @@ function bfw_get_settings() {
     $settings['payment_order_collection_id_information'] = array(
       'title' => __('Payment Order Collection ID', 'bfw'),
       'type' => 'title',
-      'description' => 'Payment Order Collection ID is not configurable.'
+      'description' => 'Payment Order Collection ID is not configurable.',
     );
   } elseif ( isset( $saved_settings['payment_order_collection_id'] ) && !empty( $saved_settings['payment_order_collection_id'] ) ) {
     $settings['payment_order_collection_id_information'] = array(
