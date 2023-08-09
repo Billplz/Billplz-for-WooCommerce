@@ -13,7 +13,7 @@
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 7.9.0
+ * WC tested up to: 8.0.0
  */
 
 defined('ABSPATH') || exit;
@@ -39,6 +39,8 @@ class Woocommerce_Billplz {
     add_action('admin_notices', array(&$this, 'admin_notices'), 15);
     add_action('plugins_loaded', array(&$this, 'init'));
     add_filter('option_woocommerce_billplz_settings', array(&$this, 'patch_keys_constant'), 10, 2);
+
+    add_action('before_woocommerce_init', array(&$this, 'wc_hpos_compatibility'));
   }
 
   private function define_constants() {
@@ -211,6 +213,12 @@ class Woocommerce_Billplz {
     }
 
     return false;
+  }
+
+  public function wc_hpos_compatibility() {
+    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+    }
   }
 }
 $GLOBALS['woocommerce_billplz'] = Woocommerce_Billplz::get_instance();

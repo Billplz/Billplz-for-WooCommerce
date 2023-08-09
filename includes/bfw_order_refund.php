@@ -15,9 +15,15 @@ function bfw_get_refund_payment_order_defaults() {
 
 function bfw_get_refund_payment_order( $refund_id ) {
 
+    $refund = wc_get_order( $refund_id );
+
+    if ( !$refund ) {
+        return false;
+    }
+
     $payment_order_defaults = bfw_get_refund_payment_order_defaults();
 
-    $payment_order_data = get_post_meta( $refund_id, 'bfw_order_refund_payment_order', true );
+    $payment_order_data = $refund->get_meta( 'bfw_order_refund_payment_order' );
     $payment_order_data = wp_parse_args( $payment_order_data, $payment_order_defaults );
 
     if ( !$payment_order_data['id'] ) {
@@ -38,13 +44,25 @@ function bfw_get_refund_payment_order( $refund_id ) {
 
 function bfw_get_refund_payment_order_meta( $refund_id, $key = 'id' ) {
 
-    $payment_order_data = get_post_meta( $refund_id, 'bfw_order_refund_payment_order', true );
+    $refund = wc_get_order( $refund_id );
+
+    if ( !$refund ) {
+        return false;
+    }
+
+    $payment_order_data = $refund->get_meta( 'bfw_order_refund_payment_order' );
 
     return isset( $payment_order_data[ $key ] ) ? $payment_order_data[ $key ] : null;
 
 }
 
 function bfw_update_refund_payment_order( $refund_id, array $payment_order_data ) {
+
+    $refund = wc_get_order( $refund_id );
+
+    if ( !$refund ) {
+        return false;
+    }
 
     $payment_order_defaults = bfw_get_refund_payment_order_defaults();
     $payment_order_data = wp_parse_args( $payment_order_data, $payment_order_defaults );
@@ -53,7 +71,9 @@ function bfw_update_refund_payment_order( $refund_id, array $payment_order_data 
         return false;
     }
 
-    return update_post_meta( $refund_id, 'bfw_order_refund_payment_order', $payment_order_data );
+    $order->update_meta_data( 'bfw_order_refund_payment_order', $payment_order_data );
+
+    return $order->save();
 
 }
 

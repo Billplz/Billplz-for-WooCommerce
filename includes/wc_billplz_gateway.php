@@ -13,6 +13,9 @@ add_filter('woocommerce_payment_gateways', 'bfw_add_gateway');
 // Action hooks that needs to register outside of the payment gateway class
 add_action( 'wp_ajax_bfw_create_refund', array( 'WC_Billplz_Gateway', 'create_refund' ) );
 
+use Automattic\WooCommerce\Utilities\OrderUtil;
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+
 class WC_Billplz_Gateway extends WC_Payment_Gateway
 {
   public static $log_enabled = false;
@@ -550,7 +553,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     self::log('Bill ID ' . $rbody['id'] . ' created for order number #' . $order_data['id']);
 
     bfw_add_bill($order_id, $rbody['id'], 'due');
-    update_post_meta($order_id, '_transaction_id', $rbody['id']);
+
+    $order->update_meta_data('_transaction_id', $rbody['id']);
+    $order->save();
 
     wp_schedule_single_event( time() + (30 * MINUTE_IN_SECONDS), 'bfw_bill_inquiry', array( $rbody['id'], $order_data['id'] ) );
 
@@ -812,11 +817,15 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     global $post;
 
-    if ($post && $post->post_type === 'shop_order') {
+    if (OrderUtil::get_order_type($post) === 'shop_order') {
       $order = wc_get_order($post);
 
       if ($order->is_paid() && $order->get_payment_method() === $this->id) {
-        add_meta_box('bfw-order-refund-metabox', __('Billplz Refund', 'bfw'), array(&$this, 'refund_metabox'), 'shop_order', 'normal', 'core');
+        $screen = wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+          ? wc_get_page_screen_id( 'shop-order' )
+          : 'shop_order';
+
+        add_meta_box('bfw-order-refund-metabox', __('Billplz Refund', 'bfw'), array(&$this, 'refund_metabox'), $screen, 'normal', 'core');
       }
     }
   }
@@ -825,7 +834,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     global $post;
 
-    if ($post && $post->post_type === 'shop_order') {
+    if (OrderUtil::get_order_type($post) === 'shop_order') {
       $order = wc_get_order($post);
 
       if ($order->is_paid() && $order->get_payment_method() === $this->id) {

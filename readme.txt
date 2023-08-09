@@ -1,7 +1,7 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 6.2.2
+Tested up to: 6.3
 Stable tag: 3.28.0
 Requires at least: 4.6
 License: GPL-3.0-or-later
@@ -25,6 +25,7 @@ Install this plugin to accept payment using Billplz.
 
 = 3.28.0 =
 * NEW: Support order refunds via Billplz payment order
+* NEW: Added compatibility for WooCommerce High-Performance Order Storage (HPOS)
 * FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
 * FIXED: Duplicate admin notices when saving the plugin settings
 

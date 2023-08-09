@@ -27,10 +27,9 @@ function bfw_order_item_add_action_buttons( $order )
 add_action( 'woocommerce_order_item_add_action_buttons', 'bfw_order_item_add_action_buttons', 10, 1);
 
 function bfw_process_requery_action_button($order_id, $post, $update){
-  $slug = 'shop_order';
   if(is_admin()){
-    if ( $slug != $post->post_type ) {
-      return;
+    if (\Automattic\WooCommerce\Utilities\OrderUtil::get_order_type($order_id) !== 'shop_order') {
+        return false;
     }
     
     if(isset($_POST['bfw_requery_button_in_order_page']) && $_POST['bfw_requery_button_in_order_page']){
