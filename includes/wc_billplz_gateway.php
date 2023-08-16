@@ -848,10 +848,12 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     global $post;
 
-    if (OrderUtil::get_order_type($post) === 'shop_order') {
+    if ( OrderUtil::get_order_type( $post ) === 'shop_order' ) {
       $order = wc_get_order($post);
 
-      if ($order->is_paid() && $order->get_payment_method() === $this->id) {
+      if ( $order->is_paid() && $order->get_payment_method() === $this->id ) {
+        $banks = BillplzBankName::getSwift( $this->is_sandbox );
+
         include BFW_PLUGIN_DIR . '/includes/views/html-order-refund-metabox.php';
       }
     }
