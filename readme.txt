@@ -27,7 +27,7 @@ Install this plugin to accept payment using Billplz.
 * NEW: Support order refunds via Billplz payment order
 * NEW: Added compatibility for WooCommerce High-Performance Order Storage (HPOS)
 * FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
-* FIXED: Duplicate admin notices when saving the plugin settings
+* FIXED: Issue with admin notices when saving the plugin settings
 
 = 3.27.4 =
 * NEW: Added compatibility for advanced checkout plugin; eg: WooCommerce Fast Cart

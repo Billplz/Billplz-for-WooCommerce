@@ -93,14 +93,14 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     $defaults  = array(
-      'title'       => '',
-      'disabled'      => false,
-      'class'       => '',
-      'css'         => '',
-      'placeholder'     => '',
-      'type'        => 'text',
-      'desc_tip'      => false,
-      'description'     => '',
+      'title'             => '',
+      'disabled'          => false,
+      'class'             => '',
+      'css'               => '',
+      'placeholder'       => '',
+      'type'              => 'text',
+      'desc_tip'          => false,
+      'description'       => '',
       'custom_attributes' => array(),
     );
 
@@ -271,19 +271,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         'refund_success_message' => __( 'Refund created. The refund payment will be processed via Billplz.', 'bfw' ),
       ));
     }
-  }
-
-  // Display admin error messages
-  public function display_errors() {
-
-    $errors = (array) $this->get_errors();
-
-    foreach ( $errors as $error ) {
-      ?>
-      <div id="woocommerce_errors" class="error notice"><p><?php echo wp_kses_post( $error ); ?></p></div>
-      <?php
-    }
-
   }
 
   // Add an error message for display in admin on save
@@ -700,6 +687,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->verify_keys_authenticity();
 
     parent::process_admin_options();
+
+    // Reload page after settings saved.
+    wp_safe_redirect( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+    exit();
   }
 
   private function verify_keys_authenticity()
