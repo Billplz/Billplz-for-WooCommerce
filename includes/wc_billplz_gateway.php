@@ -828,7 +828,11 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   }
 
   public function can_refund_order( $order ) {
-    return $order && $order->is_paid() && $this->supports( 'refunds' );
+    return $order
+        && $this->supports( 'refunds' )
+        && $order->is_paid()
+        && $order->get_total() > 0
+        && $order->get_remaining_refund_amount() > 0;
   }
 
   public function register_metaboxes()
