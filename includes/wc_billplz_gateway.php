@@ -1057,7 +1057,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         throw new Exception( __( 'Please enter the refund description.', 'bfw' ) );
       }
 
-      $banks = BillplzBankName::getSwift();
+      $banks = BillplzBankName::getSwift( $this->is_sandbox );
 
       if ( !in_array( $refund_data['bank'], array_keys( $banks ) ) ) {
         throw new Exception( __( 'Invalid bank selected.' ) );
