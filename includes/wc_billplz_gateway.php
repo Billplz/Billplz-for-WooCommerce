@@ -697,7 +697,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     $posted_data = $this->get_post_data();
 
-    if ( $this->verify_api_key( $posted_data ) ){
+    if ( $this->verify_api_key( $posted_data ) ) {
       $this->verify_collection_id( $posted_data );
       $this->verify_payment_order_collection_id( $posted_data );
     }
@@ -705,11 +705,20 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function verify_api_key( $posted_data )
   {
-    if ( !isset( $posted_data['woocommerce_billplz_api_key'] ) ) {
+    $is_sandbox = isset($posted_data['woocommerce_billplz_is_sandbox']) ? $posted_data['woocommerce_billplz_is_sandbox'] === '1' : false;
+    $api_key    = isset($posted_data['woocommerce_billplz_api_key']) ? $posted_data['woocommerce_billplz_api_key'] : false;
+
+    if ( !$api_key ) {
       return false;
     }
 
-    list( $rheader, $rbody ) = $this->billplz->getWebhookRank();
+    global $bfw_connect, $bfw_api;
+
+    $bfw_connect->set_api_key( $api_key, $is_sandbox );
+    $bfw_api->set_connect( $bfw_connect );
+    $billplz = $bfw_api;
+
+    list( $rheader, $rbody ) = $billplz->getWebhookRank();
 
     switch ( $rheader ) {
       case 200:
@@ -731,13 +740,21 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function verify_collection_id( $posted_data )
   {
-    if ( !isset( $posted_data['woocommerce_billplz_collection_id'] ) ) {
+    $is_sandbox    = isset($posted_data['woocommerce_billplz_is_sandbox']) ? $posted_data['woocommerce_billplz_is_sandbox'] === '1' : false;
+    $api_key       = isset($posted_data['woocommerce_billplz_api_key']) ? $posted_data['woocommerce_billplz_api_key'] : false;
+    $collection_id = isset($posted_data['woocommerce_billplz_collection_id']) ? $posted_data['woocommerce_billplz_collection_id'] : false;
+
+    if ( !$api_key || !$collection_id ) {
       return false;
     }
 
-    $collection_id = sanitize_text_field( $posted_data['woocommerce_billplz_collection_id'] );
+    global $bfw_connect, $bfw_api;
 
-    list( $rheader, $rbody ) = $this->billplz->getCollection( $collection_id );
+    $bfw_connect->set_api_key( $api_key, $is_sandbox );
+    $bfw_api->set_connect( $bfw_connect );
+    $billplz = $bfw_api;
+
+    list( $rheader, $rbody ) = $billplz->getCollection( $collection_id );
 
     switch ( $rheader ) {
       case 200:
@@ -763,11 +780,20 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private function verify_payment_order_collection_id( $posted_data )
   {
-    if ( !isset( $posted_data['woocommerce_billplz_payment_order_collection_id'] ) ) {
+    $is_sandbox                  = isset($posted_data['woocommerce_billplz_is_sandbox']) ? $posted_data['woocommerce_billplz_is_sandbox'] === '1' : false;
+    $api_key                     = isset($posted_data['woocommerce_billplz_api_key']) ? $posted_data['woocommerce_billplz_api_key'] : false;
+    $x_signature                 = isset($posted_data['woocommerce_billplz_x_signature']) ? $posted_data['woocommerce_billplz_x_signature'] : false;
+    $payment_order_collection_id = isset($posted_data['woocommerce_billplz_payment_order_collection_id']) ? $posted_data['woocommerce_billplz_payment_order_collection_id'] : $this->payment_order_collection_id;
+
+    if ( !$api_key || !$x_signature || !$payment_order_collection_id ) {
       return false;
     }
 
-    $payment_order_collection_id = sanitize_text_field( $posted_data['woocommerce_billplz_payment_order_collection_id'] );
+    global $bfw_connect, $bfw_api;
+
+    $bfw_connect->set_api_key( $api_key, $is_sandbox );
+    $bfw_api->set_connect( $bfw_connect );
+    $billplz = $bfw_api;
 
     $parameter = array(
       'epoch' => time(),
@@ -778,9 +804,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $parameter['epoch'],
     );
 
-    $parameter['checksum'] = hash_hmac( 'sha512', implode( '', $checksum_data ), $this->x_signature );
+    $parameter['checksum'] = hash_hmac( 'sha512', implode( '', $checksum_data ), $x_signature );
 
-    list( $rheader, $rbody ) = $this->billplz->getPaymentOrderCollection( $payment_order_collection_id, $parameter );
+    list( $rheader, $rbody ) = $billplz->getPaymentOrderCollection( $payment_order_collection_id, $parameter );
 
     switch ( $rheader ) {
       case 200:
@@ -891,7 +917,13 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         throw new Exception( __( 'Invalid order.', 'bfw' ) );
       }
 
-      if ( !$refund_amount || $refund_amount === wc_format_decimal( 0, wc_get_price_decimals() ) ) {
+      $payment_order_collection_id_state = get_option( 'bfw_payment_order_collection_id_state', 'verified' );
+
+      if ( $payment_order_collection_id_state !== 'verified' ) {
+        throw new Exception( __( 'Invalid payment order collection ID. Please set a valid Billplz payment order collection ID in the plugin settings.', 'bfw' ) );
+      }
+
+      if ( !$refund_amount ) {
         throw new Exception( __( 'Please enter the refund amount.', 'bfw' ) );
       }
 
@@ -924,7 +956,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         'description'         => $refund_description,
       );
 
-      // Refund data will be deleted after 24 hours
+      // Save refund data into WordPress database for 24 hours, so that we can retrieved it in the process_refund method
       set_transient( "bfw_order_{$order_id}_refund_data", $refund_data, DAY_IN_SECONDS );
 
       // Refer WC_AJAX::refund_line_items /////////////////////////////////////////////////////////
@@ -937,7 +969,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       }
 
       if ( $total_refund !== $refunded_amount ) {
-        // throw new Exception( __( 'Error processing refund. Please try again.', 'bfw' ) );
+        throw new Exception( __( 'Error processing refund. Please try again.', 'bfw' ) );
       }
 
       // Prepare line items which we are refunding
@@ -1011,6 +1043,12 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
       if ( !$this->payment_order_collection_id ) {
         throw new Exception( __( 'To refund the order via Billplz, enter your payment order credentials in the plugin settings.', 'bfw' ) );
+      }
+
+      $payment_order_collection_id_state = get_option( 'bfw_payment_order_collection_id_state', 'verified' );
+
+      if ( $payment_order_collection_id_state !== 'verified' ) {
+        throw new Exception( __( 'Invalid payment order collection ID. Please set a valid Billplz payment order collection ID in the plugin settings.', 'bfw' ) );
       }
 
       // Refund information
