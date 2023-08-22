@@ -1220,9 +1220,23 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     if ( $payment_order_data['status'] === 'refunded' ) {
-      $refund_note = sprintf( __( 'Refund #%d was deleted because the refund payment failed to be processed via Billplz.', 'bfw' ), $refund_id );
+    } elseif ( $payment_order_data['status'] === 'refunded' ) {
     } else {
-      $refund_note = sprintf( __( 'Refund #%d successfully submitted to Billplz.', 'bfw' ), $refund_id );
+    }
+
+
+    switch ( $payment_order_data['status'] ) {
+      case 'completed':
+        $refund_note = sprintf( __( 'Refund #%d successfully paid via Billplz.', 'bfw' ), $refund_id );
+        break;
+
+      case 'refunded':
+        $refund_note = sprintf( __( 'Refund #%d was deleted because the refund payment failed to be processed via Billplz.', 'bfw' ), $refund_id );
+        break;
+
+      default:
+        $refund_note = sprintf( __( 'Refund #%d successfully submitted to Billplz.', 'bfw' ), $refund_id );
+        break;
     }
 
     $reference = sprintf( __( 'ID: %s', 'bfw' ), $payment_order_data['id'] );
