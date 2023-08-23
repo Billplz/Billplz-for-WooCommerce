@@ -23,9 +23,10 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
-= 3.28.0 =
+= 3.28.0 - 2023-08-23 =
 * NEW: Support order refunds via Billplz payment order
 * NEW: Added compatibility for WooCommerce High-Performance Order Storage (HPOS)
+* NEW: Added Paydee credit/debit card payment
 * FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
 * FIXED: Issue with admin notices when saving the plugin settings
 
