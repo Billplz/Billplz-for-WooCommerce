@@ -60,7 +60,7 @@ class BillplzBankName
         }
 
         $banks['PHBMMYKL'] = __( 'Affin Bank Berhad', 'bfw' );
-        $banks['BPMBMYKL'] = __( 'AGROBANK / BANK PERTANIAN MALAYSIA BERHAD', 'bfw' );
+        $banks['AGOBMYKL'] = __( 'AGROBANK / BANK PERTANIAN MALAYSIA BERHAD', 'bfw' );
         $banks['MFBBMYKL'] = __( 'Alliance Bank Malaysia Berhad', 'bfw' );
         $banks['RJHIMYKL'] = __( 'AL RAJHI BANKING &amp; INVESTMENT CORPORATION (MALAYSIA) BERHAD', 'bfw' );
         $banks['ARBKMYKL'] = __( 'AmBank (M) Berhad', 'bfw' );
