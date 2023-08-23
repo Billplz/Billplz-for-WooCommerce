@@ -956,8 +956,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         'description'         => $refund_description,
       );
 
-      // Save refund data into WordPress database for 24 hours, so that we can retrieved it in the process_refund method
-      set_transient( "bfw_order_{$order_id}_refund_data", $refund_data, DAY_IN_SECONDS );
+      // Save refund data into WordPress database for 1 hour, so that we can retrieved it in the process_refund method
+      set_transient( "bfw_order_{$order_id}_refund_data", $refund_data, HOUR_IN_SECONDS );
 
       // Refer WC_AJAX::refund_line_items /////////////////////////////////////////////////////////
 
