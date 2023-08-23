@@ -273,6 +273,19 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
   }
 
+  // Display admin error messages
+  public function display_errors() {
+
+    $errors = (array) $this->get_errors();
+
+    foreach ( $errors as $error ) {
+      ?>
+      <div id="woocommerce_errors" class="error notice"><p><?php echo wp_kses_post( $error ); ?></p></div>
+      <?php
+    }
+
+  }
+
   // Add an error message for display in admin on save
   public function add_error( $error ) {
 
