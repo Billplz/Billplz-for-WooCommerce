@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 6.0
-Stable tag: 3.27.4
+Tested up to: 6.3
+Stable tag: 3.28.0
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,13 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.28.0 - 2023-08-23 =
+* NEW: Support order refunds via Billplz payment order
+* NEW: Added compatibility for WooCommerce High-Performance Order Storage (HPOS)
+* NEW: Added Paydee credit/debit card payment
+* FIXED: Retrieve the customer's name from the checkout page instead of their profile information for a logged-in customer
+* FIXED: Issue with admin notices when saving the plugin settings
 
 = 3.27.4 =
 * NEW: Added compatibility for advanced checkout plugin; eg: WooCommerce Fast Cart
@@ -82,12 +89,13 @@ Install this plugin to accept payment using Billplz.
 
 The API Key, Collection and X Signature Key can be hidden from WordPress Dashboard by setting it on wp-config.php
 
+#### API Credentials
 - API Key: `define('BFW_API_KEY', '<your-api-key-here>');`
 - X Signature: `define('BFW_X_SIGNATURE', '<your-x-signature-here>');`
 - Collection ID: `define('BFW_COLLECTION_ID', '<your-collection-id-here>');`
+- Payment Order Collection ID: `define('BFW_PAYMENT_ORDER_COLLECTION_ID', '<your-payment-order-collection-id-here>');`
 
 == Frequently Asked Questions ==
-
 
 = Where can I get API Secret Key? =
 

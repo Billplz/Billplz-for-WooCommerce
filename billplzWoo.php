@@ -6,14 +6,14 @@
  * Description: Billplz. Fair payment platform.
  * Author: Billplz Sdn Bhd
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.27.4
+ * Version: 3.28.0
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 6.7
+ * WC tested up to: 8.0.0
  */
 
 defined('ABSPATH') || exit;
@@ -39,6 +39,8 @@ class Woocommerce_Billplz {
     add_action('admin_notices', array(&$this, 'admin_notices'), 15);
     add_action('plugins_loaded', array(&$this, 'init'));
     add_filter('option_woocommerce_billplz_settings', array(&$this, 'patch_keys_constant'), 10, 2);
+
+    add_action('before_woocommerce_init', array(&$this, 'wc_hpos_compatibility'));
   }
 
   private function define_constants() {
@@ -48,6 +50,7 @@ class Woocommerce_Billplz {
     $this->define( 'BFW_PLUGIN_URL', plugin_dir_url(BFW_PLUGIN_FILE));
     $this->define( 'BFW_PLUGIN_DIR',  dirname(BFW_PLUGIN_FILE) );
     $this->define( 'BFW_BASENAME',  plugin_basename(BFW_PLUGIN_FILE) );
+    $this->define( 'BFW_PLUGIN_VER',  '3.28.0' );
   }
 
   public function check_environment() {
@@ -99,6 +102,10 @@ class Woocommerce_Billplz {
 
     if (defined('BFW_COLLECTION_ID')) {
       $value['collection_id'] = BFW_COLLECTION_ID;
+    }
+
+    if (defined('BFW_PAYMENT_ORDER_COLLECTION_ID')) {
+      $value['payment_order_collection_id'] = BFW_PAYMENT_ORDER_COLLECTION_ID;
     }
 
     if (defined('BFW_X_SIGNATURE')) {
@@ -170,6 +177,8 @@ class Woocommerce_Billplz {
 
     include BFW_PLUGIN_DIR . '/includes/wc_billplz_gateway.php';
     include BFW_PLUGIN_DIR . '/includes/wc_bill_inquiry.php';
+
+    include BFW_PLUGIN_DIR . '/includes/bfw_order_refund.php';
   }
 
   private function define( $name, $value ) {
@@ -196,13 +205,6 @@ class Woocommerce_Billplz {
       return sprintf($message, BFW_MIN_PHP_VER, phpversion());
     }
 
-    if (!function_exists('curl_init')) {
-      if ($during_activation) {
-        return __('The plugin could not be activated. cURL is not installed. Please contact your web host to install cURL.', 'bfw');
-      }
-      return __('The plugin has been deactivated. cURL is not installed. Please contact your web host to install cURL.', 'bfw');
-    }
-
     if (!class_exists('WC_Payment_Gateway')) {
       if ($during_activation) {
         return __('The plugin could not be activated. Billplz for WooCommerce depends on the last version of <a href="http://wordpress.org/extend/plugins/woocommerce/">WooCommerce</a> to work.', 'bfw');
@@ -211,6 +213,12 @@ class Woocommerce_Billplz {
     }
 
     return false;
+  }
+
+  public function wc_hpos_compatibility() {
+    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+    }
   }
 }
 $GLOBALS['woocommerce_billplz'] = Woocommerce_Billplz::get_instance();

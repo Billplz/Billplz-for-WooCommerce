@@ -8,9 +8,8 @@ function bfw_delete_order($post_id)
       return;
   }
 
-  $post_type = get_post_type($post_id);
-  if ($post_type !== 'shop_order') {
-      return;
+  if ( \Automattic\WooCommerce\Utilities\OrderUtil::get_order_type( $post_id ) !== 'shop_order' ) {
+    return false;
   }
 
   $settings = get_option('woocommerce_billplz_settings');

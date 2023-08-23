@@ -3,8 +3,8 @@
 Accept payment using Billplz.
 Compatible up to:
 - PHP 8.1
-- Wordpress 6.1.1
-- Woocommerce 7.2.3
+- Wordpress 6.3
+- Woocommerce 8.0.2
 
 # Installation
 
@@ -38,9 +38,11 @@ There 2 ways to Install this plugin:
 
 The API Key, Collection and X Signature Key can be hidden from WordPress Dashboard by setting it on wp-config.php
 
+**API Credentials**
 * API Key: `define('BFW_API_KEY', '<your-api-key-here>');`
 * X Signature: `define('BFW_X_SIGNATURE', '<your-x-signature-here>');`
 * Collection ID: `define('BFW_COLLECTION_ID', '<your-collection-id-here>');`
+* Payment Order Collection ID: `define('BFW_PAYMENT_ORDER_COLLECTION_ID', '<your-payment-order-collection-id-here>');`
 
 # Other
 
