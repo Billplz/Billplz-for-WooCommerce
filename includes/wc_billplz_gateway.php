@@ -106,20 +106,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     $data = wp_parse_args( $data, $defaults );
 
-    // Get the first part of the string before the '-' character
-    $payment_order_collection_id_array = explode( '-', $this->payment_order_collection_id );
-
-    $hidden_payment_order_collection_array = array();
-
-    foreach ( $payment_order_collection_id_array as $key => $value ) {
-      if ( $key === 0 ) {
-        $hidden_payment_order_collection_array[] = $value;
-      } else {
-        $hidden_payment_order_collection_array[] = str_repeat( '*', strlen( $value ) );
-      }
-    }
-
-    $hidden_payment_order_collection_id = implode( '-', $hidden_payment_order_collection_array );
+    // Display only the first 6 characters of the payment order collection ID and conceal the remainder with "*"
+    $hidden_payment_order_collection_id = substr( $this->payment_order_collection_id, 0, 6 );
+    $hidden_payment_order_collection_id .= str_repeat( '*', strlen( $this->payment_order_collection_id ) - 6 );
 
     ob_start();
     ?>
