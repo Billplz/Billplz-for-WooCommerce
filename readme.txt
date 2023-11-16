@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet
 Tags: billplz
-Tested up to: 6.4.1
-Stable tag: 3.28.2
+Tested up to: 6.3
+Stable tag: 3.28.1
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,9 +22,6 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
-
-= 3.28.2 - 2023-11-16 =
-* FIXED: Blank order editor page in WordPress admin
 
 = 3.28.1 - 2023-10-25 =
 * FIXED: Resolved SSL verification error during the WP remote request by removing the 'sslverify' parameter

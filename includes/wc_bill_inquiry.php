@@ -53,10 +53,6 @@ function bfw_bill_inquiry($bill_id, $order_id, $attempts = 0)
 
   $order = wc_get_order($order_id);
 
-  if (!$order) {
-    return false;
-  }
-
   bfw_update_bill($bill_id, 'paid', $order_id);
   
   WC_Billplz_Gateway::complete_payment_process($order, ['id' => $bill_id, 'type' => 'requery'], $is_sandbox);
