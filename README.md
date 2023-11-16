@@ -3,8 +3,8 @@
 Accept payment using Billplz.
 Compatible up to:
 - PHP 8.1
-- Wordpress 6.3
-- Woocommerce 8.2.1
+- Wordpress 6.4.1
+- Woocommerce 8.2.2
 
 # Installation
 
