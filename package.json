@@ -1,0 +1,27 @@
+{
+  "name": "billplz-for-woocommerce",
+  "title": "Billplz for WooCommerce",
+  "version": "3.28.3",
+  "author": "Billplz Sdn Bhd",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://wordpress.org/plugins/billplz-for-woocommerce/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/billplz/billplz-for-woocommerce.git"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.14.4",
+    "webpack": ">=4.8.3"
+  },
+  "devDependencies": {
+    "@woocommerce/dependency-extraction-webpack-plugin": "^2.3.0",
+    "@wordpress/scripts": "^26.17.0",
+    "cross-env": "7.0.3"
+  },
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "check-engines": "wp-scripts check-engines"
+  }
+}

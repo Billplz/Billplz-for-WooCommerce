@@ -6,14 +6,14 @@
  * Description: Billplz. Fair payment platform.
  * Author: Billplz Sdn Bhd
  * Author URI: http://github.com/billplz/billplz-for-woocommerce
- * Version: 3.28.2
+ * Version: 3.28.3
  * Requires PHP: 7.0
  * Requires at least: 4.6
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
  * WC requires at least: 3.0
- * WC tested up to: 8.2.2
+ * WC tested up to: 8.3.1
  */
 
 defined('ABSPATH') || exit;
@@ -41,6 +41,7 @@ class Woocommerce_Billplz {
     add_filter('option_woocommerce_billplz_settings', array(&$this, 'patch_keys_constant'), 10, 2);
 
     add_action('before_woocommerce_init', array(&$this, 'wc_hpos_compatibility'));
+    add_action('woocommerce_blocks_loaded', array(&$this, 'blocks_support'));
   }
 
   private function define_constants() {
@@ -50,7 +51,7 @@ class Woocommerce_Billplz {
     $this->define( 'BFW_PLUGIN_URL', plugin_dir_url(BFW_PLUGIN_FILE));
     $this->define( 'BFW_PLUGIN_DIR',  dirname(BFW_PLUGIN_FILE) );
     $this->define( 'BFW_BASENAME',  plugin_basename(BFW_PLUGIN_FILE) );
-    $this->define( 'BFW_PLUGIN_VER',  '3.28.2' );
+    $this->define( 'BFW_PLUGIN_VER',  '3.28.3' );
   }
 
   public function check_environment() {
@@ -218,6 +219,19 @@ class Woocommerce_Billplz {
   public function wc_hpos_compatibility() {
     if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
         \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+    }
+  }
+
+  public function blocks_support() {
+    if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
+      include BFW_PLUGIN_DIR . '/includes/wc_billplz_blocks_support.php';
+
+      add_action(
+        'woocommerce_blocks_payment_method_type_registration',
+        function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
+          $payment_method_registry->register( new WC_Billplz_Blocks_Support() );
+        }
+      );
     }
   }
 }
