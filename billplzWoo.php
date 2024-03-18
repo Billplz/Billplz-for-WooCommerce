@@ -9,6 +9,7 @@
  * Version: 3.28.3
  * Requires PHP: 7.0
  * Requires at least: 4.6
+ * Requires Plugins: woocommerce
  * License: GPLv3
  * Text Domain: bfw
  * Domain Path: /languages/
