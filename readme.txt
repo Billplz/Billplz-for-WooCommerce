@@ -1,7 +1,7 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet, yiedpozi
 Tags: billplz
-Tested up to: 6.4.1
+Tested up to: 6.5
 Stable tag: 3.28.3
 Requires at least: 4.6
 License: GPL-3.0-or-later
