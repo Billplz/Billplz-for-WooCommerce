@@ -188,7 +188,7 @@ function bfw_get_settings() {
     'type' => 'checkbox',
     'label' => __('Enable logging', 'bfw'),
     'default' => 'no',
-    'description' => sprintf(__('Log Billplz events, such as IPN requests, inside <code>%s</code>', 'bfw'), wc_get_log_file_path('billplz')),
+    'description' => sprintf(__('Log Billplz events, such as IPN requests, inside <code>%s</code>', 'bfw'), WC_Log_Handler_File::get_log_file_path('billplz')),
   );
 
   $settings['bill_option'] = array(
