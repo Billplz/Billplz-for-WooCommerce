@@ -13,6 +13,12 @@ add_filter('woocommerce_payment_gateways', 'bfw_add_gateway');
 // Action hooks that needs to register outside of the payment gateway class
 add_action( 'wp_ajax_bfw_create_refund', array( 'WC_Billplz_Gateway', 'create_refund' ) );
 
+// "admin_notices" hook must be registered outside gateway class to avoid duplicate notices in admin screen
+add_action('admin_notices', function() {
+  $wc_billplz_gateway = new WC_Billplz_Gateway();
+  $wc_billplz_gateway->display_errors();
+});
+
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
