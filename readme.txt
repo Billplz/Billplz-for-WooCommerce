@@ -23,6 +23,10 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
+= 3.28.5 - 2024-05-29 =
+* FIXED: Duplicate admin notice issue
+* FIXED: Missing "Billplz Refund" metabox in order details page when HPOS is enabled
+
 = 3.28.4 - 2024-03-18 =
 * FIXED: Remove deprecation notice of woocommerce log file path
 
