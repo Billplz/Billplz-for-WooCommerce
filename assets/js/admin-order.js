@@ -99,7 +99,7 @@ jQuery(document).ready(function($) {
 
                 var data = {
                     action                : 'bfw_create_refund',
-                    order_id              : bfw_admin_order_metaboxes.order_id,
+                    order_id              : woocommerce_admin_meta_boxes.post_id,
                     refund_amount         : refund_amount,
                     refunded_amount       : refunded_amount,
                     refund_reason         : refund_reason,

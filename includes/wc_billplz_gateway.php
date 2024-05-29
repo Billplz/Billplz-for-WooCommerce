@@ -261,7 +261,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
       wp_localize_script('bfw-admin-order', 'bfw_admin_order_metaboxes', array(
         'ajax_url'               => admin_url('admin-ajax.php'),
-        'order_id'               => get_the_ID(),
         'create_refund_nonce'    => wp_create_nonce('bfw-create-refund'),
         'refund_success_message' => __( 'Refund created. The refund payment will be processed via Billplz.', 'bfw' ),
       ));
