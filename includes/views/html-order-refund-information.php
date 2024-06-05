@@ -8,7 +8,13 @@ if ( !$billplz_payment_order ) {
 }
 ?>
 
-<a href="<?php echo esc_url( $billplz_payment_order['url'] ); ?>" target="_blank" id="bfw-order-refund-information">
-    <span class="bfw-order-refund-label"><?php esc_html_e( 'Billplz Refund ID :', 'bfw' ); ?></span>
-    <span class="bfw-order-refund-id"><?php echo esc_html( $billplz_payment_order['id'] ); ?></span>
-</a>
+<div class="bfw-order-refund-info">
+    <?php
+    printf(
+        __( 'Processed via <span class="bfw-brand-text">Billplz</span> Payment Order<br><strong>Payment Order ID:</strong> <span class="help_tip" aria-label="Status: %3$s" data-tip="Status: %3$s"><a href="%2$s" target="_blank">%1$s</a></span>', 'bfw' ),
+        $billplz_payment_order['id'],
+        $billplz_payment_order['url'],
+        strtoupper( $billplz_payment_order['status'] )
+    );
+    ?>
+</div>

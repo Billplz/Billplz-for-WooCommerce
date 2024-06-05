@@ -11,7 +11,18 @@ function bfw_add_gateway($methods)
 add_filter('woocommerce_payment_gateways', 'bfw_add_gateway');
 
 // Action hooks that needs to register outside of the payment gateway class
-add_action( 'wp_ajax_bfw_create_refund', array( 'WC_Billplz_Gateway', 'create_refund' ) );
+add_action('wp_ajax_bfw_create_refund', array('WC_Billplz_Gateway', 'create_refund'));
+
+// "admin_notices" hook must be registered outside gateway class to avoid duplicate notices in admin screen
+add_action('admin_notices', function() {
+  $wc_billplz_gateway = new WC_Billplz_Gateway();
+  $wc_billplz_gateway->display_errors();
+});
+
+// Display the saved payment order data for specified refund
+add_action('woocommerce_after_order_refund_item_name', function($refund) {
+  include BFW_PLUGIN_DIR . '/includes/views/html-order-refund-information.php';
+});
 
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
@@ -232,8 +243,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 
-    add_action('admin_notices', array(&$this, 'display_errors'));
-
     add_action('before_woocommerce_pay_form', array(&$this, 'before_woocommerce_pay_form'), 10, 3);
 
     add_action('woocommerce_thankyou_billplz', array(&$this, 'thankyou_page'));
@@ -241,25 +250,19 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     add_action('woocommerce_update_options_payment_gateways_billplz', array(&$this, 'process_admin_options'));
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
 
-    add_action('add_meta_boxes', array(&$this, 'register_metaboxes'));
-    add_action('woocommerce_after_order_refund_item_name', array(&$this, 'show_refund_info'));
+    add_action('add_meta_boxes', array(&$this, 'register_metaboxes'), 10, 2);
   }
 
-  public function enqueue_scripts($hook_suffix)
+  public function enqueue_scripts()
   {
-    global $post_type;
+    wp_enqueue_style('bfw-admin-order', BFW_PLUGIN_URL . 'assets/css/admin-order.css', array('woocommerce_admin_styles'), BFW_PLUGIN_VER, 'all');
+    wp_enqueue_script('bfw-admin-order', BFW_PLUGIN_URL . 'assets/js/admin-order.js', array('jquery', 'wc-admin-order-meta-boxes'), BFW_PLUGIN_VER, true);
 
-    if ($post_type === 'shop_order') {
-      wp_enqueue_style('bfw-admin-order', BFW_PLUGIN_URL . 'assets/css/admin-order.css', array('woocommerce_admin_styles'), BFW_PLUGIN_VER, 'all');
-      wp_enqueue_script('bfw-admin-order', BFW_PLUGIN_URL . 'assets/js/admin-order.js', array('jquery', 'wc-admin-order-meta-boxes'), BFW_PLUGIN_VER, true);
-
-      wp_localize_script('bfw-admin-order', 'bfw_admin_order_metaboxes', array(
-        'ajax_url'               => admin_url('admin-ajax.php'),
-        'order_id'               => get_the_ID(),
-        'create_refund_nonce'    => wp_create_nonce('bfw-create-refund'),
-        'refund_success_message' => __( 'Refund created. The refund payment will be processed via Billplz.', 'bfw' ),
-      ));
-    }
+    wp_localize_script('bfw-admin-order', 'bfw_admin_order_metaboxes', array(
+      'ajax_url'               => admin_url('admin-ajax.php'),
+      'create_refund_nonce'    => wp_create_nonce('bfw-create-refund'),
+      'refund_success_message' => __( 'Refund created. The refund payment will be processed via Billplz.', 'bfw' ),
+    ));
   }
 
   // Display admin error messages
@@ -858,11 +861,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         && $order->get_remaining_refund_amount() > 0;
   }
 
-  public function register_metaboxes()
+  public function register_metaboxes( $post_type, $post )
   {
-    global $post;
-
-    if (OrderUtil::get_order_type($post) === 'shop_order') {
+    if ( OrderUtil::get_order_type($post) === 'shop_order' ) {
       $order = wc_get_order($post);
 
       if ( $order && $order->is_paid() && $order->get_payment_method() === $this->id ) {
@@ -875,10 +876,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
   }
 
-  public function refund_metabox()
+  public function refund_metabox($post)
   {
-    global $post;
-
     if ( OrderUtil::get_order_type( $post ) === 'shop_order' ) {
       $order = wc_get_order($post);
 
@@ -1256,11 +1255,5 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $refund_note .= $reference;
 
     $order->add_order_note( $refund_note );
-  }
-
-  // Display the saved payment order data for specified order
-  public function show_refund_info( $refund )
-  {
-    include BFW_PLUGIN_DIR . '/includes/views/html-order-refund-information.php';
   }
 }

@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet, yiedpozi
 Tags: billplz
-Tested up to: 6.5
-Stable tag: 3.28.4
+Tested up to: 6.5.3
+Stable tag: 3.28.5
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,10 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.28.5 - 2024-05-29 =
+* FIXED: Duplicate admin notice issue
+* FIXED: Missing "Billplz Refund" metabox in order details page when HPOS is enabled
 
 = 3.28.4 - 2024-03-18 =
 * FIXED: Remove deprecation notice of woocommerce log file path

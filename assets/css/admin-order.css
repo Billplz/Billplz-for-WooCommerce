@@ -47,33 +47,12 @@
 }
 
 /* Order Refund Information  */
-#bfw-order-refund-information {
-    background-color: #fff;
-    border-radius: 50px;
-    margin-top: 7px;
-    display: flex;
+.bfw-order-refund-info {
+    margin-top: 5px;
 }
-#bfw-order-refund-information .bfw-order-refund-label,
-#bfw-order-refund-information .bfw-order-refund-id {
-    font-weight: 500;
-    border: 2px solid #3784f4;
-    border-radius: 50px;
-    padding: 4px 15px;
-    white-space: nowrap;
-}
-#bfw-order-refund-information .bfw-order-refund-label {
-    background-color: #3784f4;
-    color: #fff;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    padding-right: 7px;
-}
-#bfw-order-refund-information .bfw-order-refund-id {
+.bfw-order-refund-info span.bfw-brand-text {
+    font-weight: bold;
     color: #3784f4;
-    border-left: 0;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    padding-left: 7px;
 }
 
 /* Required asterisk */
