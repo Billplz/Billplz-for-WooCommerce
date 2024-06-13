@@ -255,14 +255,35 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   public function enqueue_scripts()
   {
-    wp_enqueue_style('bfw-admin-order', BFW_PLUGIN_URL . 'assets/css/admin-order.css', array('woocommerce_admin_styles'), BFW_PLUGIN_VER, 'all');
-    wp_enqueue_script('bfw-admin-order', BFW_PLUGIN_URL . 'assets/js/admin-order.js', array('jquery', 'wc-admin-order-meta-boxes'), BFW_PLUGIN_VER, true);
+    $screen    = get_current_screen();
+    $screen_id = $screen ? $screen->id : '';
 
-    wp_localize_script('bfw-admin-order', 'bfw_admin_order_metaboxes', array(
-      'ajax_url'               => admin_url('admin-ajax.php'),
-      'create_refund_nonce'    => wp_create_nonce('bfw-create-refund'),
-      'refund_success_message' => __( 'Refund created. The refund payment will be processed via Billplz.', 'bfw' ),
-    ));
+    if ( $this->is_order_meta_box_screen( $screen_id ) ) {
+      wp_enqueue_style('bfw-admin-order', BFW_PLUGIN_URL . 'assets/css/admin-order.css', array('woocommerce_admin_styles'), BFW_PLUGIN_VER, 'all');
+      wp_enqueue_script('bfw-admin-order', BFW_PLUGIN_URL . 'assets/js/admin-order.js', array('jquery', 'wc-admin-order-meta-boxes'), BFW_PLUGIN_VER, true);
+
+      wp_localize_script('bfw-admin-order', 'bfw_admin_order_metaboxes', array(
+        'ajax_url'               => admin_url('admin-ajax.php'),
+        'create_refund_nonce'    => wp_create_nonce('bfw-create-refund'),
+        'refund_success_message' => __( 'Refund created. The refund payment will be processed via Billplz.', 'bfw' ),
+      ));
+    }
+  }
+
+  // Helper function from WooCommerce plugin to determine whether the current screen is an order edit screen
+  private function is_order_meta_box_screen( $screen_id ) {
+
+    $screen_id = str_replace( 'edit-', '', $screen_id );
+
+    $types_with_metaboxes_screen_ids = array_filter(
+      array_map(
+        'wc_get_page_screen_id',
+        wc_get_order_types( 'order-meta-boxes' )
+      )
+    );
+
+    return in_array( $screen_id, $types_with_metaboxes_screen_ids, true );
+
   }
 
   // Display admin error messages
@@ -1223,12 +1244,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    if ( $payment_order_data['status'] === 'refunded' ) {
-    } elseif ( $payment_order_data['status'] === 'refunded' ) {
-    } else {
-    }
-
 
     switch ( $payment_order_data['status'] ) {
       case 'completed':
