@@ -13,15 +13,15 @@
     </div>
     <div class="bfw-metabox-field-container bank-account-number-field-container">
         <label for="bank-account-number" class="bfw-metabox-label"><?php _e( 'Account Number', 'bfw' ); ?><span class="bfw-required">*</span></label>
-        <input id="refund-bank-account-number" type="number" class="bfw-metabox-field" value="<?php echo esc_attr( $order->get_meta('bfw_order_refund_bank_account_number') ); ?>"/>
+        <input id="refund-bank-account-number" type="number" class="bfw-metabox-field" />
     </div>
     <div class="bfw-metabox-field-container name-field-container">
         <label for="bank-account-name" class="bfw-metabox-label"><?php _e( 'Account Name', 'bfw' ); ?><span class="bfw-required">*</span></label>
-        <input id="refund-bank-account-name" type="text" class="bfw-metabox-field" value="<?php echo esc_attr( $order->get_meta('bfw_order_refund_bank_account_name') ); ?>"/>
+        <input id="refund-bank-account-name" type="text" class="bfw-metabox-field" />
     </div>
     <div class="bfw-metabox-field-container identity-number-field-container">
         <label for="identity-number" class="bfw-metabox-label"><?php _e( 'IC Number', 'bfw' ); ?><span class="bfw-required">*</span></label>
-        <input id="refund-identity-number" type="number" class="bfw-metabox-field" value="<?php echo esc_attr( $order->get_meta('bfw_order_refund_identity_number') ); ?>"/>
+        <input id="refund-identity-number" type="number" class="bfw-metabox-field" />
     </div>
     <div class="bfw-metabox-field-container amount-field-container">
         <label for="amount" class="bfw-metabox-label"><?php _e( 'Amount', 'bfw'); ?><span class="bfw-required">*</span></label>
@@ -29,7 +29,7 @@
     </div>
     <div class="bfw-metabox-field-container description-field-container">
         <label for="description" class="bfw-metabox-label"><?php _e( 'Description', 'bfw' ); ?><span class="bfw-required">*</span></label>
-        <input id="refund-description" type="text" class="bfw-metabox-field" value="<?php echo esc_attr( $order->get_meta('bfw_order_refund_description') ?: sprintf( __( 'Refund for Order #%d', 'bfw' ), $order->get_id() ) ); ?>"/>
+        <input id="refund-description" type="text" class="bfw-metabox-field" value="<?php echo esc_attr( sprintf( __( 'Refund for Order %d', 'bfw' ), $order->get_id() ) ); ?>"/>
     </div>
     <div class="bfw-metabox-submit-container">
         <?php
