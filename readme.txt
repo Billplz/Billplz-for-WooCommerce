@@ -2,7 +2,7 @@
 Contributors: wanzulnet, yiedpozi
 Tags: billplz
 Tested up to: 6.6.1
-Stable tag: 3.28.7
+Stable tag: 3.28.8
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.28.8 - 2024-08-13 =
+* FIXED: Resolved PHP 8.x deprecation warnings
 
 = 3.28.7 - 2024-07-29 =
 * FIXED: Remove special characters from the Payment Order description
