@@ -36,6 +36,27 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
   private $error_messages = array();
 
+  private $do_not_clear_cart = false;
+
+  private $is_sandbox = false;
+  private $api_key;
+  private $x_signature;
+  private $collection_id;
+  private $payment_order_collection_id;
+
+  private $reference_1_label;
+  private $reference_1;
+  private $instructions;
+
+  private $twoctwop_boost;
+  private $twoctwop_tng;
+  private $twoctwop_grabpay;
+  private $twoctwop_shopeepay;
+  private $is_advanced_checkout;
+
+  private $connect;
+  private $billplz;
+
   public function __construct()
   {
     $this->id = self::$gateway_id;
