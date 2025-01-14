@@ -437,20 +437,20 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     if ($this->has_fields) {
       $gateways = $this->fetch_billplz_payment_gateways();
       $collection_gateways = $this->fetch_billplz_collection_payment_gateways();
-      $bank_name = $this->add_custom_gateways(BillplzBankName::get());
+      $banks = $this->add_custom_gateways(BillplzPaymentOption::getBanks());
 
       if (has_action('bfw_payment_fields')) {
-        do_action('bfw_payment_fields', $gateways, $bank_name);
+        do_action('bfw_payment_fields', $gateways, $banks);
       } elseif (has_action('bfw_payment_fields_with_collection')) {
-        do_action('bfw_payment_fields_with_collection', $gateways, $bank_name, $collection_gateways);
+        do_action('bfw_payment_fields_with_collection', $gateways, $banks, $collection_gateways);
       } else {
         $gateway_option = array();
 
         if (!empty($gateways)) {
-          foreach ($bank_name as $key => $value) {
+          foreach ($banks as $key => $value) {
             foreach ($gateways['payment_gateways'] as $gateway) {
               if ($gateway['code'] === $key && $gateway['active'] && in_array($gateway['category'], $collection_gateways)) {
-                $gateway_option[$gateway['code']] = $bank_name[$gateway['code']] ? strtoupper($bank_name[$gateway['code']]) : $gateway['code'];
+                $gateway_option[$gateway['code']] = $banks[$gateway['code']] ? strtoupper($banks[$gateway['code']]) : $gateway['code'];
               }
             }
           }
@@ -924,7 +924,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $order = wc_get_order($post);
 
       if ( $order && $order->is_paid() && $order->get_payment_method() === $this->id ) {
-        $banks = BillplzBankName::getSwift( $this->is_sandbox );
+        $banks = BillplzPaymentOption::getSwiftBanks( $this->is_sandbox );
 
         include BFW_PLUGIN_DIR . '/includes/views/html-order-refund-metabox.php';
       }
@@ -1133,7 +1133,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         throw new Exception( __( 'Please enter the refund description.', 'bfw' ) );
       }
 
-      $banks = BillplzBankName::getSwift( $this->is_sandbox );
+      $banks = BillplzPaymentOption::getSwiftBanks( $this->is_sandbox );
 
       if ( !in_array( $refund_data['bank'], array_keys( $banks ) ) ) {
         throw new Exception( __( 'Invalid bank selected.' ) );
