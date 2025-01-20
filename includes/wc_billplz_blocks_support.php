@@ -13,6 +13,10 @@ final class WC_Billplz_Blocks_Support extends AbstractPaymentMethodType {
     public function initialize() {
 
         $this->settings = get_option( 'woocommerce_billplz_settings', array() );
+
+        $bfw_icon = plugins_url("assets/images/billplz-logo-black.png", BFW_PLUGIN_FILE);
+        $this->settings['bfw_icon'] = apply_filters('bfw_checkout_block_icon', $bfw_icon);
+
         $this->gateway  = new WC_Billplz_Gateway();
 
     }
@@ -25,9 +29,9 @@ final class WC_Billplz_Blocks_Support extends AbstractPaymentMethodType {
     // Scripts/handles to be registered for this payment method
     public function get_payment_method_script_handles() {
 
-        wp_register_script( 'wc-billplz-blocks-integration', BFW_PLUGIN_URL . '/assets/build/frontend/blocks.js', array(), BFW_PLUGIN_VER, true );
+        wp_register_script( 'wc-billplz-blocks', BFW_PLUGIN_URL . '/assets/build/frontend/blocks.js', array(), BFW_PLUGIN_VER, true );
 
-        return array( 'wc-billplz-blocks-integration' );
+        return array( 'wc-billplz-blocks' );
 
     }
 
@@ -38,6 +42,7 @@ final class WC_Billplz_Blocks_Support extends AbstractPaymentMethodType {
             'name'        => $this->name,
             'title'       => $this->get_setting( 'title' ),
             'description' => $this->get_setting( 'description' ),
+            'icon'        => $this->get_setting( 'bfw_icon' ),
             'supports'    => array_filter( $this->gateway->supports, array( $this->gateway, 'supports' ) )
         );
 
