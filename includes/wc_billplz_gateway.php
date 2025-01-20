@@ -48,10 +48,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   private $reference_1;
   private $instructions;
 
-  private $twoctwop_boost;
-  private $twoctwop_tng;
-  private $twoctwop_grabpay;
-  private $twoctwop_shopeepay;
   private $is_advanced_checkout;
 
   private $connect;
@@ -91,11 +87,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->reference_1_label = $this->get_option('reference_1_label');
     $this->reference_1 = $this->get_option('reference_1');
     $this->instructions = $this->get_option('instructions');
-
-    $this->twoctwop_boost = 'yes' === $this->get_option('2c2p_boost');
-    $this->twoctwop_tng = 'yes' === $this->get_option('2c2p_tng');
-    $this->twoctwop_grabpay = 'yes' === $this->get_option('2c2p_grabpay');
-    $this->twoctwop_shopeepay = 'yes' === $this->get_option('2c2p_shopeepay');
 
     $this->is_advanced_checkout = 'yes' === $this->get_option('is_advanced_checkout');
 
@@ -726,23 +717,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
     
     exit;
-  }
-
-  public function add_custom_gateways($bank_name){
-    if ($this->twoctwop_boost){
-      $bank_name['BP-2C2PBST'] = 'Boost';
-    }
-    if ($this->twoctwop_tng){
-      $bank_name['BP-2C2PTNG'] = 'TNG';
-    }
-    if ($this->twoctwop_grabpay){
-      $bank_name['BP-2C2PGRB'] = 'Grab';
-    }
-    if ($this->twoctwop_shopeepay){
-      $bank_name['BP-2C2PSHPE'] = 'Shopee Pay';
-    }
-    asort($bank_name);
-    return apply_filters('billplz_bank_name', $bank_name);
   }
 
   public function process_admin_options()
