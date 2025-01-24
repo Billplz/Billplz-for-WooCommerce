@@ -4,19 +4,17 @@ defined('ABSPATH') || exit;
 
 class BillplzPaymentOption
 {
-    public static function getBanks()
+    public static function getBanks( bool $sandbox = false )
     {
-        $bank_name = array(
+        $banks = array(
             'ABMB0212' => __( 'allianceonline', 'bfw' ),
             'ABB0233' => __( 'affinOnline', 'bfw' ),
-            'ABB0234' => __( 'Affin Bank', 'bfw' ),
             'AMBB0209' => __( 'AmOnline', 'bfw' ),
             'AGRO01' => __( 'AGRONet', 'bfw' ),
             'BCBB0235' => __( 'CIMB Clicks', 'bfw' ),
             'BIMB0340' => __( 'Bank Islam Internet Banking', 'bfw' ),
             'BKRM0602' => __( 'i-Rakyat', 'bfw' ),
             'BMMB0341' => __( 'i-Muamalat', 'bfw' ),
-            'BOCM01' => __( 'Bank of China', 'bfw' ),
             'BSN0601' => __( 'myBSN', 'bfw' ),
             'CIT0219' => __( 'Citibank Online', 'bfw' ),
             'HLB0224' => __( 'HLB Connect', 'bfw' ),
@@ -29,15 +27,6 @@ class BillplzPaymentOption
             'RHB0218' => __( 'RHB Now', 'bfw' ),
             'SCB0216' => __( 'SC Online Banking', 'bfw' ),
             'UOB0226' => __( 'UOB Internet Banking', 'bfw' ),
-            'UOB0229' => __( 'UOB Bank', 'bfw' ),
-            'TEST0001' => __( 'FPX TEST 1', 'bfw' ),
-            'TEST0002' => __( 'FPX TEST 2', 'bfw' ),
-            'TEST0003' => __( 'FPX TEST 3', 'bfw' ),
-            'TEST0004' => __( 'FPX TEST 4', 'bfw' ),
-            'TEST0021' => __( 'FPX TEST 21', 'bfw' ),
-            'TEST0022' => __( 'FPX TEST 22', 'bfw' ),
-            'TEST0023' => __( 'FPX TEST 23', 'bfw' ),
-            'BP-FKR01' => __( 'Billplz Simulator', 'bfw' ),
             'BP-BILLPLZ1' => __( 'Visa / Mastercard (Billplz)', 'bfw' ),
             'BP-PPL01' => __( 'PayPal', 'bfw' ),
             'BP-OCBC1' => __( 'Visa / Mastercard', 'bfw' ),
@@ -89,45 +78,65 @@ class BillplzPaymentOption
             'B2B1-PBB0234' => __( 'PB enterprise (Business)', 'bfw' ),
             'B2B1-RHB0218' => __( 'RHB Reflex (Business)', 'bfw' ),
             'B2B1-SCB0215' => __( 'SC Straight2Bank (Business)', 'bfw' ),
-            'B2B1-TEST0021' => __( 'SBI Bank A (Business)', 'bfw' ),
-            'B2B1-TEST0022' => __( 'SBI Bank B (Business)', 'bfw' ),
-            'B2B1-TEST0023' => __( 'SBI Bank C (Business)', 'bfw' ),
             'B2B1-UOB0228' => __( 'UOB BIBPlus (Business)', 'bfw' ),
         );
 
-        return $bank_name;
+        $sandbox_banks = array();
+
+        if ( $sandbox ) {
+            $sandbox_banks = [
+                'ABB0234' => __( 'Affin Bank', 'bfw' ),
+                'BOCM01' => __( 'Bank of China', 'bfw' ),
+                'UOB0229' => __( 'UOB Bank', 'bfw' ),
+                'TEST0001' => __( 'FPX TEST 1', 'bfw' ),
+                'TEST0002' => __( 'FPX TEST 2', 'bfw' ),
+                'TEST0003' => __( 'FPX TEST 3', 'bfw' ),
+                'TEST0004' => __( 'FPX TEST 4', 'bfw' ),
+                'TEST0021' => __( 'FPX TEST 21', 'bfw' ),
+                'TEST0022' => __( 'FPX TEST 22', 'bfw' ),
+                'TEST0023' => __( 'FPX TEST 23', 'bfw' ),
+                'BP-FKR01' => __( 'Billplz Simulator', 'bfw' ),
+                'B2B1-TEST0021' => __( 'SBI Bank A (Business)', 'bfw' ),
+                'B2B1-TEST0022' => __( 'SBI Bank B (Business)', 'bfw' ),
+                'B2B1-TEST0023' => __( 'SBI Bank C (Business)', 'bfw' ),
+            ];
+        }
+
+        return array_merge($banks, $sandbox_banks);
     }
 
     public static function getSwiftBanks( bool $sandbox = false )
     {
-        $banks = array();
+        $swift_banks = [
+            'PHBMMYKL' => __( 'Affin Bank Berhad', 'bfw' ),
+            'AGOBMYKL' => __( 'AGROBANK / BANK PERTANIAN MALAYSIA BERHAD', 'bfw' ),
+            'MFBBMYKL' => __( 'Alliance Bank Malaysia Berhad', 'bfw' ),
+            'RJHIMYKL' => __( 'AL RAJHI BANKING &amp; INVESTMENT CORPORATION (MALAYSIA) BERHAD', 'bfw' ),
+            'ARBKMYKL' => __( 'AmBank (M) Berhad', 'bfw' ),
+            'BIMBMYKL' => __( 'Bank Islam Malaysia Berhad', 'bfw' ),
+            'BKRMMYKL' => __( 'Bank Kerjasama Rakyat Malaysia Berhad', 'bfw' ),
+            'BMMBMYKL' => __( 'Bank Muamalat (Malaysia) Berhad', 'bfw' ),
+            'BSNAMYK1' => __( 'Bank Simpanan Nasional Berhad', 'bfw' ),
+            'CIBBMYKL' => __( 'CIMB Bank Berhad', 'bfw' ),
+            'CITIMYKL' => __( 'Citibank Berhad', 'bfw' ),
+            'HLBBMYKL' => __( 'Hong Leong Bank Berhad', 'bfw' ),
+            'HBMBMYKL' => __( 'HSBC Bank Malaysia Berhad', 'bfw' ),
+            'KFHOMYKL' => __( 'Kuwait Finance House', 'bfw' ),
+            'MBBEMYKL' => __( 'Maybank / Malayan Banking Berhad', 'bfw' ),
+            'OCBCMYKL' => __( 'OCBC Bank (Malaysia) Berhad', 'bfw' ),
+            'PBBEMYKL' => __( 'Public Bank Berhad', 'bfw' ),
+            'RHBBMYKL' => __( 'RHB Bank Berhad', 'bfw' ),
+            'SCBLMYKX' => __( 'Standard Chartered Bank (Malaysia) Berhad', 'bfw' ),
+            'UOVBMYKL' => __( 'United Overseas Bank (Malaysia) Berhad', 'bfw' ),
+        ];
 
-        if ( $sandbox === true ) {
-            $banks['DUMMYBANKVERIFIED'] = __( 'Billplz Dummy Bank Verified', 'bfw' );
+        if ( $sandbox ) {
+            array_unshift( $swift_banks, [
+                'DUMMYBANKVERIFIED' => __( 'Billplz Dummy Bank Verified', 'bfw' ),
+            ] );
         }
 
-        $banks['PHBMMYKL'] = __( 'Affin Bank Berhad', 'bfw' );
-        $banks['AGOBMYKL'] = __( 'AGROBANK / BANK PERTANIAN MALAYSIA BERHAD', 'bfw' );
-        $banks['MFBBMYKL'] = __( 'Alliance Bank Malaysia Berhad', 'bfw' );
-        $banks['RJHIMYKL'] = __( 'AL RAJHI BANKING &amp; INVESTMENT CORPORATION (MALAYSIA) BERHAD', 'bfw' );
-        $banks['ARBKMYKL'] = __( 'AmBank (M) Berhad', 'bfw' );
-        $banks['BIMBMYKL'] = __( 'Bank Islam Malaysia Berhad', 'bfw' );
-        $banks['BKRMMYKL'] = __( 'Bank Kerjasama Rakyat Malaysia Berhad', 'bfw' );
-        $banks['BMMBMYKL'] = __( 'Bank Muamalat (Malaysia) Berhad', 'bfw' );
-        $banks['BSNAMYK1'] = __( 'Bank Simpanan Nasional Berhad', 'bfw' );
-        $banks['CIBBMYKL'] = __( 'CIMB Bank Berhad', 'bfw' );
-        $banks['CITIMYKL'] = __( 'Citibank Berhad', 'bfw' );
-        $banks['HLBBMYKL'] = __( 'Hong Leong Bank Berhad', 'bfw' );
-        $banks['HBMBMYKL'] = __( 'HSBC Bank Malaysia Berhad', 'bfw' );
-        $banks['KFHOMYKL'] = __( 'Kuwait Finance House', 'bfw' );
-        $banks['MBBEMYKL'] = __( 'Maybank / Malayan Banking Berhad', 'bfw' );
-        $banks['OCBCMYKL'] = __( 'OCBC Bank (Malaysia) Berhad', 'bfw' );
-        $banks['PBBEMYKL'] = __( 'Public Bank Berhad', 'bfw' );
-        $banks['RHBBMYKL'] = __( 'RHB Bank Berhad', 'bfw' );
-        $banks['SCBLMYKX'] = __( 'Standard Chartered Bank (Malaysia) Berhad', 'bfw' );
-        $banks['UOVBMYKL'] = __( 'United Overseas Bank (Malaysia) Berhad', 'bfw' );
-
-        return $banks;
+        return $swift_banks;
 
     }
 }

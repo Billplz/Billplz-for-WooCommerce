@@ -412,7 +412,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   private function get_billplz_payment_options() {
 
     $payment_options = array();
-    $banks = BillplzPaymentOption::getBanks();
+    $banks = BillplzPaymentOption::getBanks( $this->is_sandbox );
 
     $gateways = $this->fetch_billplz_payment_gateways();
     $collection_gateways = $this->fetch_billplz_collection_payment_gateways();
@@ -913,7 +913,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $order = wc_get_order($post);
 
       if ( $order && $order->is_paid() && $order->get_payment_method() === $this->id ) {
-        $banks = BillplzPaymentOption::getSwiftBanks( $this->is_sandbox );
+        $swift_banks = BillplzPaymentOption::getSwiftBanks( $this->is_sandbox );
 
         include BFW_PLUGIN_DIR . '/includes/views/html-order-refund-metabox.php';
       }
@@ -1122,9 +1122,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         throw new Exception( __( 'Please enter the refund description.', 'bfw' ) );
       }
 
-      $banks = BillplzPaymentOption::getSwiftBanks( $this->is_sandbox );
+      $swift_banks = BillplzPaymentOption::getSwiftBanks( $this->is_sandbox );
 
-      if ( !in_array( $refund_data['bank'], array_keys( $banks ) ) ) {
+      if ( !in_array( $refund_data['bank'], array_keys( $swift_banks ) ) ) {
         throw new Exception( __( 'Invalid bank selected.' ) );
       }
 
