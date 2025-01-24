@@ -213,40 +213,6 @@ function bfw_get_settings() {
     'desc_tip' => true,
   );
 
-  $settings['2c2p_wallet'] = array(
-    'title' => __('2C2P Wallet', 'bfw'),
-    'type' => 'title',
-    'description' => 'This option to control the availability of specific 2c2p wallet for Skip Bill Page.',
-  );
-    
-  $settings['2c2p_boost'] = array(
-    'title' => __('2C2P Boost', 'bfw'),
-    'type' => 'checkbox',
-    'label' => __('Enable', 'bfw'),
-    'default' => 'no',
-  );
-
-  $settings['2c2p_tng'] = array(
-    'title' => __('2C2P TnG', 'bfw'),
-    'type' => 'checkbox',
-    'label' => __('Enable', 'bfw'),
-    'default' => 'no',
-  );
-    
-  $settings['2c2p_grabpay'] = array(
-    'title' => __('2C2P GrabPay', 'bfw'),
-    'type' => 'checkbox',
-    'label' => __('Enable', 'bfw'),
-    'default' => 'no',
-  );
-
-  $settings['2c2p_shopeepay'] = array(
-    'title' => __('2C2P Shopee Pay', 'bfw'),
-    'type' => 'checkbox',
-    'label' => __('Enable', 'bfw'),
-    'default' => 'no',
-  );
-
   return $settings;
 }
 

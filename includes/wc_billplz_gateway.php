@@ -48,10 +48,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   private $reference_1;
   private $instructions;
 
-  private $twoctwop_boost;
-  private $twoctwop_tng;
-  private $twoctwop_grabpay;
-  private $twoctwop_shopeepay;
   private $is_advanced_checkout;
 
   private $connect;
@@ -91,11 +87,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->reference_1_label = $this->get_option('reference_1_label');
     $this->reference_1 = $this->get_option('reference_1');
     $this->instructions = $this->get_option('instructions');
-
-    $this->twoctwop_boost = 'yes' === $this->get_option('2c2p_boost');
-    $this->twoctwop_tng = 'yes' === $this->get_option('2c2p_tng');
-    $this->twoctwop_grabpay = 'yes' === $this->get_option('2c2p_grabpay');
-    $this->twoctwop_shopeepay = 'yes' === $this->get_option('2c2p_shopeepay');
 
     $this->is_advanced_checkout = 'yes' === $this->get_option('is_advanced_checkout');
 
@@ -358,7 +349,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     return sprintf( __( '<strong>Billplz Disabled</strong>: %1$s is not valid. <a href="%2$s">Click here to configure</a>', 'bfw' ), $error_type, admin_url( 'admin.php?page=wc-settings&tab=checkout&section=' . self::$gateway_id ) );
   }
 
-  private function initialize_api_helper(){
+  private function initialize_api_helper() {
     global $bfw_connect, $bfw_api;
 
     $bfw_connect->set_api_key($this->api_key, $this->is_sandbox);
@@ -368,63 +359,98 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->billplz = &$bfw_api;
   }
 
-  private function fetch_billplz_payment_gateways()
-  {
-    if (false === ($gateways = get_transient('bfw_get_payment_gateways'))) {
-      $billplz = $this->billplz;
+  private function fetch_billplz_payment_gateways() {
 
+    $gateways = get_transient('bfw_get_payment_gateways');
+
+    if (!$gateways) {
+      $gateways = array();
+
+      $billplz = $this->billplz;
       list($rheader, $rbody) = $billplz->toArray($billplz->getPaymentGateways());
 
-      $gateways = array();  
+      if ($rheader === 200 && isset($rbody['payment_gateways'])) {
+        $gateways = $rbody['payment_gateways'];
 
-      if (isset($rbody['error']) || $rheader != 200) {
-        self::log('Failed to fetch billplz payment gateways');
+        set_transient('bfw_get_payment_gateways', $gateways, HOUR_IN_SECONDS * 1);
       } else {
-        $gateways = $rbody;
+        self::log('Failed to fetch billplz payment gateways');
       }
-
-      foreach($gateways['payment_gateways'] as $key => $value){
-        if (in_array($value['code'], array('BP-2C2PGRB', 'BP-2C2PBST', 'BP-2C2PTNG', 'BP-2C2PSHPE'))){
-          $gateways['payment_gateways'][$key]['category'] = 'twoctwopwallet';
-        }
-      }
-
-      set_transient('bfw_get_payment_gateways', $gateways, HOUR_IN_SECONDS * 1);
     }
 
     return $gateways;
+
   }
 
-  private function fetch_billplz_collection_payment_gateways(){
-    if (false === ($collection_gateways = get_transient('bfw_get_collection_gateways'))) {
-      
+  private function fetch_billplz_collection_payment_gateways() {
+
+    $collection_gateways = get_transient('bfw_get_collection_gateways');
+
+    if (!$collection_gateways) {
+      $collection_gateways = array();
+
       $billplz = $this->billplz;
       list($rheader, $rbody) = $billplz->toArray($billplz->getPaymentMethodIndex($this->collection_id));
 
-      $collection_gateways = array();
-
-      if (isset($rbody['error']) || $rheader != 200) {
-        self::log('Failed to fetch billplz collection payment gateways');
-      } else {
+      if ($rheader === 200 && isset($rbody['payment_methods'])) {
         foreach ($rbody['payment_methods'] as $payment_method) {
-          if ($payment_method['active']) {
-            switch ($payment_method['code']){
-              case 'isupaypal':
-                $payment_method['code'] = 'paypal';
-                break;
-              case 'twoctwop':
-                $payment_method['code'] = '2c2p';
-                break;
-            }
+          if ($payment_method['active'] === true) {
             $collection_gateways[] = $payment_method['code'];
           }
         }
-      }
 
-      set_transient('bfw_get_collection_gateways', $collection_gateways, MINUTE_IN_SECONDS * 30);
+        set_transient('bfw_get_collection_gateways', $collection_gateways, MINUTE_IN_SECONDS * 30);
+      } else {
+        self::log('Failed to fetch billplz collection payment gateways');
+      }
     }
 
     return $collection_gateways;
+
+  }
+
+  private function get_billplz_payment_options() {
+
+    $payment_options = array();
+    $banks = BillplzPaymentOption::getBanks( $this->is_sandbox );
+
+    $gateways = $this->fetch_billplz_payment_gateways();
+    $collection_gateways = $this->fetch_billplz_collection_payment_gateways();
+
+    foreach ($gateways as $gateway) {
+      $bank_name = isset($banks[$gateway['code']]) ? $banks[$gateway['code']] : null;
+
+      if (!$bank_name) {
+        continue;
+      }
+
+      // 2C2P e-Wallet code
+      $ewalletCodes = ['BP-2C2PGRB', 'BP-2C2PBST', 'BP-2C2PTNG', 'BP-2C2PSHPE'];
+
+      // Update gateway category code for 2C2P e-Wallet
+      if (in_array($gateway['code'], $ewalletCodes)) {
+        $gateway['category'] = 'twoctwopwallet';
+      }
+
+      // Update gateway category code for 2C2P
+      if ($gateway['category'] === '2c2p') {
+        $gateway['category'] = 'twoctwop';
+      }
+
+      // Update gateway category code for Paypal
+      if ($gateway['category'] === 'paypal') {
+        $gateway['category'] = 'isupaypal';
+      }
+
+      if (in_array($gateway['category'], $collection_gateways) && $gateway['active'] == true) {
+        $payment_options[$gateway['code']] = $bank_name;
+      }
+    }
+
+    natcasesort($payment_options);
+
+    return $payment_options;
+
   }
 
   public function payment_fields()
@@ -435,34 +461,14 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     }
 
     if ($this->has_fields) {
-      $gateways = $this->fetch_billplz_payment_gateways();
-      $collection_gateways = $this->fetch_billplz_collection_payment_gateways();
-      $bank_name = $this->add_custom_gateways(BillplzBankName::get());
+      $payment_options = $this->get_billplz_payment_options();
 
-      if (has_action('bfw_payment_fields')) {
-        do_action('bfw_payment_fields', $gateways, $bank_name);
-      } elseif (has_action('bfw_payment_fields_with_collection')) {
-        do_action('bfw_payment_fields_with_collection', $gateways, $bank_name, $collection_gateways);
-      } else {
-        $gateway_option = array();
-
-        if (!empty($gateways)) {
-          foreach ($bank_name as $key => $value) {
-            foreach ($gateways['payment_gateways'] as $gateway) {
-              if ($gateway['code'] === $key && $gateway['active'] && in_array($gateway['category'], $collection_gateways)) {
-                $gateway_option[$gateway['code']] = $bank_name[$gateway['code']] ? strtoupper($bank_name[$gateway['code']]) : $gateway['code'];
-              }
-            }
-          }
-        }
-
-        woocommerce_form_field('billplz_bank', array(
-          'type'        => 'select',
-          'required'    => true,
-          'label'       => __('Choose Payment Method', 'bfw'),
-          'options'       => $gateway_option
-        ));
-      }
+      woocommerce_form_field('billplz_bank', array(
+        'type' => 'select',
+        'required' => true,
+        'label' => __('Choose Payment Method', 'bfw'),
+        'options' => $payment_options,
+      ));
     }
   }
 
@@ -713,23 +719,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     exit;
   }
 
-  public function add_custom_gateways($bank_name){
-    if ($this->twoctwop_boost){
-      $bank_name['BP-2C2PBST'] = 'Boost';
-    }
-    if ($this->twoctwop_tng){
-      $bank_name['BP-2C2PTNG'] = 'TNG';
-    }
-    if ($this->twoctwop_grabpay){
-      $bank_name['BP-2C2PGRB'] = 'Grab';
-    }
-    if ($this->twoctwop_shopeepay){
-      $bank_name['BP-2C2PSHPE'] = 'Shopee Pay';
-    }
-    asort($bank_name);
-    return apply_filters('billplz_bank_name', $bank_name);
-  }
-
   public function process_admin_options()
   {
     delete_transient('bfw_get_payment_gateways');
@@ -924,7 +913,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       $order = wc_get_order($post);
 
       if ( $order && $order->is_paid() && $order->get_payment_method() === $this->id ) {
-        $banks = BillplzBankName::getSwift( $this->is_sandbox );
+        $swift_banks = BillplzPaymentOption::getSwiftBanks( $this->is_sandbox );
 
         include BFW_PLUGIN_DIR . '/includes/views/html-order-refund-metabox.php';
       }
@@ -1133,9 +1122,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         throw new Exception( __( 'Please enter the refund description.', 'bfw' ) );
       }
 
-      $banks = BillplzBankName::getSwift( $this->is_sandbox );
+      $swift_banks = BillplzPaymentOption::getSwiftBanks( $this->is_sandbox );
 
-      if ( !in_array( $refund_data['bank'], array_keys( $banks ) ) ) {
+      if ( !in_array( $refund_data['bank'], array_keys( $swift_banks ) ) ) {
         throw new Exception( __( 'Invalid bank selected.' ) );
       }
 

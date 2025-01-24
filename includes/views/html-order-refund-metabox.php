@@ -5,7 +5,7 @@
         <label for="bank" class="bfw-metabox-label"><?php _e('Bank', 'bfw'); ?><span class="bfw-required">*</span></label>
         <select id="refund-bank" class="bfw-metabox-field">
             <?php
-            foreach ( $banks as $bank_code => $bank_name ) {
+            foreach ( $swift_banks as $bank_code => $bank_name ) {
                 echo '<option value="' . esc_attr( $bank_code ) . '">' . esc_html( $bank_name ) . '</option>';
             }
             ?>
