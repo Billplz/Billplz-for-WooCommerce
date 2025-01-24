@@ -102,7 +102,7 @@ class BillplzPaymentOption
             ];
         }
 
-        return array_merge($banks, $sandbox_banks);
+        return array_merge( $banks, $sandbox_banks );
     }
 
     public static function getSwiftBanks( bool $sandbox = false )
@@ -131,12 +131,12 @@ class BillplzPaymentOption
         ];
 
         if ( $sandbox ) {
-            array_unshift( $swift_banks, [
+            $sandbox_swift_banks = [
                 'DUMMYBANKVERIFIED' => __( 'Billplz Dummy Bank Verified', 'bfw' ),
-            ] );
+            ];
         }
 
-        return $swift_banks;
-
+        // Sandbox first
+        return array_merge( $sandbox_swift_banks, $swift_banks );
     }
 }
