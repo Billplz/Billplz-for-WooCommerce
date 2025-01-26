@@ -336,7 +336,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       'x_signature_missing'                       => $this->key_missing_message( __( 'XSignature Key', 'bfw' ) ),
       'api_key_invalid_state'                     => $this->invalid_state_message( __( 'API Key', 'bfw' ) ),
       'collection_id_invalid_state'               => $this->invalid_state_message( __( 'Collection ID', 'bfw' ) ),
-      'payment_order_collection_id_invalid_state' => $this->invalid_state_message( __( 'Payment Order Collection ID', 'bfw' ) ),
+      'payment_order_collection_id_invalid_state' => $this->invalid_state_message( __( 'Payment Order Collection ID or X-Signature Key', 'bfw' ) ), // to verify PO collection, we requires valid X-Signature key
     );
 
   }
