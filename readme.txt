@@ -27,8 +27,8 @@ Install this plugin to accept payment using Billplz.
 * NEW: Add payment icon in WooCommerce checkout block
 * NEW: Introduced new filter hook: `bfw_checkout_block_icon`
 * FIXED: Include all payment options in the dropdown including FPX B2B, e-Wallet and Cards when "Bypass Billplz Bill Page" is enabled
-* MODIFIED: Removed action hooks: `bfw_payment_fields`, `bfw_payment_fields_with_collection`
-* MODIFIED: Removed filters hook: `billplz_bank_name`
+* MODIFIED: Removed action hooks: `bfw_payment_fields`, `bfw_payment_fields_with_collection`; no longer used as we have updated the payment options function
+* MODIFIED: Removed filters hook: `billplz_bank_name`; no longer used as we have updated the payment options function
 
 = 3.28.8 - 2024-08-13 =
 * FIXED: Resolved PHP 8.x deprecation warnings
