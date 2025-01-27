@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet, yiedpozi
 Tags: billplz
-Tested up to: 6.6.1
-Stable tag: 3.28.8
+Tested up to: 6.7.1
+Stable tag: 3.28.9
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,13 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.28.9 - 2025-01-27 =
+* NEW: Add payment icon in WooCommerce checkout block
+* NEW: Introduced new filter hook: `bfw_checkout_block_icon`
+* FIXED: Include all payment options in the dropdown including FPX B2B, e-Wallet and Cards when "Bypass Billplz Bill Page" is enabled
+* MODIFIED: Removed action hooks: `bfw_payment_fields`, `bfw_payment_fields_with_collection`; no longer used as we have updated the payment options function
+* MODIFIED: Removed filters hook: `billplz_bank_name`; no longer used as we have updated the payment options function
 
 = 3.28.8 - 2024-08-13 =
 * FIXED: Resolved PHP 8.x deprecation warnings
