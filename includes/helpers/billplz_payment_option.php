@@ -52,7 +52,7 @@ class BillplzPaymentOption
             'BP-RZRMB2QR' => __( 'Maybank QR', 'bfw' ),
             'BP-RZRWCTP' => __( 'WeChat Pay', 'bfw' ),
             // 'BP-RZRSHPE' => __( 'Shopee Pay', 'bfw' ),
-            'BP-MPGS1' => __( 'MPGS', 'bfw' ),
+            'BP-MPGS1' => __( 'Visa / Mastercard', 'bfw' ),
             'BP-CYBS1' => __( 'Secure Acceptance', 'bfw' ),
             'BP-EBPG1' => __( 'Visa / Mastercard', 'bfw' ),
             'BP-EBPG2' => __( 'AMEX', 'bfw' ),
