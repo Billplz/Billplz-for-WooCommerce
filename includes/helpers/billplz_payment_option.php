@@ -82,10 +82,8 @@ class BillplzPaymentOption
             'B2B1-UOB0228' => __( 'UOB BIBPlus (Business)', 'bfw' ),
         );
 
-        $sandbox_banks = array();
-
         if ( $sandbox ) {
-            $sandbox_banks = [
+            $banks = [
                 'ABB0234' => __( 'Affin Bank', 'bfw' ),
                 'UOB0229' => __( 'UOB Bank', 'bfw' ),
                 'TEST0001' => __( 'FPX TEST 1', 'bfw' ),
@@ -102,7 +100,7 @@ class BillplzPaymentOption
             ];
         }
 
-        return array_merge( $banks, $sandbox_banks );
+        return $banks;
     }
 
     public static function getSwiftBanks( bool $sandbox = false )
@@ -131,12 +129,11 @@ class BillplzPaymentOption
         ];
 
         if ( $sandbox ) {
-            $sandbox_swift_banks = [
+            $swift_banks = [
                 'DUMMYBANKVERIFIED' => __( 'Billplz Dummy Bank Verified', 'bfw' ),
             ];
         }
 
-        // Sandbox first
-        return array_merge( $sandbox_swift_banks, $swift_banks );
+        return $swift_banks;
     }
 }
