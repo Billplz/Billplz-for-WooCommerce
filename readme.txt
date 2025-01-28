@@ -23,7 +23,7 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
-= 3.28.9 - 2025-01-28 =
+= 3.28.10 - 2025-01-28 =
 * FIXED: Missing payment option - Bank of China
 * FIXED: Exclude live FPX and SWIFT banks when sandbox is enabled
 
