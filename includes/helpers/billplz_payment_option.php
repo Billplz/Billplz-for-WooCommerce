@@ -15,6 +15,7 @@ class BillplzPaymentOption
             'BIMB0340' => __( 'Bank Islam Internet Banking', 'bfw' ),
             'BKRM0602' => __( 'i-Rakyat', 'bfw' ),
             'BMMB0341' => __( 'i-Muamalat', 'bfw' ),
+            'BOCM01' => __( 'Bank of China', 'bfw' ),
             'BSN0601' => __( 'myBSN', 'bfw' ),
             'CIT0219' => __( 'Citibank Online', 'bfw' ),
             'HLB0224' => __( 'HLB Connect', 'bfw' ),
@@ -86,7 +87,6 @@ class BillplzPaymentOption
         if ( $sandbox ) {
             $sandbox_banks = [
                 'ABB0234' => __( 'Affin Bank', 'bfw' ),
-                'BOCM01' => __( 'Bank of China', 'bfw' ),
                 'UOB0229' => __( 'UOB Bank', 'bfw' ),
                 'TEST0001' => __( 'FPX TEST 1', 'bfw' ),
                 'TEST0002' => __( 'FPX TEST 2', 'bfw' ),
