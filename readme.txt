@@ -2,7 +2,7 @@
 Contributors: wanzulnet, yiedpozi
 Tags: billplz
 Tested up to: 6.7.1
-Stable tag: 3.28.9
+Stable tag: 3.28.10
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,10 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.28.9 - 2025-01-28 =
+* FIXED: Missing payment option - Bank of China
+* FIXED: Exclude live FPX and SWIFT banks when sandbox is enabled
 
 = 3.28.9 - 2025-01-27 =
 * NEW: Add payment icon in WooCommerce checkout block
