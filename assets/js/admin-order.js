@@ -94,7 +94,6 @@ jQuery(document).ready(function($) {
                 var bank                = order_refund_form.find('#refund-bank').val();
                 var bank_account_number = order_refund_form.find('#refund-bank-account-number').val();
                 var bank_account_name   = order_refund_form.find('#refund-bank-account-name').val();
-                var identity_number     = order_refund_form.find('#refund-identity-number').val();
                 var description         = order_refund_form.find('#refund-description').val();
 
                 var data = {
@@ -111,7 +110,6 @@ jQuery(document).ready(function($) {
                     bank                  : bank,
                     bank_account_number   : bank_account_number,
                     bank_account_name     : bank_account_name,
-                    identity_number       : identity_number,
                     description           : description,
 
                     security              : bfw_admin_order_metaboxes.create_refund_nonce

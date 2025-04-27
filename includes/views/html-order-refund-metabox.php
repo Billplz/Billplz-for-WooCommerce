@@ -19,10 +19,6 @@
         <label for="bank-account-name" class="bfw-metabox-label"><?php _e( 'Account Name', 'bfw' ); ?><span class="bfw-required">*</span></label>
         <input id="refund-bank-account-name" type="text" class="bfw-metabox-field" />
     </div>
-    <div class="bfw-metabox-field-container identity-number-field-container">
-        <label for="identity-number" class="bfw-metabox-label"><?php _e( 'IC Number', 'bfw' ); ?><span class="bfw-required">*</span></label>
-        <input id="refund-identity-number" type="number" class="bfw-metabox-field" />
-    </div>
     <div class="bfw-metabox-field-container amount-field-container">
         <label for="amount" class="bfw-metabox-label"><?php _e( 'Amount', 'bfw'); ?><span class="bfw-required">*</span></label>
         <input id="refund-amount" type="number" class="bfw-metabox-field" step="0.01"/>
