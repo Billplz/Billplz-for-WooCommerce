@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet, yiedpozi
 Tags: billplz
-Tested up to: 6.7.1
-Stable tag: 3.28.10
+Tested up to: 6.8
+Stable tag: 3.28.11
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.28.11 - 2025-04-28 =
+* FIXED: Removed "IC Number" field from refund form
 
 = 3.28.10 - 2025-01-28 =
 * FIXED: Missing payment option - Bank of China

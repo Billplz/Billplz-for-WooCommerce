@@ -943,7 +943,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $bank                   = isset( $_POST['bank'] ) ? sanitize_text_field( wp_unslash( $_POST['bank'] ) ) : '';
     $bank_account_number    = isset( $_POST['bank_account_number'] ) ? sanitize_text_field( wp_unslash( $_POST['bank_account_number'] ) ) : '';
     $bank_account_name      = isset( $_POST['bank_account_name'] ) ? sanitize_text_field( wp_unslash( $_POST['bank_account_name'] ) ) : '';
-    $identity_number        = isset( $_POST['identity_number'] ) ? sanitize_text_field( wp_unslash( $_POST['identity_number'] ) ) : '';
     $refund_description     = isset( $_POST['description'] ) ? sanitize_text_field( wp_unslash( $_POST['description'] ) ) : '';
 
     try {
@@ -975,10 +974,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         throw new Exception( __( 'Please enter the bank account name.', 'bfw' ) );
       }
 
-      if ( !$identity_number ) {
-        throw new Exception( __( 'Please enter the identification number (IC/SSM number) for bank account verification purposes.', 'bfw' ) );
-      }
-
       if ( !$refund_description ) {
         throw new Exception( __( 'Please enter the refund description.', 'bfw' ) );
       }
@@ -988,7 +983,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         'bank'                => $bank,
         'bank_account_number' => $bank_account_number,
         'bank_account_name'   => $bank_account_name,
-        'identity_number'     => $identity_number,
         'description'         => $refund_description,
       );
 
@@ -1094,7 +1088,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         'bank'                => '',
         'bank_account_number' => '',
         'bank_account_name'   => '',
-        'identity_number'     => '',
         'description'         => '',
       ) );
 
@@ -1114,10 +1107,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         throw new Exception( __( 'Please enter the bank account name.', 'bfw' ) );
       }
 
-      if ( !$refund_data['identity_number'] ) {
-        throw new Exception( __( 'Please enter the identification number (IC/SSM number) for bank account verification purposes.', 'bfw' ) );
-      }
-
       if ( !$refund_data['description'] ) {
         throw new Exception( __( 'Please enter the refund description.', 'bfw' ) );
       }
@@ -1132,7 +1121,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
         'payment_order_collection_id' => $this->payment_order_collection_id,
         'bank_code'                   => $refund_data['bank'],
         'bank_account_number'         => $refund_data['bank_account_number'],
-        'identity_number'             => $refund_data['identity_number'],
         'name'                        => $refund_data['bank_account_name'],
         'description'                 => $refund_data['description'],
         'total'                       => absint( $refund_data['amount'] * 100 ),
