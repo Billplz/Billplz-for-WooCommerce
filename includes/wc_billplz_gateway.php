@@ -263,6 +263,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
 
     add_action('add_meta_boxes', array(&$this, 'register_metaboxes'), 10, 2);
+
+    add_action('woocommerce_after_order_object_save', array(&$this, 'delete_bill_cancelled_order'));
   }
 
   public function enqueue_scripts()
@@ -1268,5 +1270,48 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $refund_note .= $reference;
 
     $order->add_order_note( $refund_note );
+  }
+
+  public function delete_bill_cancelled_order($order)
+  {
+    if ($order->get_status() !== 'cancelled') {
+      return;
+    }
+
+    $bill_id = $order->get_transaction_id();
+
+    try {
+      $billplz = $this->billplz;
+
+      if (!empty(bfw_get_bill_state_legacy($order->get_id(), $bill_id))){
+        bfw_delete_bill($bill_id);
+        list($rheader, $rbody) = $billplz->toArray($billplz->deleteBill($bill_id));
+
+        if ($rheader === 200) {
+          $order->add_order_note(
+            sprintf(
+              __('Bill (%s) deleted: Order marked as "Cancelled".', 'bfw'),
+              $bill_id,
+            ),
+          );
+        }
+
+        $error_message = isset($rbody['error']['message']) ? $rbody['error']['message'] : null;
+
+        if ($error_message) {
+          throw new Exception($error_message);
+        }
+
+        throw new Exception('Unknown error');
+      }
+    } catch (Exception $e) {
+      $order->add_order_note(
+        sprintf(
+          __('Failed to delete bill (%1$s) upon the order being marked as "Cancelled".<br><br>Message: %2$s', 'bfw'),
+          $bill_id,
+          $e->getMessage(),
+        ),
+      );
+    }
   }
 }
