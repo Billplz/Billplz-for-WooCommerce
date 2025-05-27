@@ -1286,6 +1286,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     $bill_id = $order->get_transaction_id();
 
+    if (!$bill_id) {
+      return;
+    }
+
     try {
       $billplz = $this->billplz;
 
@@ -1300,6 +1304,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
               $bill_id,
             ),
           );
+
+          return;
         }
 
         $error_message = isset($rbody['error']['message']) ? $rbody['error']['message'] : null;
