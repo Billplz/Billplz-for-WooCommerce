@@ -213,6 +213,13 @@ function bfw_get_settings() {
     'desc_tip' => true,
   );
 
+  $settings['auto_delete_bill_order_cancelled'] = array(
+    'title' => __('Auto Delete Bill', 'bfw'),
+    'type' => 'checkbox',
+    'label' => __('Automatically delete a bill upon order marked as "Cancelled"', 'bfw'),
+    'default' => 'no',
+  );
+
   return $settings;
 }
 

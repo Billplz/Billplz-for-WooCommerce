@@ -49,6 +49,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   private $instructions;
 
   private $is_advanced_checkout;
+  private $auto_delete_bill_order_cancelled;
 
   private $connect;
   private $billplz;
@@ -89,6 +90,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->instructions = $this->get_option('instructions');
 
     $this->is_advanced_checkout = 'yes' === $this->get_option('is_advanced_checkout');
+    $this->auto_delete_bill_order_cancelled = 'yes' === $this->get_option('auto_delete_bill_order_cancelled');
 
     if ( !$this->is_valid_for_use() ) {
       $this->enabled = 'no';
@@ -1275,6 +1277,10 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   public function delete_bill_cancelled_order($order)
   {
     if ($order->get_status() !== 'cancelled') {
+      return;
+    }
+
+    if (!$this->auto_delete_bill_order_cancelled) {
       return;
     }
 
