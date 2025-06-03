@@ -266,7 +266,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     add_action('add_meta_boxes', array(&$this, 'register_metaboxes'), 10, 2);
 
-    add_action('woocommerce_after_order_object_save', array(&$this, 'delete_bill_cancelled_order'));
+    add_action('woocommerce_order_status_changed', array(&$this, 'delete_bill_on_order_cancelled'), 10, 4);
   }
 
   public function enqueue_scripts()
@@ -1274,7 +1274,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $order->add_order_note( $refund_note );
   }
 
-  public function delete_bill_cancelled_order($order)
+  public function delete_bill_on_order_cancelled($order_id, $status_from, $status_to, $order)
   {
     if ($order->get_status() !== 'cancelled') {
       return;
