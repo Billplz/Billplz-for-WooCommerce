@@ -1,0 +1,10 @@
+* text=auto
+
+/.gitignore export-ignore
+/.gitattributes export-ignore
+/LICENSE export-ignore
+/README.md export-ignore
+/resources export-ignore
+/LICENSE export-ignore
+/package.json export-ignore
+/webpack.config.js export-ignore
