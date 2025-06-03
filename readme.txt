@@ -23,7 +23,7 @@ Install this plugin to accept payment using Billplz.
 
 == Changelog ==
 
-= 3.28.12 - 2025-05-xx =
+= 3.28.12 - 2025-06-03 =
 * ADDED: Enable/disable automatic bill deletion upon order marked as "Cancelled"
 
 = 3.28.11 - 2025-04-28 =
