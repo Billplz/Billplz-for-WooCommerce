@@ -593,7 +593,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       'reference_2' => $order_data['id'],
     );
 
-    self::log('Creating bill for order number #' . $order_data['id']);
+    self::log('Creating a bill for order number #' . $order_data['id']);
 
     $billplz = $this->billplz;
     list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional));
@@ -1284,6 +1284,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       return;
     }
 
+    $order_id = $order->get_id();
     $bill_id = $order->get_transaction_id();
 
     if (!$bill_id) {
@@ -1293,7 +1294,9 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     try {
       $billplz = $this->billplz;
 
-      if (!empty(bfw_get_bill_state_legacy($order->get_id(), $bill_id))){
+      if (!empty(bfw_get_bill_state_legacy($order_id, $bill_id))){
+        self::log("Deleting bill ({$bill_id}) for order number #{$order_id}");
+
         bfw_delete_bill($bill_id);
         list($rheader, $rbody) = $billplz->toArray($billplz->deleteBill($bill_id));
 
@@ -1304,6 +1307,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
               $bill_id,
             ),
           );
+
+          self::log("Bill ({$bill_id}) deleted for order number #{$order_id}");
 
           return;
         }
@@ -1324,6 +1329,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
           $e->getMessage(),
         ),
       );
+
+      self::log('Failed to delete bill (' . $bill_id . '): ' . $e->getMessage());
     }
   }
 }
