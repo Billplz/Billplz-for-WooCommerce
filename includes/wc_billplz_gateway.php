@@ -49,6 +49,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   private $instructions;
 
   private $is_advanced_checkout;
+  private $auto_delete_bill_order_cancelled;
 
   private $connect;
   private $billplz;
@@ -89,6 +90,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $this->instructions = $this->get_option('instructions');
 
     $this->is_advanced_checkout = 'yes' === $this->get_option('is_advanced_checkout');
+    $this->auto_delete_bill_order_cancelled = 'yes' === $this->get_option('auto_delete_bill_order_cancelled');
 
     if ( !$this->is_valid_for_use() ) {
       $this->enabled = 'no';
@@ -263,6 +265,8 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     add_action('woocommerce_api_wc_billplz_gateway', array(&$this, 'check_response'));
 
     add_action('add_meta_boxes', array(&$this, 'register_metaboxes'), 10, 2);
+
+    add_action('woocommerce_order_status_changed', array(&$this, 'delete_bill_on_order_cancelled'), 10, 4);
   }
 
   public function enqueue_scripts()
@@ -589,7 +593,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       'reference_2' => $order_data['id'],
     );
 
-    self::log('Creating bill for order number #' . $order_data['id']);
+    self::log('Creating a bill for order number #' . $order_data['id']);
 
     $billplz = $this->billplz;
     list($rheader, $rbody) = $billplz->toArray($billplz->createBill($parameter, $optional));
@@ -1268,5 +1272,65 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     $refund_note .= $reference;
 
     $order->add_order_note( $refund_note );
+  }
+
+  public function delete_bill_on_order_cancelled($order_id, $status_from, $status_to, $order)
+  {
+    if ($order->get_status() !== 'cancelled') {
+      return;
+    }
+
+    if (!$this->auto_delete_bill_order_cancelled) {
+      return;
+    }
+
+    $order_id = $order->get_id();
+    $bill_id = $order->get_transaction_id();
+
+    if (!$bill_id) {
+      return;
+    }
+
+    try {
+      $billplz = $this->billplz;
+
+      if (!empty(bfw_get_bill_state_legacy($order_id, $bill_id))){
+        self::log("Deleting bill ({$bill_id}) for order number #{$order_id}");
+
+        bfw_delete_bill($bill_id);
+        list($rheader, $rbody) = $billplz->toArray($billplz->deleteBill($bill_id));
+
+        if ($rheader === 200) {
+          $order->add_order_note(
+            sprintf(
+              __('Bill (%s) deleted: Order marked as "Cancelled".', 'bfw'),
+              $bill_id,
+            ),
+          );
+
+          self::log("Bill ({$bill_id}) deleted for order number #{$order_id}");
+
+          return;
+        }
+
+        $error_message = isset($rbody['error']['message']) ? $rbody['error']['message'] : null;
+
+        if ($error_message) {
+          throw new Exception($error_message);
+        }
+
+        throw new Exception('Unknown error');
+      }
+    } catch (Exception $e) {
+      $order->add_order_note(
+        sprintf(
+          __('Failed to delete bill (%1$s) upon the order being marked as "Cancelled".<br><br>Message: %2$s', 'bfw'),
+          $bill_id,
+          $e->getMessage(),
+        ),
+      );
+
+      self::log('Failed to delete bill (' . $bill_id . '): ' . $e->getMessage());
+    }
   }
 }
