@@ -301,14 +301,14 @@ class BillplzWooCommerceWPConnect
 
             foreach ($keys as $key){
                 if (isset($_GET['billplz'][$key])){
-                    $data['billplz'][$key] = $_GET['billplz'][$key];
+                    $data['billplz'][$key] = sanitize_text_field( stripslashes( $_GET['billplz'][$key] ) );
                 }
             } 
         } elseif ($type == 'bill_callback') {
             $keys = array('amount', 'collection_id', 'due_at', 'email', 'id', 'mobile', 'name', 'paid_amount', 'transaction_id', 'transaction_status', 'paid_at', 'paid', 'state', 'url', 'x_signature');
             foreach ($keys as $key){
                 if (isset($_POST[$key])){
-                    $data[$key] = $_POST[$key];
+                    $data[$key] = sanitize_text_field( stripslashes( $_POST[$key] ) );
                 }
             }
         } elseif ($type == 'payout_callback') {
@@ -320,7 +320,7 @@ class BillplzWooCommerceWPConnect
         if ($type != 'bill_redirect') {
             foreach ($keys as $key){
                 if (isset($_POST[$key])){
-                    $data[$key] = $_POST[$key];
+                    $data[$key] = sanitize_text_field( stripslashes( $_POST[$key] ) );
                 }
             }
         }
