@@ -1,8 +1,8 @@
 === Billplz for WooCommerce ===
 Contributors: wanzulnet, yiedpozi
 Tags: billplz
-Tested up to: 6.8.1
-Stable tag: 3.28.12
+Tested up to: 6.8.2
+Stable tag: 3.28.13
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,9 @@ Install this plugin to accept payment using Billplz.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.28.13 - 2025-07-28 =
+* FIXED: X-Signature mismatch caused by special character encoding in the payment callback data (e.g., slash)
 
 = 3.28.12 - 2025-06-18 =
 * ADDED: Enable/disable automatic bill deletion upon order marked as "Cancelled"
