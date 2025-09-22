@@ -4,7 +4,7 @@ defined('ABSPATH') || exit;
 
 ?>
 <p class="form-row validate-required">
-  <label><?php echo esc_html_e('Choose Payment Method', 'bfw'); ?> 
+  <label><?php esc_html_e('Choose Payment Method', 'bfw'); ?> 
     <span class="required">*</span>
   </label>
   
