@@ -1297,7 +1297,6 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       if (!empty(bfw_get_bill_state_legacy($order_id, $bill_id))){
         self::log("Deleting bill ({$bill_id}) for order number #{$order_id}");
 
-        bfw_delete_bill($bill_id);
         list($rheader, $rbody) = $billplz->toArray($billplz->deleteBill($bill_id));
 
         if ($rheader === 200) {
