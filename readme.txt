@@ -147,15 +147,15 @@ The API Key, Collection and X Signature Key can be hidden from WordPress Dashboa
 
 = Where can I get API Secret Key? =
 
-You can the API Secret Key at your Billplz Account Settings.
+You can obtain the API Secret Key from your Billplz Dashboard >> Settings.
 
 = Where can I get Collection ID? =
 
-You can the Collection ID at your Billplz >> Billing.
+You can obtain the Collection ID from your Billplz Dashboard >> Collection.
 
 = Where can I get X Signature Key? =
 
-You can the X Signature Key at your Billplz Account Settings.
+You can obtain the X Signature Key from your Billplz Dashboard >> Settings.
 
 = Troubleshooting =
 
