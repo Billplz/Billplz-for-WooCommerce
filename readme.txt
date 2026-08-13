@@ -1,6 +1,5 @@
 === Billplz for WooCommerce ===
-Contributors: wanzulnet, yiedpozi
-Tags: billplz
+Tags: woocommerce, ecommerce, billplz, payment
 Tested up to: 6.9
 Stable tag: 3.28.14
 Requires at least: 4.6
@@ -8,10 +7,11 @@ License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 7.0
 
-Accept payment by using Billplz.
+Billplz payment integration for WooCommerce.
 
 == Description ==
-Install this plugin to accept payment using Billplz.
+
+Billplz payment integration for WooCommerce.
 
 == Upgrade Notice ==
 
