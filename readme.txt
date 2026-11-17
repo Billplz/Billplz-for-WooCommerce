@@ -1,7 +1,7 @@
 === Billplz for WooCommerce ===
 Tags: woocommerce, ecommerce, billplz, payment
 Tested up to: 7.1
-Stable tag: 3.28.15
+Stable tag: 3.28.16
 Requires at least: 4.6
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -22,6 +22,9 @@ Billplz payment integration for WooCommerce.
 * Enable X Signature Key at Billplz Account Settings
 
 == Changelog ==
+
+= 3.28.16 - 2026-11-17 =
+* FIXED: Bill and order verification when updating payment status
 
 = 3.28.15 - 2026-10-06 =
 * ADDED: DuitNow QR (BP-RHBQR) payment option
