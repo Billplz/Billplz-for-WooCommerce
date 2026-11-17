@@ -8,7 +8,7 @@ function bfw_requery_button( $actions, $order ) {
         return $actions;
     }
 
-    if (empty($bill_state = bfw_get_bill_state_legacy($order->get_id(), $bill_id)))
+    if (empty($bill_state = bfw_get_bill_state($order->get_id(), $bill_id)))
     {
         return $actions;
     }
