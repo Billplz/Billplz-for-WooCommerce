@@ -504,7 +504,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
   {
     $billplz = $this->billplz;
 
-    if (!empty(bfw_get_bill_state_legacy($order_id, $bill_id))){
+    if (!empty(bfw_get_bill_state($order_id, $bill_id))){
       bfw_delete_bill($bill_id);
       $billplz->deleteBill($bill_id);
     }
@@ -690,7 +690,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
 
     $order_id = sanitize_text_field($_GET['order']);
 
-    if (empty(bfw_get_bill_state_legacy($order_id, $data['id']))) {
+    if (empty(bfw_get_bill_state($order_id, $data['id']))) {
       status_header(404);
       self::log('Order not found for Bill ID: ' . $data['id']);
       exit('Order not found');
@@ -711,7 +711,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
       exit;
     }
     
-    if (bfw_get_bill_state_legacy($order_id, $data['id']) == 'due' && $data['paid']) {
+    if (bfw_get_bill_state($order_id, $data['id']) == 'due' && $data['paid']) {
       bfw_update_bill($data['id'], 'paid', $order_id);
       self::complete_payment_process($order, $data, $this->is_sandbox);
     }
@@ -1294,7 +1294,7 @@ class WC_Billplz_Gateway extends WC_Payment_Gateway
     try {
       $billplz = $this->billplz;
 
-      if (!empty(bfw_get_bill_state_legacy($order_id, $bill_id))){
+      if (!empty(bfw_get_bill_state($order_id, $bill_id))){
         self::log("Deleting bill ({$bill_id}) for order number #{$order_id}");
 
         list($rheader, $rbody) = $billplz->toArray($billplz->deleteBill($bill_id));

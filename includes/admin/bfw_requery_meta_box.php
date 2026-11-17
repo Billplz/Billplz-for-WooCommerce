@@ -15,7 +15,7 @@ function bfw_meta_box_actions($actions)
         return $actions;
     }
 
-    if (empty($bill_state = bfw_get_bill_state_legacy($order->get_id(), $bill_id)))
+    if (empty($bill_state = bfw_get_bill_state($order->get_id(), $bill_id)))
     {
         return $actions;
     }
@@ -38,7 +38,7 @@ function bfw_process_meta_box_actions($order)
   $bill_id = $order->get_transaction_id();
   $order_id = $order->get_id();
 
-  if (empty($bill_state = bfw_get_bill_state_legacy($order_id, $bill_id))) 
+  if (empty($bill_state = bfw_get_bill_state($order_id, $bill_id))) 
   {
     return;
   }

@@ -8,7 +8,7 @@ function bfw_order_item_add_action_buttons( $order )
         return;
     }
 
-    if (empty($bill_state = bfw_get_bill_state_legacy($order->get_id(), $bill_id)))
+    if (empty($bill_state = bfw_get_bill_state($order->get_id(), $bill_id)))
     {
         return;
     }
@@ -39,7 +39,7 @@ function bfw_process_requery_action_button($order_id, $post, $update){
         return;
       }
 
-      if (empty($bill_state = bfw_get_bill_state_legacy($order->get_id(), $bill_id)))
+      if (empty($bill_state = bfw_get_bill_state($order->get_id(), $bill_id)))
       {
         return;
       }

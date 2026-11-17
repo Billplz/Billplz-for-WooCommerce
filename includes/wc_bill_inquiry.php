@@ -3,7 +3,7 @@
 
 function bfw_bill_inquiry($bill_id, $order_id, $attempts = 0)
 {
-  if (empty($bill_state = bfw_get_bill_state_legacy($order_id, $bill_id))) 
+  if (empty($bill_state = bfw_get_bill_state($order_id, $bill_id))) 
   {
     return;
   }
